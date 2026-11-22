@@ -620,16 +620,9 @@
             <span id="syncBadge" class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-stone-200 text-slate-700">Connecting</span>
           </div>
           <p class="text-slate-700 leading-relaxed">
-            Hearts, checkmarks, notes, custom pins, and the Dec 30 choice are shared. The day open on this phone stays on this phone.
+            Hearts, checkmarks, notes, custom pins, and the Dec 30 choice are shared by every phone. The day open on this phone stays on this phone.
           </p>
           <div id="syncLiveState" class="hidden text-linden font-bold">This phone is on the shared family copy.</div>
-          <div id="syncNeedsPin" class="space-y-2">
-            <p class="text-slate-700">On a public family link, enter the PIN once on this phone. A private signed-in link syncs without it.</p>
-            <div class="flex items-center gap-2">
-              <input id="familyPinInput" type="password" autocomplete="current-password" maxlength="40" placeholder="Family PIN" class="flex-1 px-3 py-2 rounded-xl bg-white border border-amber-300 font-mono text-[11px]" />
-              <button type="button" onclick="saveFamilyPin()" class="px-3.5 py-2 rounded-xl bg-linden hover:bg-[#1c4837] text-white font-bold shadow-2xs">Sync this phone</button>
-            </div>
-          </div>
         </div>
       </div>
     </div>
@@ -2197,7 +2190,6 @@
     }
 
 
-    const FAMILY_PIN_KEY = 'prague_family_pin_v1';
     let syncRevision = 0;
     let applyingRemote = false;
     let pushTimer = null;
@@ -2208,14 +2200,8 @@
     let holdRemote = false;
     let editGen = 0;
 
-    function familyPin() {
-      try { return localStorage.getItem(FAMILY_PIN_KEY) || ''; } catch (e) { return ''; }
-    }
-
     function syncHeaders(json) {
       const headers = { 'x-atlas-client': '1' };
-      const pin = familyPin();
-      if (pin) headers['x-family-pin'] = pin;
       if (json) headers['content-type'] = 'application/json';
       return headers;
     }
@@ -2235,9 +2221,7 @@
           ? 'px-2 py-0.5 rounded-full text-[10px] font-bold bg-linden text-white'
           : 'px-2 py-0.5 rounded-full text-[10px] font-bold bg-stone-200 text-slate-700';
       }
-      const pinBox = document.getElementById('syncNeedsPin');
       const liveBox = document.getElementById('syncLiveState');
-      if (pinBox) pinBox.classList.toggle('hidden', mode === 'live');
       if (liveBox) liveBox.classList.toggle('hidden', mode !== 'live');
     }
 
@@ -2292,10 +2276,6 @@
           headers: syncHeaders(true),
           body: JSON.stringify({ baseRevision: syncRevision, state: buildCompactSyncObject() })
         });
-        if (res.status === 401) {
-          setSyncStatus('warn', 'Enter the family PIN to sync phones');
-          return;
-        }
         if (!res.ok) {
           setSyncStatus('warn', 'Saved on this phone');
           return;
@@ -2320,10 +2300,6 @@
       if (pushInFlight || holdRemote) return;
       try {
         const res = await fetch('/api/sync', { headers: syncHeaders(false), cache: 'no-store' });
-        if (res.status === 401) {
-          setSyncStatus('warn', 'Enter the family PIN to sync phones');
-          return;
-        }
         if (!res.ok) {
           setSyncStatus('warn', 'Saved on this phone');
           return;
@@ -2366,20 +2342,6 @@
       document.addEventListener('visibilitychange', () => {
         if (document.visibilityState === 'visible') pullLiveSync();
       });
-    }
-
-    function saveFamilyPin() {
-      const input = document.getElementById('familyPinInput');
-      const pin = (input && input.value || '').trim();
-      if (pin.length < 4) {
-        showToast('Use at least 4 characters.');
-        return;
-      }
-      try { localStorage.setItem(FAMILY_PIN_KEY, pin); } catch (e) {}
-      seeded = false;
-      holdRemote = false;
-      pullLiveSync();
-      showToast('Checking the family PIN…');
     }
 
     function esc(value) {
@@ -4447,8 +4409,6 @@
       if (input) input.value = baseUrl;
       const bytes = document.getElementById('syncByteCount');
       if (bytes) bytes.textContent = 'Live link';
-      const pinInput = document.getElementById('familyPinInput');
-      if (pinInput && !pinInput.value) pinInput.value = familyPin();
       drawVisualQrMatrix('syncQrCanvas', baseUrl);
       if (copyTextSafely(baseUrl)) showToast('Family link copied.');
     }
@@ -4618,6 +4578,7 @@
       injectBespokeBrandIcons();
       renderAllUI();
       initMapEngine();
+      try { localStorage.removeItem('prague_family_pin_v1'); } catch (e) {}
       bindSheetDrag();
       syncHudInset();
       window.addEventListener('resize', syncHudInset);
