@@ -157,6 +157,70 @@
       text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
     }
 
+    :root { color-scheme: light; }
+
+    @media (prefers-color-scheme: dark) {
+      :root { color-scheme: dark; }
+      html, body { background: #0e1218; color: #f4efe6; }
+      #map { background: #161b22; }
+      .atlas-glass {
+        background: rgba(18, 22, 30, 0.92);
+        border-color: rgba(255, 255, 255, 0.12);
+        box-shadow: 0 14px 36px -8px rgba(0, 0, 0, 0.55);
+      }
+      .bg-white,
+      .bg-white\/40, .bg-white\/50, .bg-white\/60, .bg-white\/75,
+      .bg-white\/80, .bg-white\/85, .bg-white\/90,
+      .bg-parchment, .bg-stone-50, .bg-stone-100, .bg-stone-200 {
+        background-color: #1b2230 !important;
+      }
+      .hover\:bg-white:hover,
+      .hover\:bg-amber-50:hover,
+      .hover\:bg-stone-200:hover,
+      .hover\:bg-emerald-50:hover,
+      .hover\:bg-rose-50\/70:hover {
+        background-color: #243044 !important;
+      }
+      .text-vltava { color: #f4efe6 !important; }
+      .text-slate-500, .text-slate-600, .text-slate-700 { color: #c5ceda !important; }
+        .text-amber-900, .text-amber-950, .text-orange-950, .text-rose-900 { color: #f6e2b8 !important; }
+      .text-rose-950 { color: #fecdd3 !important; }
+      .text-linden { color: #8fd4b0 !important; }
+      .text-cobalt { color: #9ec4f0 !important; }
+      .text-pink-900 { color: #fbcfe8 !important; }
+      .text-stone-800 { color: #e7e5e4 !important; }
+      .bg-amber-50, .bg-amber-50\/90, .bg-amber-50\/95, .bg-amber-100, .bg-amber-100\/90 {
+        background-color: #3a2c16 !important;
+      }
+      .bg-rose-50, .bg-rose-50\/95, .bg-rose-50\/70 { background-color: #3a1c24 !important; }
+      .bg-emerald-50, .bg-emerald-50\/75 { background-color: #143028 !important; }
+      .bg-blue-50 { background-color: #172848 !important; }
+      .bg-pink-50 { background-color: #3b1830 !important; }
+      .bg-orange-50 { background-color: #3a2614 !important; }
+      .bg-vltava\/5 { background-color: rgba(255, 255, 255, 0.06) !important; }
+      .border-vltava\/8, .border-vltava\/10, .border-vltava\/12, .border-vltava\/15, .border-vltava\/20,
+      .border-stone-200, .border-stone-300, .border-amber-200, .border-amber-300, .border-amber-300\/80,
+      .border-rose-200, .border-rose-300, .border-emerald-200, .border-blue-200, .border-pink-200, .border-orange-200 {
+        border-color: rgba(255, 255, 255, 0.14) !important;
+      }
+      input, textarea, select {
+        background-color: #151b26;
+        color: #f4efe6;
+        border-color: rgba(255, 255, 255, 0.16);
+      }
+      option { background: #151b26; color: #f4efe6; }
+      .leaflet-popup-content-wrapper, .leaflet-popup-tip { background: #1b2230; color: #f4efe6; }
+      .leaflet-bar a, .leaflet-control-attribution {
+        background: #1b2230;
+        color: #d5dbe4;
+      }
+      .leaflet-bar a { border-bottom-color: rgba(255,255,255,0.12); }
+      .district-callout {
+        color: rgba(244, 239, 230, 0.55);
+        text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
+      }
+    }
+
     .leg-midpoint-pill {
       background: rgba(20, 25, 35, 0.88);
       color: #FCFAF6;
@@ -281,7 +345,7 @@
 
         <!-- Map Tile Style Switcher -->
         <div class="relative">
-          <select id="tileStyleSelect" onchange="switchTileLayer(this.value)" aria-label="Map Cartographic Style"
+          <select id="tileStyleSelect" onchange="switchTileLayer(this.value, true)" aria-label="Map Cartographic Style"
             class="appearance-none bg-white/85 hover:bg-white text-vltava text-xs font-bold rounded-xl pl-2.5 pr-7 py-2 border border-vltava/15 focus:outline-none focus:border-garnet cursor-pointer transition">
             <option value="voyager">Street Map</option>
             <option value="editorial">Clear Streets</option>
@@ -535,7 +599,9 @@
           <div>
             <label class="block font-bold text-vltava mb-1">Category</label>
             <select id="cpCategory" class="w-full px-3 py-2 rounded-xl bg-white border border-stone-300 text-xs font-semibold focus:outline-none focus:border-garnet">
-              <option value="food">Food / Café / Beer</option>
+              <option value="food">Meal</option>
+              <option value="cafe">Café</option>
+              <option value="beer">Beer</option>
               <option value="sight">Castle / Culture</option>
               <option value="walk">Walk / Viewpoint</option>
               <option value="transit">Transit / Drive</option>
@@ -1088,7 +1154,9 @@
 
     const CATEGORY_META = {
       transit: { label: 'Transit / Drive', color: '#255485', badge: 'bg-blue-50 text-cobalt border-blue-200' },
-      food:    { label: 'Food & Tank Beer', color: '#C97A1E', badge: 'bg-amber-50 text-amber-900 border-amber-200' },
+      food:    { label: 'Meal', color: '#9A3412', badge: 'bg-orange-50 text-orange-950 border-orange-200' },
+      cafe:    { label: 'Café', color: '#9F1239', badge: 'bg-rose-50 text-rose-900 border-rose-200' },
+      beer:    { label: 'Beer', color: '#C97A1E', badge: 'bg-amber-50 text-amber-900 border-amber-200' },
       sight:   { label: 'Castle & Culture', color: '#B8293D', badge: 'bg-rose-50 text-garnet border-rose-200' },
       walk:    { label: 'Walk & Viewpoint', color: '#245C46', badge: 'bg-emerald-50 text-linden border-emerald-200' },
       holiday: { label: 'Holiday Special',  color: '#9D174D', badge: 'bg-pink-50 text-pink-900 border-pink-200' }
@@ -1183,7 +1251,7 @@
           },
           {
             id: 'd3-s3', time: '18:30–20:30', title: 'Dinner at Lokál Dlouhááá',
-            category: 'food', lat: 50.0908, lng: 14.4264,
+            category: 'beer', lat: 50.0908, lng: 14.4264,
             neighborhood: 'Dlouhá, Staré Město',
             tip: 'Gold standard for unpasteurized tank Pilsner Urquell (ask for a hladinka pour) paired with fried Eidam cheese (smažený sýr) and homemade tartar sauce.',
             booking: 'Reserve Table for 5 Ahead'
@@ -1217,7 +1285,7 @@
           },
           {
             id: 'd4-s2', time: '09:00–10:15', title: 'Breakfast at Café Louvre',
-            category: 'food', lat: 50.0818, lng: 14.4189,
+            category: 'cafe', lat: 50.0818, lng: 14.4189,
             neighborhood: 'Národní 22',
             tip: 'Serving Praguers since 1902 (regulars included Franz Kafka & Albert Einstein). Great breakfast plates, thick hot chocolate, and upstairs billiard tables.',
             booking: null
@@ -1382,7 +1450,7 @@
           },
           {
             id: 'd7-s6', time: '16:45–17:45', title: 'Pastries at Myšák Vodičkova',
-            category: 'food', lat: 50.0806, lng: 14.4241,
+            category: 'cafe', lat: 50.0806, lng: 14.4241,
             neighborhood: 'Vodičkova 31',
             tip: 'Restored 1911 cukrárna—order the caramel-vanilla větrník choux pastry and filter coffee (closes at 19:00).',
             booking: null
@@ -1450,7 +1518,7 @@
           },
           {
             id: 'd9-s2', time: '12:45–14:30', title: 'Holiday Lunch at Café Savoy',
-            category: 'food', lat: 50.0813, lng: 14.4063,
+            category: 'cafe', lat: 50.0813, lng: 14.4063,
             neighborhood: 'Vítězná 5, Malá Strana',
             tip: 'Beneath an 1893 Neo-Renaissance painted ceiling; order Wiener schnitzel, roast dishes, or thick Savoy hot chocolate.',
             booking: 'Reserve for 5 Ahead'
@@ -1721,7 +1789,7 @@
         stops: [
           {
             id: 'd16-s1', time: '10:30–12:00', title: "New Year's Brunch at Café Louvre",
-            category: 'food', lat: 50.0818, lng: 14.4189,
+            category: 'cafe', lat: 50.0818, lng: 14.4189,
             neighborhood: 'Národní 22',
             tip: 'Celebrate the first morning of 2027 with eggs, pastries, and thick hot chocolate.',
             booking: 'Reserve Brunch for 5'
@@ -1794,12 +1862,12 @@
       },
       {
         id: 'gem-kavarna', title: 'Kavárna co hledá jméno',
-        lat: 50.0713, lng: 14.4052, neighborhood: 'Stroupežnického 10, Smíchov', time: '10:30–12:00', category: 'food',
+        lat: 50.0713, lng: 14.4052, neighborhood: 'Stroupežnického 10, Smíchov', time: '10:30–12:00', category: 'cafe',
         tip: 'Hidden courtyard industrial-chic café in Smíchov beloved by Prague locals for brunch and specialty flat whites.'
       },
       {
         id: 'gem-eska', title: 'Eska Restaurant & Bakery',
-        lat: 50.0921, lng: 14.4508, neighborhood: 'Pernerova 49, Karlín', time: '11:30–13:00', category: 'food',
+        lat: 50.0921, lng: 14.4508, neighborhood: 'Pernerova 49, Karlín', time: '11:30–13:00', category: 'cafe',
         tip: 'Michelin Bib Gourmand Nordic-Czech bakery in Karlín—famous for sourdough bread, fermented veggies, and potatoes in ash.'
       },
       {
@@ -1819,7 +1887,7 @@
       },
       {
         id: 'gem-altstadthof', title: 'Hausbrauerei Altstadthof (Red Beer)',
-        lat: 49.4570, lng: 11.0747, neighborhood: 'Bergstraße 19, Nuremberg', time: '12:30–14:00', category: 'food',
+        lat: 49.4570, lng: 11.0747, neighborhood: 'Bergstraße 19, Nuremberg', time: '12:30–14:00', category: 'beer',
         tip: 'Just below Nuremberg Imperial Castle; brews organic Nuremberg Rotbier (red beer) with hearty Franconian food.'
       },
       {
@@ -1874,14 +1942,14 @@
      * 16-ITEM BOOKINGS & WINTER HOLIDAY RULES CHECKLIST
      */
     const BOOKING_CHECKLIST = [
-      { id: 'chk-rental', day: 'Thu 17 Dec', title: 'Debi & Tom rental car, pickup at PRG', desc: 'One car for the airport, Mníšek, Dresden, Karlštejn, Nuremberg, and Kutná Hora. In Prague, use a spot if the Airbnb includes one, or a P+R at about 50 CZK for 24 hours, and ride trams and metro. Return it at PRG on Jan 2. Confirm it fits five plus bags for the Nuremberg night.' },
-      { id: 'chk-vignette', day: 'Pre-Trip', title: 'Czech Electronic Motorway Vignette (dálniční známka)', desc: 'Buy it for Debi and Tom\'s rental on edalnice.cz before the D4, D5, D8, or D11.' },
-      { id: 'chk-botel', day: 'Thu 17 Dec', title: 'River-boat room on the Vltava', desc: 'Debi and Tom sleep here the nights of 17 and 18 Dec. Ethan sleeps at home in Mníšek. From the night of 19 Dec everyone is at the Airbnb. Write down the boat name and the gangway.' },
+      { id: 'chk-rental', who: ['Debi', 'Tom'], day: 'Thu 17 Dec', title: 'Debi & Tom rental car, pickup at PRG', desc: 'One car for the airport, Mníšek, Dresden, Karlštejn, Nuremberg, and Kutná Hora. In Prague, use a spot if the Airbnb includes one, or a P+R at about 50 CZK for 24 hours, and ride trams and metro. Return it at PRG on Jan 2. Confirm it fits five plus bags for the Nuremberg night.' },
+      { id: 'chk-vignette', who: ['Debi', 'Tom'], day: 'Pre-Trip', title: 'Czech Electronic Motorway Vignette (dálniční známka)', desc: 'Buy it for the rental on edalnice.cz before the D4, D5, D8, or D11.' },
+      { id: 'chk-botel', who: ['Debi', 'Tom'], day: 'Thu 17 Dec', title: 'River-boat room on the Vltava', desc: 'You sleep here the nights of 17 and 18 Dec. Ethan sleeps at home in Mníšek. From the night of 19 Dec everyone is at the Airbnb. Write down the boat name and the gangway.' },
       { id: 'chk-hotel', day: 'Sat 19 Dec', title: 'Airbnb at Vinohradská 403/17', desc: 'Booked for all five from the night of 19 Dec, in Vinohrady. The 17th and 18th are the river boat for Debi and Tom, and Ethan\'s house for Ethan. Check whether the listing includes a parking spot.' },
       { id: 'chk-nbergstay', day: 'Sun 27 Dec', title: 'Book one Nuremberg place for all five', desc: 'Everyone stays together the night of Dec 27, then drives back on Dec 28.' },
       { id: 'chk-litacka',  day: 'Pre-Trip', title: 'Install PID Lítačka App on Everyone’s Phones', desc: 'Activate tram/metro tickets in-app BEFORE boarding (inspectors patrol Castle trams).' },
       { id: 'chk-euronet',  day: 'Pre-Trip', title: 'Avoid Euronet ATMs & 100g Old Town Ham Stalls', desc: 'Use Czech bank ATMs (Česká spořitelna, ČSOB, KB), always choose CZK, and skip tourist chimney cakes.' },
-      { id: 'chk-mnisek',   day: 'Fri 18 Dec', title: 'Book Mníšek pod Brdy Chateau Friday Tour (24h Ahead)', desc: 'Friday winter tours (10:30, 12:00, 13:30) require advance phone/online reservation.' },
+      { id: 'chk-mnisek', who: ['Ethan', 'Debi', 'Tom'], day: 'Fri 18 Dec', title: 'Book Mníšek pod Brdy Chateau Friday Tour (24h Ahead)', desc: 'Friday winter tours (10:30, 12:00, 13:30) require advance phone/online reservation. Olivia and Jordan are not here yet.' },
       { id: 'chk-lokal',    day: 'Sat 19 Dec', title: 'Reserve Lokál Dlouhááá Table for 5', desc: 'Evening tank Pilsner & smažený sýr dinner—books out fast on pre-Christmas Saturday.' },
       { id: 'chk-kuchyn',   day: 'Mon 21 Dec', title: 'Reserve Kuchyň Lunch Table for 5 (Castle Gates)', desc: 'Hradčanské náměstí terrace lunch overlooking Prague.' },
       { id: 'chk-glaubicu', day: 'Mon 21 Dec', title: 'Reserve U Glaubiců Cellar Dinner for 5', desc: 'Malostranské náměstí 700-year-old vaulted cellar dinner.' },
@@ -2281,27 +2349,30 @@
       }
     }
 
-    function lodgingNote(dayId) {
-      if (dayId === 'day-1' || dayId === 'day-2') {
-        return "Ethan sleeps at home in Mníšek. Debi and Tom sleep on their river-boat hotel on the Vltava in Prague, and drive back after the day.";
+    function lodgingNote(day) {
+      const user = state.activeUser;
+      const idx = TRIP_DAYS.findIndex(d => d.id === day.id);
+      if (!userIsHere(user, idx)) return '';
+      if (day.id === 'day-1' || day.id === 'day-2') {
+        return user === 'Ethan'
+          ? 'You sleep at home in Mníšek.'
+          : 'You sleep on the river-boat hotel in Prague.';
       }
-      if (dayId === 'day-11') {
-        return 'All five together in Nuremberg tonight. Book one place, then drive back tomorrow.';
+      if (day.id === 'day-11') return 'All five sleep in Nuremberg tonight.';
+      if (day.id === 'day-12') return 'Drive back today. Tonight is the Airbnb, Vinohradská 403/17.';
+      if (day.id === 'day-17') {
+        return user === 'Ethan'
+          ? 'The others fly home today. You are not on the flight.'
+          : 'Checkout from Vinohradská. Debi and Tom return the rental at the airport.';
       }
-      if (dayId === 'day-12') {
-        return 'Leave Nuremberg after the castle. All five sleep at the Airbnb, Vinohradská 403/17.';
-      }
-      if (dayId === 'day-17') {
-        return "Checkout from the Airbnb on Vinohradská. Debi and Tom return the rental at the airport. Ethan is not on the flight.";
-      }
-      if (dayId === 'day-6') {
-        return 'Day trip only. Debi and Tom drive the rental both ways. Sleep back at the Airbnb, Vinohradská 403/17.';
-      }
-      return "Prague. Debi and Tom's nights of 17 and 18 Dec are the river-boat hotel. From the night of 19 Dec, all five stay at the Airbnb, Vinohradská 403/17, Vinohrady. Use a parking spot if the listing includes one, otherwise a park-and-ride, then trams and metro.";
+      if (day.id === 'day-6') return 'Day trip. Sleep back at the Airbnb, Vinohradská 403/17.';
+      return 'Tonight is the Airbnb, Vinohradská 403/17.';
     }
 
     function lodgingHtml(day) {
-      return `<div class="mt-2 px-2.5 py-2 rounded-xl bg-amber-50/90 border border-amber-200 text-[11px] text-amber-950 leading-relaxed"><strong>Where we sleep. </strong>${esc(lodgingNote(day.id))}</div>`;
+      const note = lodgingNote(day);
+      if (!note) return '';
+      return `<div class="mt-2 px-2.5 py-2 rounded-xl bg-amber-50/90 border border-amber-200 text-[11px] text-amber-950 leading-relaxed"><strong>Where we sleep. </strong>${esc(note)}</div>`;
     }
 
     /**
@@ -2409,7 +2480,9 @@
     };
 
     function getCategoryMicroSvg(cat) {
-      if (cat === 'food') return `<svg class="w-2.5 h-2.5" viewBox="0 0 24 24" fill="currentColor"><path d="M18 8h1a4 4 0 0 1 0 8h-1v1a3 3 0 0 1-3 3H8a3 3 0 0 1-3-3V8h13zm1 2h-1v4h1a2 2 0 0 0 0-4z"/></svg>`;
+      if (cat === 'beer') return `<svg class="w-2.5 h-2.5" viewBox="0 0 24 24" fill="currentColor"><path d="M18 8h1a4 4 0 0 1 0 8h-1v1a3 3 0 0 1-3 3H8a3 3 0 0 1-3-3V8h13zm1 2h-1v4h1a2 2 0 0 0 0-4z"/></svg>`;
+      if (cat === 'cafe') return `<svg class="w-2.5 h-2.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M6 8h10v6a4 4 0 0 1-4 4H10a4 4 0 0 1-4-4V8z"/><path d="M16 9h2a2 2 0 0 1 0 4h-2"/></svg>`;
+      if (cat === 'food') return `<svg class="w-2.5 h-2.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M4 10h16M6 10c0 5 2 8 6 8s6-3 6-8"/><path d="M12 4v3"/></svg>`;
       if (cat === 'walk') return `<svg class="w-2.5 h-2.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 17l6-6 4 4 8-8"/></svg>`;
       if (cat === 'transit') return `<svg class="w-2.5 h-2.5" viewBox="0 0 24 24" fill="currentColor"><path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99z"/></svg>`;
       if (cat === 'holiday') return `<svg class="w-2.5 h-2.5" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`;
@@ -2449,7 +2522,13 @@
       gemsLayerGroup = L.layerGroup().addTo(map);
       markersLayerGroup = L.layerGroup().addTo(map);
 
-      switchTileLayer(state.tileStyle || 'voyager');
+      switchTileLayer(deviceMapStyle(), false);
+      const scheme = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)');
+      if (scheme && scheme.addEventListener) {
+        scheme.addEventListener('change', () => {
+          if (!state.tileChosen) switchTileLayer(deviceMapStyle(), false);
+        });
+      }
 
       // Show/Hide District Cartographic Labels based on Zoom
       map.on('zoomend', updateDistrictCalloutsVisibility);
@@ -2467,10 +2546,20 @@
       renderMapLayers(true);
     }
 
-    function switchTileLayer(styleKey) {
-      state.tileStyle = styleKey;
-      document.getElementById('tileStyleSelect').value = styleKey;
-      persistState();
+    function deviceMapStyle() {
+      if (state.tileChosen && state.tileStyle) return state.tileStyle;
+      const dark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+      return dark ? 'night' : 'voyager';
+    }
+
+    function switchTileLayer(styleKey, fromUser) {
+      if (fromUser) {
+        state.tileChosen = true;
+        state.tileStyle = styleKey;
+        persistState();
+      }
+      const select = document.getElementById('tileStyleSelect');
+      if (select) select.value = styleKey;
 
       if (!map || typeof window.L === 'undefined') return;
       if (activeTileLayer) map.removeLayer(activeTileLayer);
@@ -2732,28 +2821,18 @@
 
     function parkingCopy(user, dayIndex, day) {
       if (!userIsHere(user, dayIndex)) return '';
-      if (user === 'Olivia' || user === 'Jordan') {
-        return 'All five stay at Vinohradská 403/17. Debi and Tom handle the rental. You ride with them on the long days and take the tram in Prague.';
+      const drives = user === 'Debi' || user === 'Tom';
+      if (!drives) {
+        if (user === 'Ethan' && dayIndex <= 1) return 'The rental goes back to the boat with Debi and Tom.';
+        if ((user === 'Olivia' || user === 'Jordan') && day.id === 'day-3') return 'Debi and Tom handle the car. You ride with them on the long days.';
+        return '';
       }
-      if (user === 'Ethan' && dayIndex <= 1) {
-        return 'You sleep at home. Debi and Tom drive the rental back to the river-boat hotel tonight, so it does not stay in the driveway.';
-      }
-      if (user === 'Ethan') {
-        return 'On Prague nights you are at the Airbnb with everyone else. The rental belongs in a spot the listing includes, or at a park-and-ride for about 50 CZK for the first 24 hours. On the 17th and 18th it goes back to the boat with Debi and Tom.';
-      }
-      if (dayIndex <= 1) {
-        return 'Tonight you sleep on the river-boat hotel in Prague. Use the parking that comes with the boat. The embankment is not a free overnight zone, so do not leave the rental on the street. If the booking has no spot, a park-and-ride is about 50 CZK for the first 24 hours. Ethan stays at his house in Mníšek.';
-      }
-      if (day.id === 'day-11') {
-        return 'Tonight, use the parking that comes with the place you booked, or a station park-and-ride. Old-town garages charge by the hour and get expensive if the car sits overnight.';
-      }
-      if (day.id === 'day-6') {
-        return 'Dresden is a day trip. A center garage is fine while you walk the city. Bring the car back the same night to the Airbnb spot, if the listing has one, or to a Prague park-and-ride.';
-      }
-      if (day.id === 'day-12') {
-        return 'You drive back today. Tonight the flat is Vinohradská 403/17. Use its parking spot if the listing includes one. Otherwise a Prague park-and-ride is about 50 CZK for the first 24 hours.';
-      }
-      return 'The flat is Vinohradská 403/17. Use a parking spot if the listing includes one. Street parking in Vinohrady is still paid, so do not assume the curb is free overnight. Otherwise use a Prague park-and-ride: about 50 CZK for the first 24 hours, then 10 CZK an hour. Zličín 1 on Řevnická (metro B), Letňany on Listova (metro C), the Opatov garage on Chilská (metro C), or the Černý Most garage on Chlumecká (metro B, 2 m height limit, fine for a normal car). The metro ticket is extra. Purple and orange zones in the center bill by the hour all night.';
+      if (dayIndex <= 1) return 'Park in the boat’s own spot. If the booking has none, a park-and-ride is about 50 CZK for 24 hours. The embankment is not free overnight.';
+      if (day.id === 'day-3' || day.id === 'day-12') return 'Tonight use the Airbnb spot if the listing has one. Otherwise a park-and-ride is about 50 CZK for the first 24 hours.';
+      if (day.id === 'day-6') return 'A Dresden garage is fine for the day. Bring the car back to the Airbnb spot, or a Prague park-and-ride.';
+      if (day.id === 'day-11') return 'Use the parking that comes with the Nuremberg place, or a station park-and-ride.';
+      if (day.id === 'day-17') return 'Return the rental at the airport today.';
+      return '';
     }
 
     function personDayCards(day) {
@@ -2784,7 +2863,6 @@
           <div class="p-3 rounded-2xl bg-white/90 border border-vltava/10 text-xs text-slate-700 leading-relaxed">
             <div class="text-[10px] font-extrabold uppercase tracking-wider text-garnet">${userIsHere(user, idx) ? 'Your route' : 'Family route'}</div>
             <p class="mt-1">${esc(blurb)}</p>
-            <p class="mt-1 text-[10px] text-slate-500">Walking follows footpaths and stairs. Car and bus follow the roads. Tram and metro follow the streets. A train is a straight hop, because the public router has no rail line.</p>
           </div>`;
       }
       return html;
@@ -3021,25 +3099,105 @@
       drawRoutedLegs(token, pairs);
     }
 
-    function requestStopPhoto(stop) {
+    function foldText(value) {
+      return String(value || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    }
+
+    function photoWords(value) {
+      const drop = { dinner: 1, lunch: 1, breakfast: 1, brunch: 1, walk: 1, stroll: 1, hike: 1, tour: 1, guided: 1, sunrise: 1, sunset: 1, evening: 1, morning: 1, farewell: 1, family: 1, holiday: 1, arrival: 1, pickup: 1, drive: 1, pastries: 1, hidden: 1, with: 1, from: 1, near: 1, prague: 1, praha: 1, that: 1, this: 1 };
+      return foldText(value).split(/[^a-z0-9]+/).filter(word => word.length > 3 && !drop[word]);
+    }
+
+    function photoQuery(stop) {
+      let title = String(stop.title || '').replace(/\([^)]*\)/g, ' ');
+      title = title.replace(/\b(sunrise|sunset|evening|morning|afternoon|farewell|family|holiday|guided|hidden|stroll|hike|arrival|pickup|pastries|drive|local|christmas|market|fortress|baroque|pilgrimage|walk|town)\b/gi, ' ');
+      title = title.replace(/^(dinner|lunch|breakfast|brunch|walk|tour)\b/gi, ' ');
+      title = title.replace(/\b(at|on|in|the|and|a|of|for|with|from|to|near)\b/gi, ' ');
+      title = title.replace(/[^0-9A-Za-zÀ-žÁ-ž\s'-]/g, ' ').replace(/\s+/g, ' ').trim();
+      return title.length > 3 ? title : String(stop.title || '');
+    }
+
+    function photoPlaceBonus(fileTitle, stop) {
+      const name = foldText(fileTitle);
+      const context = foldText((stop.title || '') + ' ' + (stop.neighborhood || ''));
+      let bonus = 0;
+      const elsewhere = ['svitavy', 'brno', 'plzen', 'pilsen', 'wien', 'vienna', 'berlin', 'dresden', 'nurnberg', 'munchen'];
+      elsewhere.forEach(city => {
+        if (name.indexOf(city) !== -1 && context.indexOf(city) === -1) bonus -= 14;
+      });
+      if ((name.indexOf('prague') !== -1 || name.indexOf('praha') !== -1) && context.indexOf('nurnberg') === -1 && context.indexOf('dresden') === -1) bonus += 6;
+      return bonus;
+    }
+
+    function fileScore(fileTitle, words) {
+      const name = foldText(fileTitle);
+      if (/\.svg$|map\b|flag of|locator|coat of arms|logo|icon|diagram|planek|plan of/.test(name)) return 0;
+      if (!/\.(jpe?g|png|webp)$/.test(name)) return 0;
+      const looseName = name.replace(/(.)\1+/g, '$1');
+      const hits = [];
+      words.forEach(word => {
+        const looseWord = word.replace(/(.)\1+/g, '$1');
+        if (hits.indexOf(looseWord) === -1 && looseName.indexOf(looseWord) !== -1) hits.push(looseWord);
+      });
+      if (!hits.length) return 0;
+      if (hits.length >= 2) {
+        const ranked = hits.slice().sort((a, b) => b.length - a.length);
+        const gap = Math.abs(looseName.indexOf(ranked[0]) - looseName.indexOf(ranked[1]));
+        if (gap > 22) return 0;
+      }
+      return hits.reduce((sum, word) => sum + word.length, 0);
+    }
+
+    async function commonsFiles(query) {
+      const url = 'https://commons.wikimedia.org/w/api.php?action=query&format=json&origin=*&list=search&srnamespace=6&srlimit=6&srsearch=' + encodeURIComponent(query);
+      const data = await fetch(url).then(r => r.json());
+      return ((data.query && data.query.search) || []).map(hit => hit.title);
+    }
+
+    async function commonsThumb(fileTitle) {
+      const url = 'https://commons.wikimedia.org/w/api.php?action=query&format=json&origin=*&prop=imageinfo&iiprop=url&iiurlwidth=960&titles=' + encodeURIComponent(fileTitle);
+      const data = await fetch(url).then(r => r.json());
+      const page = Object.values((data.query && data.query.pages) || {})[0];
+      const info = page && page.imageinfo && page.imageinfo[0];
+      return info ? (info.thumburl || info.url || '') : '';
+    }
+
+    async function requestStopPhoto(stop) {
       if (!stop) return;
-      const key = Math.round(stop.lat * 1000) / 1000 + ',' + Math.round(stop.lng * 1000) / 1000;
+      const key = stop.id || (stop.lat + ',' + stop.lng);
       if (photoCache[key] && photoCache[key] !== 'pending') {
         paintStopPhoto(stop, photoCache[key]);
         return;
       }
       if (photoCache[key] === 'pending') return;
       photoCache[key] = 'pending';
-      const url = 'https://commons.wikimedia.org/w/api.php?action=query&format=json&origin=*' +
-        '&generator=geosearch&ggscoord=' + stop.lat + '|' + stop.lng +
-        '&ggsradius=700&ggslimit=8&prop=pageimages&piprop=thumbnail&pithumbsize=640&pilimit=8';
-      fetch(url).then(r => r.json()).then(data => {
-        const pages = data && data.query && data.query.pages ? Object.values(data.query.pages) : [];
-        const bad = /map|flag of|locator|coat of arms|logo|icon|diagram/i;
-        const hit = pages.find(p => p.thumbnail && p.thumbnail.source && !bad.test(p.title || ''));
-        photoCache[key] = hit ? { src: hit.thumbnail.source, title: hit.title || stop.title } : { src: '' };
+      const query = photoQuery(stop);
+      const words = photoWords(query + ' ' + (stop.neighborhood || '') + ' ' + (stop.title || ''));
+      try {
+        const queries = [query];
+        const loose = foldText(query).replace(/(.)\1+/g, '$1');
+        if (loose && queries.indexOf(loose) === -1) queries.push(loose);
+        const place = String(stop.neighborhood || '').split(',')[0].trim();
+        if (place && query.toLowerCase().indexOf(place.toLowerCase()) === -1) queries.push(query + ' ' + place);
+        if (foldText(query).indexOf('prague') === -1 && foldText(query).indexOf('praha') === -1) queries.push(query + ' Prague');
+        let best = '';
+        let bestScore = 0;
+        for (let i = 0; i < queries.length; i++) {
+          const files = await commonsFiles(queries[i]);
+          files.forEach(file => {
+            const score = fileScore(file, words) + photoPlaceBonus(file, stop);
+            if (score > bestScore) {
+              bestScore = score;
+              best = file;
+            }
+          });
+        }
+        const src = best ? await commonsThumb(best) : '';
+        photoCache[key] = src ? { src: src, title: best.replace(/^File:/, '') } : { src: '' };
         paintStopPhoto(stop, photoCache[key]);
-      }).catch(() => { photoCache[key] = { src: '' }; });
+      } catch (e) {
+        photoCache[key] = { src: '' };
+      }
     }
 
     function paintStopPhoto(stop, photo) {
@@ -3051,7 +3209,7 @@
         img.classList.remove('hidden');
         const cap = img.nextElementSibling;
         if (cap && cap.hasAttribute('data-photo-credit')) {
-          cap.textContent = 'Photo from Wikimedia Commons, near this stop. Google Maps still has its own pictures.';
+          cap.textContent = 'Photo of this place, from Wikimedia Commons.';
           cap.classList.remove('hidden');
         }
       });
@@ -3472,9 +3630,14 @@
       renderGemsOverlay();
     }
 
+    function checklistForUser(user) {
+      return BOOKING_CHECKLIST.filter(item => !item.who || item.who.indexOf(user) !== -1);
+    }
+
     function updateHeaderChecklistBadge() {
-      const done = BOOKING_CHECKLIST.filter(i => state.checkedBookings[i.id]).length;
-      document.getElementById('headerChecklistCount').textContent = `${done}/${BOOKING_CHECKLIST.length}`;
+      const mine = checklistForUser(state.activeUser);
+      const done = mine.filter(i => state.checkedBookings[i.id]).length;
+      document.getElementById('headerChecklistCount').textContent = `${done}/${mine.length}`;
     }
 
     // SVG Circular Progress Ring for Day Ribbon Pills
@@ -3719,9 +3882,10 @@
                     <span>&#9733; ${esc(stop.booking)}</span>
                   </div>` : ''}
 
+                <img data-stop-photo="${safeDomId(stop.id)}" alt="" class="hidden mt-2 w-full h-40 object-cover rounded-xl border border-stone-200" />
+                <p data-photo-credit class="hidden text-[10px] text-slate-400 mt-1"></p>
                 <p class="text-xs text-slate-600 mt-2 leading-relaxed">${esc(stop.tip)}</p>
                 ${routeNote(state.activeUser, stop, day) ? `<p class="text-[11px] font-medium text-cobalt mt-1.5">${esc(routeNote(state.activeUser, stop, day))}</p>` : ''}
-                ${isSelected ? `<img data-stop-photo="${safeDomId(stop.id)}" alt="" class="hidden mt-2 w-full h-36 object-cover rounded-xl border border-stone-200" /><p data-photo-credit class="hidden text-[10px] text-slate-400 mt-1"></p>` : ''}
 
                 <!-- Card Footer: Family Upvotes & Direct Maps Deep Links -->
                 <div class="mt-2.5 pt-2 border-t border-vltava/8 flex items-center justify-between gap-2 flex-wrap">
@@ -3773,8 +3937,7 @@
         </div>`;
 
       feed.innerHTML = html;
-      const selectedStop = stops.find(s => s.id === state.selectedStopId);
-      if (selectedStop) requestStopPhoto(selectedStop);
+      stops.forEach(stop => requestStopPhoto(stop));
     }
 
     function updateDayNote(dayId, val) {
@@ -3912,7 +4075,8 @@
       const body = document.getElementById('toolsModalBody');
 
       if (tab === 'checklist') {
-        body.innerHTML = BOOKING_CHECKLIST.map(item => {
+        const mine = checklistForUser(state.activeUser);
+        body.innerHTML = `<p class="text-[11px] text-slate-500 px-1">Showing what ${esc(state.activeUser)} needs to handle.</p>` + mine.map(item => {
           const checked = !!state.checkedBookings[item.id];
           return `
             <label onclick="toggleBookingItem('${item.id}')"
