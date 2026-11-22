@@ -157,6 +157,11 @@
       text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
     }
 
+    .who-card { width: 100%; min-height: 6.25rem; }
+    @media (min-width: 640px) {
+      .who-card { width: calc(50% - 0.25rem); }
+    }
+
     :root { color-scheme: light; }
 
     @media (prefers-color-scheme: dark) {
@@ -641,24 +646,24 @@
     <div class="atlas-glass w-full max-w-lg rounded-3xl p-5 shadow-2xl" role="dialog" aria-modal="true" aria-labelledby="whoTitle">
       <h2 id="whoTitle" class="font-display font-bold text-xl text-vltava">Who is holding this phone?</h2>
       <p class="text-sm text-slate-600 mt-1 leading-relaxed">Routes, parking, and which days are yours follow that person. Olivia and Jordan land Saturday 19 Dec. Ethan starts at home in Mníšek.</p>
-      <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-2">
-        <button type="button" onclick="chooseWho('Ethan')" class="text-left px-3 py-2.5 rounded-2xl bg-white border border-vltava/10 hover:border-garnet">
+      <div class="mt-4 flex flex-wrap justify-center gap-2">
+        <button type="button" onclick="chooseWho('Ethan')" class="who-card text-left px-3 py-2.5 rounded-2xl bg-white border border-vltava/10 hover:border-garnet">
           <span class="block font-bold text-vltava">Ethan</span>
           <span class="block text-[11px] text-slate-500 mt-0.5">Home in Mníšek on the 17th and 18th. With everyone at the Airbnb from the 19th.</span>
         </button>
-        <button type="button" onclick="chooseWho('Debi')" class="text-left px-3 py-2.5 rounded-2xl bg-white border border-vltava/10 hover:border-garnet">
+        <button type="button" onclick="chooseWho('Debi')" class="who-card text-left px-3 py-2.5 rounded-2xl bg-white border border-vltava/10 hover:border-garnet">
           <span class="block font-bold text-vltava">Debi</span>
           <span class="block text-[11px] text-slate-500 mt-0.5">Rental car from Thursday 17 Dec. The 17th and 18th are the river boat in Prague.</span>
         </button>
-        <button type="button" onclick="chooseWho('Tom')" class="text-left px-3 py-2.5 rounded-2xl bg-white border border-vltava/10 hover:border-garnet">
+        <button type="button" onclick="chooseWho('Tom')" class="who-card text-left px-3 py-2.5 rounded-2xl bg-white border border-vltava/10 hover:border-garnet">
           <span class="block font-bold text-vltava">Tom</span>
           <span class="block text-[11px] text-slate-500 mt-0.5">Same car as Debi. The 17th and 18th are the river boat in Prague.</span>
         </button>
-        <button type="button" onclick="chooseWho('Olivia')" class="text-left px-3 py-2.5 rounded-2xl bg-white border border-vltava/10 hover:border-garnet">
+        <button type="button" onclick="chooseWho('Olivia')" class="who-card text-left px-3 py-2.5 rounded-2xl bg-white border border-vltava/10 hover:border-garnet">
           <span class="block font-bold text-vltava">Olivia</span>
           <span class="block text-[11px] text-slate-500 mt-0.5">Lands Saturday 19 Dec. Earlier days stay the family plan.</span>
         </button>
-        <button type="button" onclick="chooseWho('Jordan')" class="text-left px-3 py-2.5 rounded-2xl bg-white border border-vltava/10 hover:border-garnet sm:col-span-2">
+        <button type="button" onclick="chooseWho('Jordan')" class="who-card text-left px-3 py-2.5 rounded-2xl bg-white border border-vltava/10 hover:border-garnet">
           <span class="block font-bold text-vltava">Jordan</span>
           <span class="block text-[11px] text-slate-500 mt-0.5">Lands Saturday 19 Dec. Earlier days stay the family plan.</span>
         </button>
