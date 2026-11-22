@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no" />
   <title>Prague Time</title>
   <link rel="icon" href="favicon.ico" sizes="32x32" />
   <link rel="icon" type="image/png" href="favicon.png" sizes="64x64" />
@@ -187,7 +187,8 @@
         background-color: #243044 !important;
       }
       .text-vltava { color: #f4efe6 !important; }
-      .text-slate-500, .text-slate-600, .text-slate-700 { color: #c5ceda !important; }
+      .text-slate-400, .text-slate-500, .text-slate-600, .text-slate-700 { color: #c5ceda !important; }
+      .text-garnet { color: #f3a8b4 !important; }
         .text-amber-900, .text-amber-950, .text-orange-950, .text-rose-900 { color: #f6e2b8 !important; }
       .text-rose-950 { color: #fecdd3 !important; }
       .text-linden { color: #8fd4b0 !important; }
@@ -257,16 +258,86 @@
       padding: 6px 8px 0 0 !important;
     }
 
-    /* Position Leaflet Zoom Bottom-Right out of the way of Floating HUD */
-    .leaflet-bottom.leaflet-right {
-      margin-bottom: 14px;
-      margin-right: 12px;
+    @media (prefers-color-scheme: dark) {
+      .leaflet-popup-content-wrapper {
+        background: #1b2230 !important;
+        color: #f4efe6 !important;
+        border-color: rgba(255, 255, 255, 0.16) !important;
+        box-shadow: 0 18px 40px -10px rgba(0, 0, 0, 0.55) !important;
+      }
+      .leaflet-popup-tip { background: #1b2230 !important; }
+      .leaflet-popup-content { color: #f4efe6 !important; }
+      .leaflet-container a.leaflet-popup-close-button { color: #d5dbe4 !important; }
+      .leaflet-popup-content .bg-linden\/15 { background-color: rgba(143, 212, 176, 0.18) !important; }
+      .leaflet-popup-content .bg-stone-100 { background-color: #243044 !important; }
+      .leaflet-popup-content .hover\:bg-stone-200:hover { background-color: #2c3b54 !important; }
     }
+
+    .leaflet-control-zoom { display: none !important; }
+
+    header.hud-dock {
+      top: 0;
+      left: 0;
+      right: 0;
+      padding: max(0.4rem, env(safe-area-inset-top)) 0.5rem 0;
+      gap: 0.4rem;
+    }
+
+    #itineraryDrawer {
+      --sheet-peek: 3.35rem;
+    }
+
+    #sheetHandle { touch-action: none; cursor: grab; }
+    #sheetHandle:active { cursor: grabbing; }
+    #drawerStopsFeed { min-height: 0; overscroll-behavior: contain; }
+
     @media (max-width: 1023px) {
+      #itineraryDrawer {
+        top: auto !important;
+        bottom: max(0.45rem, env(safe-area-inset-bottom));
+        height: min(46dvh, calc(100dvh - var(--hud-bottom, 148px) - 0.7rem - env(safe-area-inset-bottom)));
+        max-height: calc(100dvh - var(--hud-bottom, 148px) - 0.45rem - env(safe-area-inset-bottom));
+        transition: height 0.28s ease;
+      }
+      #itineraryDrawer[data-sheet="peek"] { height: var(--sheet-peek); }
+      #itineraryDrawer[data-sheet="half"] {
+        height: min(46dvh, calc(100dvh - var(--hud-bottom, 148px) - 0.7rem - env(safe-area-inset-bottom)));
+      }
+      #itineraryDrawer[data-sheet="full"] {
+        height: calc(100dvh - var(--hud-bottom, 148px) - 0.45rem - env(safe-area-inset-bottom));
+      }
+      #itineraryDrawer.is-dragging { transition: none; }
       .leaflet-bottom.leaflet-right {
-        margin-bottom: auto;
-        top: 132px;
-        bottom: auto;
+        top: auto !important;
+        bottom: var(--map-chrome-bottom, 52dvh) !important;
+        right: 6px !important;
+        margin: 0 !important;
+      }
+      .leaflet-control-attribution {
+        max-width: 8.5rem;
+        font-size: 9px !important;
+        line-height: 1.2;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .map-chrome-hidden .leaflet-bottom.leaflet-right {
+        opacity: 0;
+        pointer-events: none;
+      }
+    }
+
+    @media (min-width: 1024px) {
+      header.hud-dock {
+        top: 0.625rem;
+        left: 0.625rem;
+        right: 0.625rem;
+        padding: 0;
+        gap: 0.5rem;
+      }
+      .leaflet-bottom.leaflet-right {
+        margin-bottom: 14px;
+        margin-right: 12px;
       }
     }
 
@@ -309,11 +380,11 @@
   </div>
 
   <!-- ==================== 2. FLOATING TOP COMMAND DOCK ==================== -->
-  <header class="fixed top-2.5 left-2.5 right-2.5 z-[500] pointer-events-none flex flex-col gap-2">
-    <div class="atlas-glass rounded-2xl px-3 sm:px-4 py-2 flex items-center justify-between gap-2 pointer-events-auto">
+  <header class="hud-dock fixed z-[500] pointer-events-none flex flex-col">
+    <div class="atlas-glass rounded-2xl px-2.5 sm:px-4 py-1.5 sm:py-2 flex flex-col gap-1.5 sm:flex-row sm:items-center sm:justify-between sm:gap-2 pointer-events-auto">
       <!-- Left: Krtek Emblem & Editorial Atlas Title -->
       <div class="flex items-center gap-2.5 min-w-0">
-        <div id="headerKrtekSlot" class="w-10 h-10 rounded-xl bg-amber-50 border border-amber-200/80 flex items-center justify-center shrink-0 shadow-2xs" title="Krtek — Your Bohemian Winter Guide"></div>
+        <div id="headerKrtekSlot" class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-amber-50 border border-amber-200/80 flex items-center justify-center shrink-0 shadow-2xs" title="Krtek — Your Bohemian Winter Guide"></div>
         <div class="min-w-0">
           <div class="flex items-center gap-2">
             <h1 class="font-display font-bold text-sm sm:text-base md:text-lg tracking-tight text-vltava truncate">
@@ -331,7 +402,7 @@
       </div>
 
       <!-- Center / Right Controls -->
-      <div class="flex items-center gap-1.5 sm:gap-2 shrink-0 flex-wrap justify-end">
+      <div class="flex items-center gap-0.5 sm:gap-2 min-w-0 overflow-x-auto no-scrollbar flex-nowrap sm:overflow-visible sm:justify-end">
         <!-- View Scope Toggle: Day Route vs Central Europe Overview -->
         <div class="hidden xl:inline-flex rounded-xl bg-vltava/5 p-1 border border-vltava/10">
           <button id="btnScopeDay" onclick="setOverviewMode(false)" class="px-2.5 py-1 rounded-lg text-xs font-bold transition bg-vltava text-parchment shadow-2xs">
@@ -343,7 +414,7 @@
         </div>
 
         <!-- Compact Overview Toggle for Medium/Small Screens -->
-        <button id="btnScopeCompact" onclick="toggleOverviewMode()" class="xl:hidden flex items-center gap-1 px-2.5 py-2 rounded-xl bg-white/80 hover:bg-white text-vltava border border-vltava/15 text-xs font-bold transition" title="Toggle Day Route vs Central Europe Overview">
+        <button id="btnScopeCompact" onclick="toggleOverviewMode()" class="xl:hidden flex items-center gap-1 px-2 py-1.5 sm:px-2.5 sm:py-2 rounded-xl bg-white/80 hover:bg-white text-vltava border border-vltava/15 text-xs font-bold transition shrink-0" title="Toggle Day Route vs Central Europe Overview">
           <svg class="w-3.5 h-3.5 text-garnet" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
           <span class="hidden sm:inline" id="compactScopeLabel">Overview</span>
         </button>
@@ -351,7 +422,7 @@
         <!-- Map Tile Style Switcher -->
         <div class="relative">
           <select id="tileStyleSelect" onchange="switchTileLayer(this.value, true)" aria-label="Map Cartographic Style"
-            class="appearance-none bg-white/85 hover:bg-white text-vltava text-xs font-bold rounded-xl pl-2.5 pr-7 py-2 border border-vltava/15 focus:outline-none focus:border-garnet cursor-pointer transition">
+            class="appearance-none bg-white/85 hover:bg-white text-vltava text-[11px] sm:text-xs font-bold rounded-xl pl-1.5 pr-5 sm:pl-2.5 sm:pr-7 py-1.5 sm:py-2 border border-vltava/15 focus:outline-none focus:border-garnet cursor-pointer transition max-w-[4.3rem] sm:max-w-none">
             <option value="voyager">Street Map</option>
             <option value="editorial">Clear Streets</option>
             <option value="topo">Topo Trails</option>
@@ -365,7 +436,7 @@
           <div id="desktopVoterPills" class="flex items-center gap-0.5"></div>
         </div>
         <select id="mobileVoterSelect" onchange="setActiveUser(this.value)" aria-label="Select active family member"
-          class="lg:hidden bg-white/85 text-vltava text-xs font-bold rounded-xl px-2 py-2 border border-vltava/15 focus:outline-none">
+          class="lg:hidden bg-white/85 text-vltava text-[11px] sm:text-xs font-bold rounded-xl px-1.5 py-1.5 sm:px-2 sm:py-2 border border-vltava/15 focus:outline-none max-w-[3.9rem] sm:max-w-[5.5rem]">
           <option value="Ethan">Ethan</option>
           <option value="Debi">Debi</option>
           <option value="Tom">Tom</option>
@@ -375,16 +446,16 @@
 
         <!-- Honest Guide Gems Toggle (Bob & Bobek Icon) -->
         <button id="btnGemsToggle" onclick="toggleHonestGems()"
-          class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-linden text-white border border-linden text-xs font-bold transition shadow-2xs"
+          class="flex items-center gap-1.5 px-2 py-1.5 sm:px-2.5 rounded-xl bg-linden text-white border border-linden text-xs font-bold transition shadow-2xs shrink-0"
           title="Toggle Bob & Bobek's Honest Guide Hidden Gems (+ pins)">
           <span id="btnBobekIcon" class="w-5 h-5 flex items-center justify-center shrink-0"></span>
           <span class="hidden md:inline">Gems</span>
-          <span id="gemsStatusBadge" class="text-[10px] font-mono bg-white/20 px-1.5 py-0.2 rounded">ON</span>
+          <span id="gemsStatusBadge" class="hidden sm:inline text-[10px] font-mono bg-white/20 px-1.5 py-0.2 rounded">ON</span>
         </button>
 
         <!-- Tools & Checklist Drawer Button (Pat & Mat Icon) -->
         <button onclick="openToolsModal('checklist')"
-          class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-amber-50 hover:bg-amber-100 text-vltava border border-amber-300/80 text-xs font-bold transition shadow-2xs"
+          class="flex items-center gap-1.5 px-2 py-1.5 sm:px-2.5 rounded-xl bg-amber-50 hover:bg-amber-100 text-vltava border border-amber-300/80 text-xs font-bold transition shadow-2xs shrink-0"
           title="Pat & Mat's Trip Prep Checklist, CZK Converter & Near Me Finder">
           <span id="btnPatMatIcon" class="w-5 h-5 flex items-center justify-center shrink-0"></span>
           <span class="hidden md:inline">Tools</span>
@@ -393,14 +464,13 @@
 
         <!-- Prominent Share Sync Link Button -->
         <button onclick="triggerQuickShareSync()"
-          class="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-garnet hover:bg-[#9e2032] text-white text-xs font-bold transition shadow-md border border-white/15"
+          class="flex items-center gap-1.5 px-2 py-1.5 sm:px-3 sm:py-2 rounded-xl bg-garnet hover:bg-[#9e2032] text-white text-xs font-bold transition shadow-md border border-white/15 shrink-0"
           title="Copy the family link. Votes, checkmarks, and notes already sync across phones.">
           <svg class="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
             <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
             <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
           </svg>
           <span class="hidden sm:inline">Share Sync Link</span>
-          <span class="sm:hidden">Sync</span>
         </button>
       </div>
     </div>
@@ -432,19 +502,19 @@
     <span id="desktopDrawerToggleLabel">Hide Itinerary</span>
   </button>
 
-  <aside id="itineraryDrawer"
-    class="fixed z-[450] left-2.5 right-2.5 bottom-2.5 lg:right-auto lg:top-[176px] lg:bottom-3 lg:w-[435px] xl:w-[465px] h-[52vh] lg:h-auto atlas-glass rounded-3xl flex flex-col overflow-hidden transition-all duration-300">
+  <aside id="itineraryDrawer" data-sheet="half"
+    class="fixed z-[450] left-2.5 right-2.5 lg:right-auto lg:top-[176px] lg:bottom-3 lg:w-[435px] xl:w-[465px] lg:h-auto atlas-glass rounded-3xl flex flex-col overflow-hidden">
 
-    <!-- Mobile Bottom-Sheet Drag / Snap Handle -->
-    <div class="lg:hidden flex items-center justify-between px-4 pt-2.5 pb-1.5 border-b border-vltava/10 shrink-0 bg-white/40">
-      <button onclick="cycleMobileSheetHeight()" class="flex items-center gap-2 text-[11px] font-bold text-slate-600">
-        <span class="w-8 h-1 rounded-full bg-vltava/25 inline-block"></span>
-        <span id="mobileSheetStateLabel">Half Sheet (Tap to Expand/Minimize)</span>
+    <!-- Mobile Bottom-Sheet Drag / Snap Handle. Stays put while the day list scrolls. -->
+    <div id="sheetHandle" class="lg:hidden sticky top-0 z-10 flex items-center justify-between gap-2 px-3 py-2 border-b border-vltava/10 shrink-0 bg-white/85">
+      <button type="button" id="sheetGrab" class="flex items-center gap-2 min-w-0 text-[11px] font-bold text-slate-600">
+        <span class="w-9 h-1.5 rounded-full bg-vltava/30 inline-block shrink-0"></span>
+        <span id="mobileSheetStateLabel" class="truncate">Drag or tap</span>
       </button>
-      <div class="flex items-center gap-1">
-        <button onclick="setMobileSheetHeight('peek')" class="px-2 py-0.5 rounded-md bg-white/80 border border-vltava/10 text-[10px] font-bold text-vltava">Map</button>
-        <button onclick="setMobileSheetHeight('half')" class="px-2 py-0.5 rounded-md bg-white/80 border border-vltava/10 text-[10px] font-bold text-vltava">Split</button>
-        <button onclick="setMobileSheetHeight('full')" class="px-2 py-0.5 rounded-md bg-white/80 border border-vltava/10 text-[10px] font-bold text-vltava">Full</button>
+      <div class="flex items-center gap-1 shrink-0">
+        <button type="button" data-sheet-snap="peek" onclick="setMobileSheetHeight('peek')" class="px-2 py-1 rounded-md bg-white/80 border border-vltava/10 text-[10px] font-bold text-vltava">Map</button>
+        <button type="button" data-sheet-snap="half" onclick="setMobileSheetHeight('half')" class="px-2 py-1 rounded-md bg-white/80 border border-vltava/10 text-[10px] font-bold text-vltava">Split</button>
+        <button type="button" data-sheet-snap="full" onclick="setMobileSheetHeight('full')" class="px-2 py-1 rounded-md bg-white/80 border border-vltava/10 text-[10px] font-bold text-vltava">Full</button>
       </div>
     </div>
 
@@ -566,16 +636,9 @@
             <span id="syncBadge" class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-stone-200 text-slate-700">Connecting</span>
           </div>
           <p class="text-slate-700 leading-relaxed">
-            Hearts, checkmarks, notes, custom pins, and the Dec 30 choice are shared. The day open on this phone stays on this phone.
+            Hearts, checkmarks, notes, custom pins, and the Dec 30 choice are shared by every phone. The day open on this phone stays on this phone.
           </p>
           <div id="syncLiveState" class="hidden text-linden font-bold">This phone is on the shared family copy.</div>
-          <div id="syncNeedsPin" class="space-y-2">
-            <p class="text-slate-700">On a public family link, enter the PIN once on this phone. A private signed-in link syncs without it.</p>
-            <div class="flex items-center gap-2">
-              <input id="familyPinInput" type="password" autocomplete="current-password" maxlength="40" placeholder="Family PIN" class="flex-1 px-3 py-2 rounded-xl bg-white border border-amber-300 font-mono text-[11px]" />
-              <button type="button" onclick="saveFamilyPin()" class="px-3.5 py-2 rounded-xl bg-linden hover:bg-[#1c4837] text-white font-bold shadow-2xs">Sync this phone</button>
-            </div>
-          </div>
         </div>
       </div>
     </div>
@@ -2143,7 +2206,6 @@
     }
 
 
-    const FAMILY_PIN_KEY = 'prague_family_pin_v1';
     let syncRevision = 0;
     let applyingRemote = false;
     let pushTimer = null;
@@ -2154,14 +2216,8 @@
     let holdRemote = false;
     let editGen = 0;
 
-    function familyPin() {
-      try { return localStorage.getItem(FAMILY_PIN_KEY) || ''; } catch (e) { return ''; }
-    }
-
     function syncHeaders(json) {
       const headers = { 'x-atlas-client': '1' };
-      const pin = familyPin();
-      if (pin) headers['x-family-pin'] = pin;
       if (json) headers['content-type'] = 'application/json';
       return headers;
     }
@@ -2181,9 +2237,7 @@
           ? 'px-2 py-0.5 rounded-full text-[10px] font-bold bg-linden text-white'
           : 'px-2 py-0.5 rounded-full text-[10px] font-bold bg-stone-200 text-slate-700';
       }
-      const pinBox = document.getElementById('syncNeedsPin');
       const liveBox = document.getElementById('syncLiveState');
-      if (pinBox) pinBox.classList.toggle('hidden', mode === 'live');
       if (liveBox) liveBox.classList.toggle('hidden', mode !== 'live');
     }
 
@@ -2238,10 +2292,6 @@
           headers: syncHeaders(true),
           body: JSON.stringify({ baseRevision: syncRevision, state: buildCompactSyncObject() })
         });
-        if (res.status === 401) {
-          setSyncStatus('warn', 'Enter the family PIN to sync phones');
-          return;
-        }
         if (!res.ok) {
           setSyncStatus('warn', 'Saved on this phone');
           return;
@@ -2266,10 +2316,6 @@
       if (pushInFlight || holdRemote) return;
       try {
         const res = await fetch('/api/sync', { headers: syncHeaders(false), cache: 'no-store' });
-        if (res.status === 401) {
-          setSyncStatus('warn', 'Enter the family PIN to sync phones');
-          return;
-        }
         if (!res.ok) {
           setSyncStatus('warn', 'Saved on this phone');
           return;
@@ -2312,20 +2358,6 @@
       document.addEventListener('visibilitychange', () => {
         if (document.visibilityState === 'visible') pullLiveSync();
       });
-    }
-
-    function saveFamilyPin() {
-      const input = document.getElementById('familyPinInput');
-      const pin = (input && input.value || '').trim();
-      if (pin.length < 4) {
-        showToast('Use at least 4 characters.');
-        return;
-      }
-      try { localStorage.setItem(FAMILY_PIN_KEY, pin); } catch (e) {}
-      seeded = false;
-      holdRemote = false;
-      pullLiveSync();
-      showToast('Checking the family PIN…');
     }
 
     function esc(value) {
@@ -2519,8 +2551,7 @@
         preferCanvas: true
       });
 
-      L.control.zoom({ position: 'bottomright' }).addTo(map);
-      L.control.scale({ position: 'bottomright', imperial: false }).addTo(map);
+      L.control.scale({ position: 'bottomright', imperial: false, metric: true }).addTo(map);
 
       routeLayerGroup = L.layerGroup().addTo(map);
       calloutsLayerGroup = L.layerGroup().addTo(map);
@@ -3393,8 +3424,10 @@
 
       if (shouldFitBounds) {
         const isDesktopDrawerOpen = window.innerWidth >= 1024 && !state.drawerCollapsedDesktop;
-        const padTopLeft = isDesktopDrawerOpen ? [490, 145] : [45, 145];
-        const padBottomRight = window.innerWidth < 1024 ? [45, 320] : [55, 55];
+        const padTopLeft = isDesktopDrawerOpen ? [490, 145] : [36, 150];
+        const sheetEl = document.getElementById('itineraryDrawer');
+        const sheetCover = window.innerWidth < 1024 && sheetEl ? Math.round(sheetEl.getBoundingClientRect().height) + 28 : 55;
+        const padBottomRight = window.innerWidth < 1024 ? [36, sheetCover] : [55, 55];
 
         if (latLngs.length === 1) {
           map.flyTo(latLngs[0], 15, { duration: 0.65 });
@@ -4054,28 +4087,112 @@
       renderMapLayers(true);
     }
 
+    function syncHudInset() {
+      const header = document.querySelector('header.hud-dock');
+      if (!header) return;
+      document.documentElement.style.setProperty('--hud-bottom', Math.ceil(header.getBoundingClientRect().bottom) + 'px');
+      placeMapChrome();
+    }
+
+    function sheetLimitPx() {
+      const hud = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--hud-bottom')) || 148;
+      const safe = 12;
+      return Math.max(160, window.innerHeight - hud - safe);
+    }
+
+    function placeMapChrome() {
+      const drawer = document.getElementById('itineraryDrawer');
+      const header = document.querySelector('header.hud-dock');
+      const narrow = window.innerWidth < 1024;
+      if (!narrow || !drawer) {
+        document.documentElement.classList.remove('map-chrome-hidden');
+        document.documentElement.style.setProperty('--map-chrome-bottom', '14px');
+        return;
+      }
+      const sheetTop = drawer.getBoundingClientRect().top;
+      const headerBottom = header ? header.getBoundingClientRect().bottom : 0;
+      const visibleMap = sheetTop - headerBottom;
+      if (visibleMap < 42) {
+        document.documentElement.classList.add('map-chrome-hidden');
+      } else {
+        document.documentElement.classList.remove('map-chrome-hidden');
+        document.documentElement.style.setProperty('--map-chrome-bottom', Math.max(8, window.innerHeight - sheetTop + 6) + 'px');
+      }
+    }
+
     function setMobileSheetHeight(snap) {
       state.mobileSheetState = snap;
       const drawer = document.getElementById('itineraryDrawer');
       const lbl = document.getElementById('mobileSheetStateLabel');
-      drawer.classList.remove('h-[84px]', 'h-[52vh]', 'h-[78vh]');
+      drawer.style.height = '';
+      drawer.dataset.sheet = snap === 'full' || snap === 'peek' ? snap : 'half';
 
-      if (snap === 'peek') {
-        drawer.classList.add('h-[84px]');
-        lbl.textContent = 'Map Focus (Tap to Expand)';
-      } else if (snap === 'full') {
-        drawer.classList.add('h-[78vh]');
-        lbl.textContent = 'Expanded View';
-      } else {
-        drawer.classList.add('h-[52vh]');
-        lbl.textContent = 'Half Sheet';
-      }
+      if (snap === 'peek') lbl.textContent = 'Drag up for the day';
+      else if (snap === 'full') lbl.textContent = 'Drag down for the map';
+      else lbl.textContent = 'Drag or tap';
+      placeMapChrome();
+      if (map) setTimeout(() => map.invalidateSize(), 280);
     }
 
     function cycleMobileSheetHeight() {
       const order = ['peek', 'half', 'full'];
       const next = order[(order.indexOf(state.mobileSheetState) + 1) % order.length];
       setMobileSheetHeight(next);
+    }
+
+    function bindSheetDrag() {
+      const handle = document.getElementById('sheetHandle');
+      const drawer = document.getElementById('itineraryDrawer');
+      if (!handle || handle.dataset.bound) return;
+      handle.dataset.bound = '1';
+      let pointerId = null;
+      let startY = 0;
+      let startH = 0;
+      let moved = false;
+
+      handle.addEventListener('pointerdown', (e) => {
+        if (window.innerWidth >= 1024) return;
+        if (e.target.closest('[data-sheet-snap]')) return;
+        pointerId = e.pointerId;
+        handle.setPointerCapture(pointerId);
+        startY = e.clientY;
+        startH = drawer.getBoundingClientRect().height;
+        moved = false;
+        drawer.classList.add('is-dragging');
+      });
+
+      handle.addEventListener('pointermove', (e) => {
+        if (pointerId !== e.pointerId) return;
+        const dy = startY - e.clientY;
+        if (Math.abs(dy) > 8) moved = true;
+        const peek = 54;
+        const full = sheetLimitPx();
+        const next = Math.min(full, Math.max(peek, startH + dy));
+        drawer.style.height = next + 'px';
+        placeMapChrome();
+      });
+
+      function endDrag(e) {
+        if (pointerId !== e.pointerId) return;
+        pointerId = null;
+        drawer.classList.remove('is-dragging');
+        if (!moved) {
+          drawer.style.height = '';
+          cycleMobileSheetHeight();
+          return;
+        }
+        const h = drawer.getBoundingClientRect().height;
+        const peek = 54;
+        const full = sheetLimitPx();
+        const half = Math.min(window.innerHeight * 0.46, full);
+        const snaps = [['peek', peek], ['half', half], ['full', full]];
+        snaps.sort((a, b) => Math.abs(a[1] - h) - Math.abs(b[1] - h));
+        drawer.style.height = '';
+        setMobileSheetHeight(snaps[0][0]);
+      }
+
+      handle.addEventListener('pointerup', endDrag);
+      handle.addEventListener('pointercancel', endDrag);
     }
 
     /**
@@ -4308,8 +4425,6 @@
       if (input) input.value = baseUrl;
       const bytes = document.getElementById('syncByteCount');
       if (bytes) bytes.textContent = 'Live link';
-      const pinInput = document.getElementById('familyPinInput');
-      if (pinInput && !pinInput.value) pinInput.value = familyPin();
       drawVisualQrMatrix('syncQrCanvas', baseUrl);
       if (copyTextSafely(baseUrl)) showToast('Family link copied.');
     }
@@ -4479,6 +4594,14 @@
       injectBespokeBrandIcons();
       renderAllUI();
       initMapEngine();
+      try { localStorage.removeItem('prague_family_pin_v1'); } catch (e) {}
+      bindSheetDrag();
+      syncHudInset();
+      window.addEventListener('resize', syncHudInset);
+      if (window.ResizeObserver) {
+        const hud = document.querySelector('header.hud-dock');
+        if (hud) new ResizeObserver(syncHudInset).observe(hud);
+      }
       startLiveSync();
     };
   </script>
