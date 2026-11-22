@@ -3,7 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Prague &amp; Beyond — Family Winter Atlas (Dec 17, 2026 – Jan 2, 2027)</title>
+  <title>Prague Time</title>
+  <link rel="icon" href="favicon.ico" sizes="32x32" />
+  <link rel="icon" type="image/png" href="favicon.png" sizes="64x64" />
+  <link rel="apple-touch-icon" href="apple-touch-icon.png" />
 
   <!-- Editorial & Technical Typography: Fraunces, Plus Jakarta Sans, JetBrains Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -157,6 +160,72 @@
       text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
     }
 
+    .who-card { width: 100%; min-height: 4.25rem; }
+
+    :root { color-scheme: light; }
+
+    @media (prefers-color-scheme: dark) {
+      :root { color-scheme: dark; }
+      html, body { background: #0e1218; color: #f4efe6; }
+      #map { background: #161b22; }
+      .atlas-glass {
+        background: rgba(18, 22, 30, 0.92);
+        border-color: rgba(255, 255, 255, 0.12);
+        box-shadow: 0 14px 36px -8px rgba(0, 0, 0, 0.55);
+      }
+      .bg-white,
+      .bg-white\/40, .bg-white\/50, .bg-white\/60, .bg-white\/75,
+      .bg-white\/80, .bg-white\/85, .bg-white\/90,
+      .bg-parchment, .bg-stone-50, .bg-stone-100, .bg-stone-200 {
+        background-color: #1b2230 !important;
+      }
+      .hover\:bg-white:hover,
+      .hover\:bg-amber-50:hover,
+      .hover\:bg-stone-200:hover,
+      .hover\:bg-emerald-50:hover,
+      .hover\:bg-rose-50\/70:hover {
+        background-color: #243044 !important;
+      }
+      .text-vltava { color: #f4efe6 !important; }
+      .text-slate-500, .text-slate-600, .text-slate-700 { color: #c5ceda !important; }
+        .text-amber-900, .text-amber-950, .text-orange-950, .text-rose-900 { color: #f6e2b8 !important; }
+      .text-rose-950 { color: #fecdd3 !important; }
+      .text-linden { color: #8fd4b0 !important; }
+      .text-cobalt { color: #9ec4f0 !important; }
+      .text-pink-900 { color: #fbcfe8 !important; }
+      .text-stone-800 { color: #e7e5e4 !important; }
+      .bg-amber-50, .bg-amber-50\/90, .bg-amber-50\/95, .bg-amber-100, .bg-amber-100\/90 {
+        background-color: #3a2c16 !important;
+      }
+      .bg-rose-50, .bg-rose-50\/95, .bg-rose-50\/70 { background-color: #3a1c24 !important; }
+      .bg-emerald-50, .bg-emerald-50\/75 { background-color: #143028 !important; }
+      .bg-blue-50 { background-color: #172848 !important; }
+      .bg-pink-50 { background-color: #3b1830 !important; }
+      .bg-orange-50 { background-color: #3a2614 !important; }
+      .bg-vltava\/5 { background-color: rgba(255, 255, 255, 0.06) !important; }
+      .border-vltava\/8, .border-vltava\/10, .border-vltava\/12, .border-vltava\/15, .border-vltava\/20,
+      .border-stone-200, .border-stone-300, .border-amber-200, .border-amber-300, .border-amber-300\/80,
+      .border-rose-200, .border-rose-300, .border-emerald-200, .border-blue-200, .border-pink-200, .border-orange-200 {
+        border-color: rgba(255, 255, 255, 0.14) !important;
+      }
+      input, textarea, select {
+        background-color: #151b26;
+        color: #f4efe6;
+        border-color: rgba(255, 255, 255, 0.16);
+      }
+      option { background: #151b26; color: #f4efe6; }
+      .leaflet-popup-content-wrapper, .leaflet-popup-tip { background: #1b2230; color: #f4efe6; }
+      .leaflet-bar a, .leaflet-control-attribution {
+        background: #1b2230;
+        color: #d5dbe4;
+      }
+      .leaflet-bar a { border-bottom-color: rgba(255,255,255,0.12); }
+      .district-callout {
+        color: rgba(244, 239, 230, 0.55);
+        text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
+      }
+    }
+
     .leg-midpoint-pill {
       background: rgba(20, 25, 35, 0.88);
       color: #FCFAF6;
@@ -200,6 +269,29 @@
         bottom: auto;
       }
     }
+
+    @keyframes atlas-hop {
+      0% { transform: scale(0.6) rotate(-8deg); }
+      60% { transform: scale(1.12) rotate(4deg); }
+      100% { transform: scale(1) rotate(0deg); }
+    }
+    @keyframes atlas-confetti {
+      0% { transform: translate3d(0, -12vh, 0) rotate(0deg); opacity: 1; }
+      100% { transform: translate3d(0, 108vh, 0) rotate(280deg); opacity: 0; }
+    }
+    .mascot-hop { animation: atlas-hop 0.6s ease; }
+    #celebrateLayer { pointer-events: none; }
+    .confetti-bit {
+      position: absolute;
+      top: 0;
+      width: 8px;
+      height: 12px;
+      border-radius: 2px;
+      animation: atlas-confetti 1.15s ease-in forwards;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .mascot-hop, .confetti-bit { animation: none !important; }
+    }
   </style>
 </head>
 <body class="antialiased selection:bg-amber-200 selection:text-vltava">
@@ -225,14 +317,15 @@
         <div class="min-w-0">
           <div class="flex items-center gap-2">
             <h1 class="font-display font-bold text-sm sm:text-base md:text-lg tracking-tight text-vltava truncate">
-              Prague &amp; Beyond <span class="hidden sm:inline font-normal italic text-garnet">— Family Winter Atlas</span>
+              Prague Time
             </h1>
             <span class="hidden 2xl:inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-mono font-medium bg-vltava/5 text-vltava/80 border border-vltava/10">
               Dec 17, 2026 – Jan 2, 2027
             </span>
           </div>
           <p class="text-[11px] text-slate-600 truncate">
-            Ethan, Debi, Tom, Olivia &amp; Jordan &bull; <span id="syncStatusLabel" class="font-medium text-linden">Connecting live sync…</span>
+            <button type="button" id="whoChip" onclick="openWhoModal(false)" class="font-bold text-garnet underline decoration-garnet/30">This phone: <span id="whoChipName">choose</span></button>
+            &bull; <span id="syncStatusLabel" class="font-medium text-linden">Connecting live sync…</span>
           </p>
         </div>
       </div>
@@ -257,7 +350,7 @@
 
         <!-- Map Tile Style Switcher -->
         <div class="relative">
-          <select id="tileStyleSelect" onchange="switchTileLayer(this.value)" aria-label="Map Cartographic Style"
+          <select id="tileStyleSelect" onchange="switchTileLayer(this.value, true)" aria-label="Map Cartographic Style"
             class="appearance-none bg-white/85 hover:bg-white text-vltava text-xs font-bold rounded-xl pl-2.5 pr-7 py-2 border border-vltava/15 focus:outline-none focus:border-garnet cursor-pointer transition">
             <option value="voyager">Street Map</option>
             <option value="editorial">Clear Streets</option>
@@ -511,7 +604,9 @@
           <div>
             <label class="block font-bold text-vltava mb-1">Category</label>
             <select id="cpCategory" class="w-full px-3 py-2 rounded-xl bg-white border border-stone-300 text-xs font-semibold focus:outline-none focus:border-garnet">
-              <option value="food">Food / Café / Beer</option>
+              <option value="food">Meal</option>
+              <option value="cafe">Café</option>
+              <option value="beer">Beer</option>
               <option value="sight">Castle / Culture</option>
               <option value="walk">Walk / Viewpoint</option>
               <option value="transit">Transit / Drive</option>
@@ -546,6 +641,48 @@
     </div>
   </div>
 
+
+  <div id="whoModal" class="hidden fixed inset-0 z-[860] bg-vltava/70 backdrop-blur-sm flex items-center justify-center p-3">
+    <div class="atlas-glass w-full max-w-sm rounded-3xl p-5 shadow-2xl max-h-[90vh] overflow-y-auto" role="dialog" aria-modal="true" aria-labelledby="whoTitle">
+      <h2 id="whoTitle" class="font-display font-bold text-xl text-vltava">Who is holding this phone?</h2>
+      <p class="text-sm text-slate-600 mt-1 leading-relaxed">Routes, parking, and which days are yours follow that person. Olivia and Jordan land Saturday 19 Dec. Ethan starts at home in Mníšek.</p>
+      <div class="mt-4 flex flex-col gap-2">
+        <button type="button" onclick="chooseWho('Ethan')" class="who-card flex items-center gap-2.5 text-left px-3 py-2.5 rounded-2xl bg-white border border-vltava/10 hover:border-garnet">
+          <span data-who-face="Ethan" class="w-11 h-11 shrink-0" aria-hidden="true"></span>
+          <span class="font-bold text-vltava">Ethan</span>
+        </button>
+        <button type="button" onclick="chooseWho('Debi')" class="who-card flex items-center gap-2.5 text-left px-3 py-2.5 rounded-2xl bg-white border border-vltava/10 hover:border-garnet">
+          <span data-who-face="Debi" class="w-11 h-11 shrink-0" aria-hidden="true"></span>
+          <span class="font-bold text-vltava">Debi</span>
+        </button>
+        <button type="button" onclick="chooseWho('Tom')" class="who-card flex items-center gap-2.5 text-left px-3 py-2.5 rounded-2xl bg-white border border-vltava/10 hover:border-garnet">
+          <span data-who-face="Tom" class="w-11 h-11 shrink-0" aria-hidden="true"></span>
+          <span class="font-bold text-vltava">Tom</span>
+        </button>
+        <button type="button" onclick="chooseWho('Olivia')" class="who-card flex items-center gap-2.5 text-left px-3 py-2.5 rounded-2xl bg-white border border-vltava/10 hover:border-garnet">
+          <span data-who-face="Olivia" class="w-11 h-11 shrink-0" aria-hidden="true"></span>
+          <span class="font-bold text-vltava">Olivia</span>
+        </button>
+        <button type="button" onclick="chooseWho('Jordan')" class="who-card flex items-center gap-2.5 text-left px-3 py-2.5 rounded-2xl bg-white border border-vltava/10 hover:border-garnet">
+          <span data-who-face="Jordan" class="w-11 h-11 shrink-0" aria-hidden="true"></span>
+          <span class="font-bold text-vltava">Jordan</span>
+        </button>
+      </div>
+      <button type="button" id="whoSkip" onclick="closeWhoModal()" class="hidden mt-3 text-[11px] font-semibold text-slate-500 underline">Keep the current person</button>
+    </div>
+  </div>
+
+  <div id="celebrateLayer" class="fixed inset-0 z-[870]"></div>
+
+  <div id="tripCelebrate" class="hidden fixed inset-0 z-[880] bg-vltava/60 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="atlas-glass max-w-sm w-full rounded-3xl p-6 text-center shadow-2xl">
+      <div id="tripCelebrateArt" class="w-24 h-24 mx-auto"></div>
+      <h2 class="font-display font-bold text-2xl text-vltava mt-3">The trip is done</h2>
+      <p id="tripCelebrateCopy" class="text-sm text-slate-600 mt-2"></p>
+      <button type="button" onclick="closeTripCelebrate()" class="mt-4 px-4 py-2 rounded-xl bg-garnet text-white text-sm font-bold">Close</button>
+    </div>
+  </div>
+
   <!-- ==================== 8. FLOATING TOAST NOTIFICATION ==================== -->
   <div id="atlasToast" class="hidden fixed bottom-5 left-1/2 -translate-x-1/2 z-[900] atlas-glass-dark text-parchment px-4 py-2.5 rounded-2xl text-xs font-semibold flex items-center gap-2.5 shadow-2xl">
     <span class="w-2 h-2 rounded-full bg-amber-400"></span>
@@ -571,6 +708,7 @@
           <path d="M46 23H52L51 28H47L46 23Z" fill="#B8293D"/>
           <!-- Mole Body & Head -->
           <path d="M18 45C18 30 22 19 32 19C42 19 46 30 46 45H18Z" fill="#1E242B"/>
+          <ellipse cx="28" cy="34" rx="6" ry="8" fill="#334155" opacity="0.55"/>
           <!-- Three Signature Hairs -->
           <path d="M32 19C32 14 29 11 27 10" stroke="#1E242B" stroke-width="2.2" stroke-linecap="round"/>
           <path d="M32 19C32 13 32 10 32 8" stroke="#1E242B" stroke-width="2.2" stroke-linecap="round"/>
@@ -601,6 +739,8 @@
           <rect x="19" y="18" width="9" height="2.2" rx="1" fill="#1E3A8A"/>
           <circle cx="17" cy="22.5" r="1.1" fill="#141923"/>
           <circle cx="21.5" cy="22.5" r="1.1" fill="#141923"/>
+          <circle cx="17.4" cy="22.1" r="0.4" fill="#FFFFFF"/>
+          <ellipse cx="15.2" cy="25" rx="1.3" ry="0.8" fill="#F0A3A0"/>
           <path d="M16.5 26C18 27.5 20.5 27.5 22 26" stroke="#141923" stroke-width="1.4" stroke-linecap="round"/>
           <!-- MAT (Right, Red Sweater & Pom-Pom Beanie) -->
           <rect x="37" y="34" width="16" height="18" rx="5" fill="#B8293D" stroke="#141923" stroke-width="1.5"/>
@@ -619,6 +759,7 @@
         <svg viewBox="0 0 64 64" class="w-full h-full" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Bob and Bobek">
           <!-- Bob (Tall Slender Rabbit Left) -->
           <ellipse cx="23" cy="14" rx="2.4" ry="8" transform="rotate(-8 23 14)" fill="#FFFFFF" stroke="#141923" stroke-width="1.4"/>
+          <ellipse cx="23.4" cy="16" rx="1" ry="4" transform="rotate(-8 23.4 16)" fill="#FBCFE8"/>
           <ellipse cx="28" cy="14" rx="2.4" ry="8" transform="rotate(6 28 14)" fill="#FFFFFF" stroke="#141923" stroke-width="1.4"/>
           <ellipse cx="25.5" cy="26" rx="6.5" ry="8" fill="#FFFFFF" stroke="#141923" stroke-width="1.4"/>
           <circle cx="23.5" cy="24.5" r="1.2" fill="#141923"/>
@@ -699,6 +840,307 @@
           <circle cx="44" cy="33" r="1.2" fill="#FFFFFF"/>
           <circle cx="39" cy="36" r="1.2" fill="#FFFFFF"/>
           <circle cx="49" cy="36" r="1.2" fill="#FFFFFF"/>
+        </svg>`,
+
+      rumcajs: () => `
+        <svg viewBox="0 0 64 64" class="w-full h-full" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Rumcajs">
+          <path d="M16 50L20 58H28L26 50" fill="#6B3A1F" stroke="#141923" stroke-width="1.3"/>
+          <path d="M36 50L38 58H46L42 50" fill="#6B3A1F" stroke="#141923" stroke-width="1.3"/>
+          <path d="M20 36H44L40 52H24L20 36Z" fill="#1F6B45" stroke="#141923" stroke-width="1.5"/>
+          <path d="M24 36H40L38 44H26L24 36Z" fill="#2E8B57"/>
+          <rect x="18" y="40" width="28" height="4" rx="1.2" fill="#C97A1E" stroke="#141923" stroke-width="1.2"/>
+          <rect x="30" y="39" width="5" height="6" rx="1" fill="#FBBF24" stroke="#141923" stroke-width="1"/>
+          <circle cx="32" cy="28" r="11" fill="#F3C7A1" stroke="#141923" stroke-width="1.5"/>
+          <ellipse cx="32" cy="33" rx="7" ry="5" fill="#E8B48A"/>
+          <path d="M22 31C24 34 28 35 32 35C36 35 40 34 42 31" fill="#5C3A1E"/>
+          <path d="M24 30H40" stroke="#3F2A1A" stroke-width="1.4" stroke-linecap="round"/>
+          <circle cx="27.5" cy="26" r="1.5" fill="#141923"/>
+          <circle cx="36.5" cy="26" r="1.5" fill="#141923"/>
+          <circle cx="28.1" cy="25.4" r="0.5" fill="#FFFFFF"/>
+          <circle cx="37.1" cy="25.4" r="0.5" fill="#FFFFFF"/>
+          <ellipse cx="25" cy="29" rx="1.6" ry="1" fill="#F0A3A0" opacity="0.9"/>
+          <ellipse cx="39" cy="29" rx="1.6" ry="1" fill="#F0A3A0" opacity="0.9"/>
+          <path d="M14 24C18 8 46 8 50 24C46 18 40 14 32 14C24 14 18 18 14 24Z" fill="#B8293D" stroke="#141923" stroke-width="1.5"/>
+          <path d="M18 18C22 12 28 11 32 14" stroke="#E11D48" stroke-width="1.4" stroke-linecap="round"/>
+          <path d="M30 12L33 4L37 11" fill="#FBBF24" stroke="#141923" stroke-width="1.1"/>
+          <path d="M22 16L26 12M40 16L36 12" stroke="#FDE68A" stroke-width="1.2" stroke-linecap="round"/>
+        </svg>`,
+
+      vecernicek: () => `
+        <svg viewBox="0 0 64 64" class="w-full h-full" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Večerníček">
+          <path d="M22 40H42L38 56H26L22 40Z" fill="#9F1239" stroke="#141923" stroke-width="1.5"/>
+          <path d="M26 40H38L36 48H28L26 40Z" fill="#B8293D"/>
+          <circle cx="28" cy="46" r="1.1" fill="#FBBF24"/>
+          <circle cx="32" cy="50" r="1.1" fill="#FBBF24"/>
+          <circle cx="36" cy="45" r="1.1" fill="#FBBF24"/>
+          <circle cx="32" cy="33" r="9" fill="#F6D2B0" stroke="#141923" stroke-width="1.5"/>
+          <path d="M24 30C26 26 30 28 32 30" stroke="#8B5E34" stroke-width="1.6" stroke-linecap="round"/>
+          <path d="M40 30C38 26 34 28 32 30" stroke="#8B5E34" stroke-width="1.6" stroke-linecap="round"/>
+          <ellipse cx="29" cy="32" rx="1.6" ry="2" fill="#FFFFFF" stroke="#141923" stroke-width="0.8"/>
+          <ellipse cx="35" cy="32" rx="1.6" ry="2" fill="#FFFFFF" stroke="#141923" stroke-width="0.8"/>
+          <circle cx="29.4" cy="32.4" r="0.8" fill="#141923"/>
+          <circle cx="35.4" cy="32.4" r="0.8" fill="#141923"/>
+          <path d="M30 36C31 37 33 37 34 36" stroke="#141923" stroke-width="1.1" stroke-linecap="round"/>
+          <ellipse cx="26.5" cy="35" rx="1.5" ry="0.9" fill="#F0A3A0"/>
+          <ellipse cx="37.5" cy="35" rx="1.5" ry="0.9" fill="#F0A3A0"/>
+          <path d="M24 24C24 14 40 14 40 26V30H24V24Z" fill="#1E3A8A" stroke="#141923" stroke-width="1.5"/>
+          <path d="M27 20H37" stroke="#93C5FD" stroke-width="1.3"/>
+          <path d="M30 10L32 4L34 10L32 12Z" fill="#FBBF24" stroke="#141923" stroke-width="1"/>
+          <circle cx="48" cy="14" r="4" fill="#FDE68A" stroke="#141923" stroke-width="1"/>
+          <path d="M48 10V8M48 18V20M44 14H42M54 14H52" stroke="#FBBF24" stroke-width="1" stroke-linecap="round"/>
+        </svg>`,
+
+      hurvinek: () => `
+        <svg viewBox="0 0 64 64" class="w-full h-full" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Hurvínek">
+          <path d="M26 46H38V56H30L26 50Z" fill="#1E3A8A" stroke="#141923" stroke-width="1.2"/>
+          <path d="M24 40H40L38 50H26L24 40Z" fill="#255485" stroke="#141923" stroke-width="1.4"/>
+          <circle cx="28" cy="45" r="1" fill="#FBBF24"/>
+          <circle cx="32" cy="47" r="1" fill="#FBBF24"/>
+          <circle cx="36" cy="45" r="1" fill="#FBBF24"/>
+          <path d="M30 40H34V44H30Z" fill="#FDE68A" stroke="#141923" stroke-width="0.8"/>
+          <circle cx="32" cy="30" r="13" fill="#F6CFA8" stroke="#141923" stroke-width="1.5"/>
+          <path d="M20 24C22 14 30 16 32 20C34 14 44 16 44 26" fill="#FBBF24" stroke="#141923" stroke-width="1.2"/>
+          <path d="M22 22C26 16 30 18 32 22" stroke="#F59E0B" stroke-width="1.3" stroke-linecap="round"/>
+          <path d="M18 20C22 8 42 8 46 20V24H18V20Z" fill="#B91C1C" stroke="#141923" stroke-width="1.4"/>
+          <path d="M22 16H42" stroke="#FCA5A5" stroke-width="1.4"/>
+          <ellipse cx="27" cy="30" rx="2" ry="2.4" fill="#FFFFFF" stroke="#141923" stroke-width="0.7"/>
+          <ellipse cx="37" cy="30" rx="2" ry="2.4" fill="#FFFFFF" stroke="#141923" stroke-width="0.7"/>
+          <circle cx="27.4" cy="30.4" r="1" fill="#141923"/>
+          <circle cx="37.4" cy="30.4" r="1" fill="#141923"/>
+          <path d="M28 36C30 38.2 34 38.2 36 36" stroke="#141923" stroke-width="1.3" stroke-linecap="round"/>
+          <ellipse cx="23.5" cy="33" rx="1.8" ry="1.1" fill="#F0A3A0"/>
+          <ellipse cx="40.5" cy="33" rx="1.8" ry="1.1" fill="#F0A3A0"/>
+        </svg>`,
+
+      sandmann: () => `
+        <svg viewBox="0 0 64 64" class="w-full h-full" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Sandmännchen">
+          <rect x="22" y="40" width="18" height="16" rx="3" fill="#1D4E89" stroke="#141923" stroke-width="1.4"/>
+          <path d="M26 40H36V46H26Z" fill="#163A66"/>
+          <circle cx="27" cy="50" r="1" fill="#FBBF24"/>
+          <circle cx="31" cy="52" r="1" fill="#FBBF24"/>
+          <circle cx="35" cy="49" r="1" fill="#FBBF24"/>
+          <circle cx="32" cy="30" r="10" fill="#F3C7A1" stroke="#141923" stroke-width="1.5"/>
+          <path d="M24 34C27 41 37 41 40 34V38H24V34Z" fill="#F8FAFC" stroke="#141923" stroke-width="1.2"/>
+          <path d="M26 36C28 39 30 39 32 37C34 39 36 39 38 36" stroke="#CBD5E1" stroke-width="0.8"/>
+          <path d="M28 28H31" stroke="#141923" stroke-width="1.2" stroke-linecap="round"/>
+          <path d="M34 28H37" stroke="#141923" stroke-width="1.2" stroke-linecap="round"/>
+          <path d="M30 33C31 34 33 34 34 33" stroke="#141923" stroke-width="1" stroke-linecap="round"/>
+          <path d="M23 18L32 4L41 18H23Z" fill="#B91C1C" stroke="#141923" stroke-width="1.4"/>
+          <path d="M28 12L32 7L36 12" stroke="#FCA5A5" stroke-width="1.2"/>
+          <path d="M22 18H42" stroke="#7F1D1D" stroke-width="2" stroke-linecap="round"/>
+          <ellipse cx="50" cy="46" rx="7" ry="6" fill="#F59E0B" stroke="#141923" stroke-width="1.3"/>
+          <path d="M46 44H54M47 47H53M48 50H52" stroke="#FDE68A" stroke-width="1" stroke-linecap="round"/>
+          <path d="M44 40C46 36 54 36 56 40" stroke="#B45309" stroke-width="1.3" stroke-linecap="round"/>
+        </svg>`,
+
+      machSebestova: () => `
+        <svg viewBox="0 0 64 64" class="w-full h-full" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Mach and Šebestová">
+          <path d="M14 36H30L28 52H16L14 36Z" fill="#1D4E89" stroke="#141923" stroke-width="1.3"/>
+          <path d="M18 36H26V42H18Z" fill="#F8FAFC" stroke="#141923" stroke-width="0.8"/>
+          <path d="M34 36H50L48 52H36L34 36Z" fill="#C2410C" stroke="#141923" stroke-width="1.3"/>
+          <path d="M38 40H46" stroke="#FDBA74" stroke-width="1.4"/>
+          <circle cx="22" cy="26" r="8.5" fill="#F6CFA8" stroke="#141923" stroke-width="1.4"/>
+          <circle cx="42" cy="26" r="8.5" fill="#F6CFA8" stroke="#141923" stroke-width="1.4"/>
+          <path d="M16 20C18 16 26 16 28 20" stroke="#8B5E34" stroke-width="1.6" stroke-linecap="round"/>
+          <path d="M36 18C40 12 48 14 49 19" fill="#B8293D" stroke="#141923" stroke-width="1.1"/>
+          <circle cx="19" cy="25" r="2.3" fill="none" stroke="#141923" stroke-width="1.1"/>
+          <circle cx="25" cy="25" r="2.3" fill="none" stroke="#141923" stroke-width="1.1"/>
+          <path d="M21.2 25H22.8" stroke="#141923" stroke-width="1"/>
+          <circle cx="19" cy="25" r="0.7" fill="#141923"/>
+          <circle cx="25" cy="25" r="0.7" fill="#141923"/>
+          <ellipse cx="39.5" cy="25.5" rx="1.3" ry="1.6" fill="#FFFFFF" stroke="#141923" stroke-width="0.6"/>
+          <ellipse cx="44.5" cy="25.5" rx="1.3" ry="1.6" fill="#FFFFFF" stroke="#141923" stroke-width="0.6"/>
+          <circle cx="39.7" cy="25.8" r="0.6" fill="#141923"/>
+          <circle cx="44.7" cy="25.8" r="0.6" fill="#141923"/>
+          <path d="M20 29C21 30 23 30 24 29" stroke="#141923" stroke-width="1" stroke-linecap="round"/>
+          <path d="M40 30C41 31 43 31 44 30" stroke="#141923" stroke-width="1" stroke-linecap="round"/>
+          <ellipse cx="16.5" cy="28" rx="1.4" ry="0.8" fill="#F0A3A0"/>
+          <ellipse cx="46.5" cy="28" rx="1.4" ry="0.8" fill="#F0A3A0"/>
+        </svg>`,
+
+      kremilek: () => `
+        <svg viewBox="0 0 64 64" class="w-full h-full" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Křemílek and Vochomůrka">
+          <circle cx="22" cy="36" r="13" fill="#F3C9A4" stroke="#141923" stroke-width="1.5"/>
+          <circle cx="45" cy="38" r="11" fill="#E7D3B0" stroke="#141923" stroke-width="1.5"/>
+          <ellipse cx="22" cy="40" rx="7" ry="5" fill="#E8B48A"/>
+          <ellipse cx="45" cy="42" rx="6" ry="4" fill="#D7C09A"/>
+          <path d="M14 26H30L28 16H16L14 26Z" fill="#B91C1C" stroke="#141923" stroke-width="1.3"/>
+          <path d="M16 20H28" stroke="#FCA5A5" stroke-width="1.3"/>
+          <rect x="20" y="16" width="4" height="4" fill="#FBBF24" stroke="#141923" stroke-width="0.8"/>
+          <ellipse cx="18" cy="34" rx="1.7" ry="2" fill="#FFFFFF" stroke="#141923" stroke-width="0.6"/>
+          <ellipse cx="25" cy="34" rx="1.7" ry="2" fill="#FFFFFF" stroke="#141923" stroke-width="0.6"/>
+          <circle cx="18.4" cy="34.4" r="0.8" fill="#141923"/>
+          <circle cx="25.4" cy="34.4" r="0.8" fill="#141923"/>
+          <ellipse cx="42" cy="37" rx="1.4" ry="1.7" fill="#FFFFFF" stroke="#141923" stroke-width="0.6"/>
+          <ellipse cx="48" cy="37" rx="1.4" ry="1.7" fill="#FFFFFF" stroke="#141923" stroke-width="0.6"/>
+          <circle cx="42.3" cy="37.3" r="0.7" fill="#141923"/>
+          <circle cx="48.3" cy="37.3" r="0.7" fill="#141923"/>
+          <path d="M19 40C21 42 24 42 26 40" stroke="#141923" stroke-width="1.2" stroke-linecap="round"/>
+          <path d="M43 42C44.5 43.4 46.5 43.4 48 42" stroke="#141923" stroke-width="1.1" stroke-linecap="round"/>
+          <ellipse cx="14" cy="37" rx="1.6" ry="1" fill="#F0A3A0"/>
+          <ellipse cx="51" cy="40" rx="1.4" ry="0.9" fill="#F0A3A0"/>
+        </svg>`,
+
+      ferda: () => `
+        <svg viewBox="0 0 64 64" class="w-full h-full" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Ferda the Ant">
+          <ellipse cx="32" cy="46" rx="9" ry="8" fill="#9F1239" stroke="#141923" stroke-width="1.4"/>
+          <ellipse cx="32" cy="34" rx="8" ry="7" fill="#B91C1C" stroke="#141923" stroke-width="1.4"/>
+          <ellipse cx="32" cy="34" rx="4" ry="3" fill="#E11D48"/>
+          <circle cx="32" cy="20" r="8" fill="#DC2626" stroke="#141923" stroke-width="1.4"/>
+          <path d="M26 16C22 10 18 8 16 6" stroke="#141923" stroke-width="1.5" stroke-linecap="round"/>
+          <path d="M38 16C42 10 46 8 48 6" stroke="#141923" stroke-width="1.5" stroke-linecap="round"/>
+          <circle cx="16" cy="6" r="1.6" fill="#141923"/>
+          <circle cx="48" cy="6" r="1.6" fill="#141923"/>
+          <ellipse cx="29" cy="19" rx="1.5" ry="1.8" fill="#FDE68A" stroke="#141923" stroke-width="0.6"/>
+          <ellipse cx="35" cy="19" rx="1.5" ry="1.8" fill="#FDE68A" stroke="#141923" stroke-width="0.6"/>
+          <circle cx="29.3" cy="19.4" r="0.7" fill="#141923"/>
+          <circle cx="35.3" cy="19.4" r="0.7" fill="#141923"/>
+          <path d="M30 23C31 24 33 24 34 23" stroke="#FDE68A" stroke-width="1" stroke-linecap="round"/>
+          <path d="M24 32H12M24 36H10M24 40H12M40 32H52M40 36H54M40 40H52" stroke="#141923" stroke-width="1.5" stroke-linecap="round"/>
+          <circle cx="12" cy="32" r="1.1" fill="#141923"/>
+          <circle cx="52" cy="32" r="1.1" fill="#141923"/>
+        </svg>`,
+
+      blaubaer: () => `
+        <svg viewBox="0 0 64 64" class="w-full h-full" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Käpt’n Blaubär">
+          <circle cx="22" cy="18" r="7" fill="#1D4E89" stroke="#141923" stroke-width="1.4"/>
+          <circle cx="42" cy="18" r="7" fill="#1D4E89" stroke="#141923" stroke-width="1.4"/>
+          <ellipse cx="22" cy="18" rx="3.2" ry="4" fill="#93C5FD"/>
+          <ellipse cx="42" cy="18" rx="3.2" ry="4" fill="#93C5FD"/>
+          <circle cx="32" cy="36" r="15" fill="#255485" stroke="#141923" stroke-width="1.5"/>
+          <ellipse cx="26" cy="32" rx="6" ry="8" fill="#3B82C4" opacity="0.55"/>
+          <ellipse cx="32" cy="42" rx="6" ry="4" fill="#F3C7A1" stroke="#141923" stroke-width="1.2"/>
+          <ellipse cx="32" cy="41" rx="2.2" ry="1.4" fill="#141923"/>
+          <ellipse cx="27" cy="33" rx="1.8" ry="2.2" fill="#FFFFFF" stroke="#141923" stroke-width="0.6"/>
+          <ellipse cx="37" cy="33" rx="1.8" ry="2.2" fill="#FFFFFF" stroke="#141923" stroke-width="0.6"/>
+          <circle cx="27.4" cy="33.4" r="0.9" fill="#141923"/>
+          <circle cx="37.4" cy="33.4" r="0.9" fill="#141923"/>
+          <path d="M18 14H46V18H18Z" fill="#0F2744" stroke="#141923" stroke-width="1.2"/>
+          <path d="M24 10H40L38 14H26L24 10Z" fill="#0F2744" stroke="#141923" stroke-width="1.2"/>
+          <path d="M30 10V6H34V10" stroke="#FBBF24" stroke-width="1.6"/>
+          <circle cx="32" cy="5" r="1.4" fill="#FBBF24"/>
+          <path d="M20 16H44" stroke="#FBBF24" stroke-width="2" stroke-linecap="round"/>
+        </svg>`,
+
+      pumuckl: () => `
+        <svg viewBox="0 0 64 64" class="w-full h-full" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Pumuckl">
+          <path d="M24 46H40L37 58H27L24 46Z" fill="#166534" stroke="#141923" stroke-width="1.4"/>
+          <path d="M28 48H36" stroke="#86EFAC" stroke-width="1.3"/>
+          <rect x="30" y="50" width="4" height="4" rx="0.6" fill="#FBBF24" stroke="#141923" stroke-width="0.7"/>
+          <circle cx="32" cy="38" r="10" fill="#F6CFA8" stroke="#141923" stroke-width="1.4"/>
+          <path d="M16 30C14 12 24 8 32 16C40 8 50 12 48 30C56 18 58 32 50 36C44 24 40 24 32 28C24 24 20 24 14 36C6 32 8 18 16 30Z" fill="#DC2626" stroke="#141923" stroke-width="1.3"/>
+          <path d="M20 22C24 16 28 18 30 22M34 20C38 14 44 16 46 22" stroke="#FCA5A5" stroke-width="1.2" stroke-linecap="round"/>
+          <ellipse cx="28.5" cy="37" rx="1.6" ry="1.9" fill="#FFFFFF" stroke="#141923" stroke-width="0.6"/>
+          <ellipse cx="35.5" cy="37" rx="1.6" ry="1.9" fill="#FFFFFF" stroke="#141923" stroke-width="0.6"/>
+          <circle cx="28.9" cy="37.4" r="0.8" fill="#141923"/>
+          <circle cx="35.9" cy="37.4" r="0.8" fill="#141923"/>
+          <circle cx="27" cy="41" r="0.7" fill="#C2410C"/>
+          <circle cx="32" cy="42" r="0.7" fill="#C2410C"/>
+          <circle cx="37" cy="41" r="0.7" fill="#C2410C"/>
+          <path d="M29 42C30.5 43.4 33.5 43.4 35 42" stroke="#141923" stroke-width="1.1" stroke-linecap="round"/>
+        </svg>`,
+
+      maxipes: () => `
+        <svg viewBox="0 0 64 64" class="w-full h-full" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Maxipes Fík">
+          <path d="M12 28L20 12L28 26Z" fill="#C2410C" stroke="#141923" stroke-width="1.3"/>
+          <path d="M52 28L44 12L36 26Z" fill="#C2410C" stroke="#141923" stroke-width="1.3"/>
+          <path d="M16 22L22 16L24 24" fill="#FDBA74"/>
+          <path d="M48 22L42 16L40 24" fill="#FDBA74"/>
+          <ellipse cx="32" cy="38" rx="15" ry="13" fill="#F59E0B" stroke="#141923" stroke-width="1.5"/>
+          <ellipse cx="26" cy="36" rx="4" ry="5" fill="#FBBF24"/>
+          <ellipse cx="32" cy="44" rx="6" ry="4" fill="#FDE68A" stroke="#141923" stroke-width="1"/>
+          <ellipse cx="32" cy="43.5" rx="2.4" ry="1.5" fill="#141923"/>
+          <path d="M30 46C31 48 33 48 34 46" fill="#F472B6"/>
+          <ellipse cx="26" cy="36" rx="1.8" ry="2.2" fill="#FFFFFF" stroke="#141923" stroke-width="0.6"/>
+          <ellipse cx="38" cy="36" rx="1.8" ry="2.2" fill="#FFFFFF" stroke="#141923" stroke-width="0.6"/>
+          <circle cx="26.4" cy="36.4" r="0.9" fill="#141923"/>
+          <circle cx="38.4" cy="36.4" r="0.9" fill="#141923"/>
+          <circle cx="24" cy="42" r="1.3" fill="#B45309"/>
+          <circle cx="40" cy="42" r="1.3" fill="#B45309"/>
+          <path d="M22 50L18 58" stroke="#141923" stroke-width="2.2" stroke-linecap="round"/>
+          <path d="M42 50L46 58" stroke="#141923" stroke-width="2.2" stroke-linecap="round"/>
+          <path d="M46 34C52 36 54 42 50 46" stroke="#F59E0B" stroke-width="2.4" stroke-linecap="round"/>
+        </svg>`,
+
+      ctyrlistek: () => `
+        <svg viewBox="0 0 64 64" class="w-full h-full" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Čtyřlístek">
+          <path d="M32 34V58" stroke="#166534" stroke-width="2.4" stroke-linecap="round"/>
+          <path d="M32 50C38 52 42 56 44 58" stroke="#166534" stroke-width="1.6" stroke-linecap="round"/>
+          <circle cx="23" cy="24" r="10" fill="#15803D" stroke="#141923" stroke-width="1.4"/>
+          <circle cx="41" cy="24" r="10" fill="#B91C1C" stroke="#141923" stroke-width="1.4"/>
+          <circle cx="23" cy="42" r="10" fill="#C2410C" stroke="#141923" stroke-width="1.4"/>
+          <circle cx="41" cy="42" r="10" fill="#1D4E89" stroke="#141923" stroke-width="1.4"/>
+          <ellipse cx="20" cy="21" rx="3" ry="4" fill="#4ADE80" opacity="0.7"/>
+          <ellipse cx="38" cy="21" rx="3" ry="4" fill="#FCA5A5" opacity="0.8"/>
+          <ellipse cx="20" cy="39" rx="3" ry="4" fill="#FDBA74" opacity="0.8"/>
+          <ellipse cx="38" cy="39" rx="3" ry="4" fill="#93C5FD" opacity="0.8"/>
+          <circle cx="22" cy="24" r="0.9" fill="#141923"/>
+          <circle cx="26" cy="24" r="0.9" fill="#141923"/>
+          <circle cx="40" cy="24" r="0.9" fill="#FFFFFF"/>
+          <circle cx="44" cy="24" r="0.9" fill="#FFFFFF"/>
+          <circle cx="22" cy="42" r="0.9" fill="#141923"/>
+          <circle cx="26" cy="42" r="0.9" fill="#141923"/>
+          <circle cx="40" cy="42" r="0.9" fill="#FFFFFF"/>
+          <circle cx="44" cy="42" r="0.9" fill="#FFFFFF"/>
+          <circle cx="32" cy="33" r="3.2" fill="#FBBF24" stroke="#141923" stroke-width="1.1"/>
+        </svg>`,
+
+      maus: () => `
+        <svg viewBox="0 0 64 64" class="w-full h-full" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Die Maus">
+          <circle cx="18" cy="18" r="9" fill="#EA580C" stroke="#141923" stroke-width="1.4"/>
+          <circle cx="46" cy="18" r="9" fill="#EA580C" stroke="#141923" stroke-width="1.4"/>
+          <ellipse cx="18" cy="18" rx="4" ry="5" fill="#FDBA74"/>
+          <ellipse cx="46" cy="18" rx="4" ry="5" fill="#FDBA74"/>
+          <circle cx="32" cy="38" r="15" fill="#F97316" stroke="#141923" stroke-width="1.5"/>
+          <ellipse cx="26" cy="34" rx="5" ry="7" fill="#FB923C"/>
+          <ellipse cx="32" cy="44" rx="5" ry="3.4" fill="#FDE68A" stroke="#141923" stroke-width="1"/>
+          <ellipse cx="32" cy="43.5" rx="1.8" ry="1.1" fill="#141923"/>
+          <ellipse cx="27" cy="35" rx="1.8" ry="2.2" fill="#FFFFFF" stroke="#141923" stroke-width="0.6"/>
+          <ellipse cx="37" cy="35" rx="1.8" ry="2.2" fill="#FFFFFF" stroke="#141923" stroke-width="0.6"/>
+          <circle cx="27.4" cy="35.4" r="0.9" fill="#141923"/>
+          <circle cx="37.4" cy="35.4" r="0.9" fill="#141923"/>
+          <path d="M22 40H14M22 43H12M42 40H50M42 43H52" stroke="#141923" stroke-width="1" stroke-linecap="round"/>
+          <path d="M40 50C46 54 52 50 54 44" stroke="#C2410C" stroke-width="2.2" stroke-linecap="round"/>
+        </svg>`,
+
+      maja: () => `
+        <svg viewBox="0 0 64 64" class="w-full h-full" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Biene Maja">
+          <path d="M14 30C18 16 28 18 32 28C36 18 46 16 50 30" fill="#BFDBFE" stroke="#141923" stroke-width="1.2" opacity="0.9"/>
+          <path d="M18 26C22 20 28 22 32 28M32 28C36 22 42 20 46 26" stroke="#93C5FD" stroke-width="1"/>
+          <ellipse cx="32" cy="38" rx="11" ry="14" fill="#FBBF24" stroke="#141923" stroke-width="1.5"/>
+          <path d="M21 34H43V40H21Z" fill="#141923"/>
+          <path d="M21 44H43V48H21Z" fill="#141923"/>
+          <ellipse cx="27" cy="36" rx="3" ry="5" fill="#FDE68A" opacity="0.7"/>
+          <circle cx="32" cy="20" r="7" fill="#FBBF24" stroke="#141923" stroke-width="1.4"/>
+          <path d="M27 16C29 14 31 15 32 17" stroke="#F59E0B" stroke-width="1.2" stroke-linecap="round"/>
+          <ellipse cx="29.5" cy="19.5" rx="1.4" ry="1.7" fill="#FFFFFF" stroke="#141923" stroke-width="0.6"/>
+          <ellipse cx="34.5" cy="19.5" rx="1.4" ry="1.7" fill="#FFFFFF" stroke="#141923" stroke-width="0.6"/>
+          <circle cx="29.8" cy="19.8" r="0.7" fill="#141923"/>
+          <circle cx="34.8" cy="19.8" r="0.7" fill="#141923"/>
+          <path d="M30 23C31 24 33 24 34 23" stroke="#141923" stroke-width="1" stroke-linecap="round"/>
+          <path d="M28 14L25 6" stroke="#141923" stroke-width="1.3" stroke-linecap="round"/>
+          <path d="M36 14L39 6" stroke="#141923" stroke-width="1.3" stroke-linecap="round"/>
+          <circle cx="25" cy="6" r="1.5" fill="#141923"/>
+          <circle cx="39" cy="6" r="1.5" fill="#141923"/>
+          <ellipse cx="26" cy="22" rx="1.4" ry="0.8" fill="#F0A3A0"/>
+        </svg>`,
+
+      rakosnicek: () => `
+        <svg viewBox="0 0 64 64" class="w-full h-full" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Rákosníček">
+          <ellipse cx="32" cy="56" rx="16" ry="4" fill="#166534" stroke="#141923" stroke-width="1.2"/>
+          <ellipse cx="26" cy="55" rx="6" ry="2" fill="#4ADE80"/>
+          <circle cx="32" cy="36" r="13" fill="#4ADE80" stroke="#141923" stroke-width="1.5"/>
+          <ellipse cx="27" cy="33" rx="5" ry="7" fill="#86EFAC"/>
+          <path d="M32 8V24" stroke="#166534" stroke-width="2.2" stroke-linecap="round"/>
+          <path d="M32 12C40 14 46 8 48 6" stroke="#15803D" stroke-width="1.6" stroke-linecap="round"/>
+          <path d="M32 16C24 18 18 12 16 8" stroke="#15803D" stroke-width="1.6" stroke-linecap="round"/>
+          <ellipse cx="28" cy="35" rx="1.7" ry="2" fill="#FFFFFF" stroke="#141923" stroke-width="0.6"/>
+          <ellipse cx="36" cy="35" rx="1.7" ry="2" fill="#FFFFFF" stroke="#141923" stroke-width="0.6"/>
+          <circle cx="28.4" cy="35.4" r="0.8" fill="#141923"/>
+          <circle cx="36.4" cy="35.4" r="0.8" fill="#141923"/>
+          <path d="M29 40C30.5 41.4 33.5 41.4 35 40" stroke="#141923" stroke-width="1.2" stroke-linecap="round"/>
+          <path d="M20 44C24 40 22 36 18 34" stroke="#166534" stroke-width="1.6" stroke-linecap="round"/>
+          <path d="M44 44C40 40 42 36 46 34" stroke="#166534" stroke-width="1.6" stroke-linecap="round"/>
         </svg>`
     };
 
@@ -717,7 +1159,9 @@
 
     const CATEGORY_META = {
       transit: { label: 'Transit / Drive', color: '#255485', badge: 'bg-blue-50 text-cobalt border-blue-200' },
-      food:    { label: 'Food & Tank Beer', color: '#C97A1E', badge: 'bg-amber-50 text-amber-900 border-amber-200' },
+      food:    { label: 'Meal', color: '#9A3412', badge: 'bg-orange-50 text-orange-950 border-orange-200' },
+      cafe:    { label: 'Café', color: '#9F1239', badge: 'bg-rose-50 text-rose-900 border-rose-200' },
+      beer:    { label: 'Beer', color: '#C97A1E', badge: 'bg-amber-50 text-amber-900 border-amber-200' },
       sight:   { label: 'Castle & Culture', color: '#B8293D', badge: 'bg-rose-50 text-garnet border-rose-200' },
       walk:    { label: 'Walk & Viewpoint', color: '#245C46', badge: 'bg-emerald-50 text-linden border-emerald-200' },
       holiday: { label: 'Holiday Special',  color: '#9D174D', badge: 'bg-pink-50 text-pink-900 border-pink-200' }
@@ -732,28 +1176,28 @@
         region: 'Mníšek pod Brdy',
         mascot: 'krtek',
         title: 'Debi & Tom Arrive + Mníšek pod Brdy',
-        summary: 'Debi and Tom land, pick up their rental car, and drive south to Ethan\'s house in Mníšek for a quiet first night.',
+        summary: 'Debi and Tom land, pick up the rental, spend the afternoon with Ethan in Mníšek, and sleep on their river-boat hotel in Prague.',
         alert: null,
         stops: [
           {
             id: 'd1-s1', time: '12:00–13:30', title: 'PRG Airport Arrival (Debi & Tom)',
             category: 'transit', lat: 50.1008, lng: 14.2600,
             neighborhood: 'Václav Havel Airport Prague',
-            tip: 'Meet Debi and Tom at Arrivals. They pick up the rental car, load the bags, and confirm the Czech electronic vignette (dálniční známka) is active before the D4. Tonight is Ethan\'s house in Mníšek, about 35 minutes south.',
+            tip: 'Meet Debi and Tom at Arrivals. They pick up the rental car, load the bags, and confirm the Czech electronic vignette (dálniční známka) is active before the D4. Tonight they sleep on the river-boat hotel in Prague. The afternoon is a visit to Ethan, then the drive back.',
             booking: null
           },
           {
             id: 'd1-s2', time: '13:30–17:30', title: 'D4 Drive & Mníšek Town Walk',
-            category: 'walk', lat: 49.8665, lng: 14.2618,
-            neighborhood: 'Mníšek pod Brdy',
-            tip: 'Easy ~35-minute drive south via D4. Unpack at Ethan’s and take a gentle loop around Náměstí F. X. Svobody before sunset (~16:00) to reset jet lag.',
+            category: 'walk', lat: 49.86653, lng: 14.26042,
+            neighborhood: 'náměstí F. X. Svobody',
+            tip: 'About 35 minutes south via D4 to Ethan at Lhotecká 517 in Stříbrná Lhota, then a short walk to Náměstí F. X. Svobody before sunset (~16:00). Bags stay in the car.',
             booking: null
           },
           {
             id: 'd1-s3', time: '18:00–20:00', title: 'Dinner at Marjána - Restaurace a Pension',
             category: 'food', lat: 49.8631, lng: 14.2687,
             neighborhood: 'Mníšek pod Brdy',
-            tip: 'Beloved neighborhood kitchen near the station. First Czech dinner for Ethan, Debi, and Tom: svíčková na smetaně with bread dumplings.',
+            tip: 'Beloved neighborhood kitchen near the station. First Czech dinner for Ethan, Debi, and Tom: svíčková na smetaně with bread dumplings. Afterward Debi and Tom drive back to the boat. Ethan walks home to Lhotecká 517.',
             booking: 'Reserve for 3 (Ethan, Debi, Tom)'
           }
         ]
@@ -764,16 +1208,16 @@
         fullDate: 'Fri 18 Dec 2026',
         country: 'CZ',
         region: 'Mníšek & Brdy Hills',
-        mascot: 'krtek',
+        mascot: 'rumcajs',
         title: 'Mníšek Chateau & Brdy Hills',
-        summary: 'Tour the local First-Republic chateau in the morning, then hike wooded Brdy trails up to Baroque Skalka.',
+        summary: 'Debi and Tom drive out from the river boat. Tour the chateau, hike to Skalka, then they sleep back on the boat. Ethan is already in Mníšek.',
         alert: 'Mníšek Chateau only runs walk-in tours on weekends in Dec; Friday tours (10:30, 12:00, 13:30) must be booked 24h in advance.',
         stops: [
           {
             id: 'd2-s1', time: '10:30–11:45', title: 'Mníšek pod Brdy Chateau Guided Tour',
             category: 'sight', lat: 49.8669, lng: 14.2611,
             neighborhood: 'Zámek Mníšek pod Brdy',
-            tip: 'Intimate 20th-century aristocratic living rooms right in town—a peaceful prelude before Prague Castle.',
+            tip: 'Intimate 20th-century aristocratic living rooms right in town. Debi and Tom drive out from the boat in the morning. Ethan walks over from home.',
             booking: 'Book 24h Ahead (Fri 10:30/12:00/13:30)'
           },
           {
@@ -791,7 +1235,7 @@
         fullDate: 'Sat 19 Dec 2026',
         country: 'CZ',
         region: 'Prague Center',
-        mascot: 'pilsner',
+        mascot: 'bobAndBobek',
         title: 'Olivia & Jordan Arrive + Arcades & Tank Beer',
         summary: 'Olivia and Jordan land. The rental car brings all five into Prague, then trams take the evening: Lucerna\'s wooden paternoster and tank Pilsner.',
         alert: null,
@@ -800,7 +1244,7 @@
             id: 'd3-s1', time: '13:00–14:30', title: 'PRG Pickup for Olivia & Jordan',
             category: 'transit', lat: 50.1008, lng: 14.2600,
             neighborhood: 'Václav Havel Airport Prague',
-            tip: 'Debi and Tom drive the rental to PRG for Olivia and Jordan. Debi and Tom\'s first Prague nights are a small river-boat room. A shared hotel for Debi, Tom, Olivia, and Jordan is the plan and is not confirmed yet, so check in wherever is actually booked. Park the car there and use Lítačka tonight.',
+            tip: 'Debi and Tom leave the river boat in the morning and drive the rental to PRG for Olivia and Jordan. Tonight all five stay at the Airbnb at Vinohradská 403/17 in Vinohrady. Park the car at a park-and-ride, or in a spot the listing includes, and use Lítačka tonight.',
             booking: null
           },
           {
@@ -812,7 +1256,7 @@
           },
           {
             id: 'd3-s3', time: '18:30–20:30', title: 'Dinner at Lokál Dlouhááá',
-            category: 'food', lat: 50.0908, lng: 14.4264,
+            category: 'beer', lat: 50.0908, lng: 14.4264,
             neighborhood: 'Dlouhá, Staré Město',
             tip: 'Gold standard for unpasteurized tank Pilsner Urquell (ask for a hladinka pour) paired with fried Eidam cheese (smažený sýr) and homemade tartar sauce.',
             booking: 'Reserve Table for 5 Ahead'
@@ -832,7 +1276,7 @@
         fullDate: 'Sun 20 Dec 2026',
         country: 'CZ',
         region: 'Old Town & Vyšehrad',
-        mascot: 'orloj',
+        mascot: 'vecernicek',
         title: 'Historic Core & Vyšehrad',
         summary: 'Sunrise on an empty Charles Bridge, First-Republic breakfast at Café Louvre, Orloj chime, and sunset at Vyšehrad.',
         alert: 'Peak pre-Christmas Sunday crowds hit Old Town Square after 10:30—sunrise on Charles Bridge (~07:50) is unbeatable.',
@@ -846,7 +1290,7 @@
           },
           {
             id: 'd4-s2', time: '09:00–10:15', title: 'Breakfast at Café Louvre',
-            category: 'food', lat: 50.0818, lng: 14.4189,
+            category: 'cafe', lat: 50.0818, lng: 14.4189,
             neighborhood: 'Národní 22',
             tip: 'Serving Praguers since 1902 (regulars included Franz Kafka & Albert Einstein). Great breakfast plates, thick hot chocolate, and upstairs billiard tables.',
             booking: null
@@ -880,7 +1324,7 @@
         fullDate: 'Mon 21 Dec 2026',
         country: 'CZ',
         region: 'Castle & Malá Strana',
-        mascot: 'krtek',
+        mascot: 'hurvinek',
         title: 'Prague Castle & Malá Strana',
         summary: 'Slip through fairy-tale Nový Svět, tour St. Vitus & Golden Lane before 16:00 closing, and dine in 700-year-old cellars.',
         alert: 'Prague Castle interiors close at 16:00 in winter (last entry 15:40; gardens closed).',
@@ -935,7 +1379,7 @@
         fullDate: 'Tue 22 Dec 2026',
         country: 'DE',
         region: 'Dresden, Germany',
-        mascot: 'dresden',
+        mascot: 'sandmann',
         title: 'Dresden Day Trip & Striezelmarkt',
         summary: 'Two hours north via D8/A17 to Saxony’s Baroque jewel and Germany’s oldest Christmas market before it closes Dec 24.',
         alert: 'Debi and Tom drive the rental both ways (about 2 hours). Dresden does NOT require a German green sticker (Umweltplakette). The market takes euros and runs through Dec 24. Sleep back in Prague.',
@@ -969,7 +1413,7 @@
         fullDate: 'Wed 23 Dec 2026',
         country: 'CZ',
         region: 'Josefov & Letná',
-        mascot: 'orloj',
+        mascot: 'machSebestova',
         title: 'Josefov, Klementinum & Letná',
         summary: 'Infinite book tower at 09:00 sharp, Baroque library, historic synagogues, butcher-hall lunch, and Letná bridges view.',
         alert: 'Jewish Quarter sites close early at 14:00 tomorrow (Dec 24) and close Saturdays—Wednesday is the ideal window.',
@@ -1011,7 +1455,7 @@
           },
           {
             id: 'd7-s6', time: '16:45–17:45', title: 'Pastries at Myšák Vodičkova',
-            category: 'food', lat: 50.0806, lng: 14.4241,
+            category: 'cafe', lat: 50.0806, lng: 14.4241,
             neighborhood: 'Vodičkova 31',
             tip: 'Restored 1911 cukrárna—order the caramel-vanilla větrník choux pastry and filter coffee (closes at 19:00).',
             booking: null
@@ -1024,9 +1468,9 @@
         fullDate: 'Thu 24 Dec 2026',
         country: 'CZ',
         region: 'Prague (Štědrý den)',
-        mascot: 'pilsner',
+        mascot: 'kremilek',
         title: 'Christmas Eve / Štědrý den',
-        summary: 'Morning supply run before noon, quiet river strolls, pre-booked festive dinner, and silent-night Old Town.',
+        summary: 'Morning supply run before noon, a quiet river stroll, then the booked Prague Boats Christmas dinner from pier 3B at 19:00.',
         alert: 'CZECH LAW: All supermarkets & shops >200 m² close at 12:00 NOON today and stay completely closed Dec 25 & Dec 26!',
         stops: [
           {
@@ -1044,14 +1488,14 @@
             booking: null
           },
           {
-            id: 'd8-s3', time: '17:30–20:00', title: 'Christmas Eve Dinner at Červený jelen',
-            category: 'food', lat: 50.0879, lng: 14.4293,
-            neighborhood: 'Hybernská 5',
-            tip: 'Dramatic former bank vault with a four-story glass beer tank tower and live holiday music—one of the best authentic kitchens open on Dec 24.',
-            booking: 'Mandatory Advance Booking'
+            id: 'd8-s3', time: '18:30–22:00', title: 'Christmas Eve Dinner Cruise, Prague Boats',
+            category: 'food', lat: 50.0917, lng: 14.4174,
+            neighborhood: 'Pier 3B, Dvořákovo nábřeží by Čechův most',
+            tip: 'The booked dinner leaves pier 3B at 19:00. Be at the pier by 18:50. That pier is on Dvořákovo nábřeží by Čechův most, not on Rašínovo nábřeží. The ordinary daily dinner listing says it does not sail on 24 Dec, so the confirmation should name pier 3B and 19:00. The cruise is about three hours, then back to the Airbnb.',
+            booking: 'Booked · pier 3B · 19:00'
           },
           {
-            id: 'd8-s4', time: '20:00–21:30', title: 'Silent-Night Old Town Walk',
+            id: 'd8-s4', time: '22:15–23:15', title: 'Silent-Night Old Town Walk',
             category: 'walk', lat: 50.0875, lng: 14.4213,
             neighborhood: 'Staré Město',
             tip: 'Walk Old Town Square and Charles Bridge while locals are home with family—magical and serene.',
@@ -1065,7 +1509,7 @@
         fullDate: 'Fri 25 Dec 2026',
         country: 'CZ',
         region: 'Petřín & Malá Strana',
-        mascot: 'krtek',
+        mascot: 'patAndMat',
         title: 'Christmas Day',
         summary: 'Ride the modernized Petřín Funicular, dine beneath Neo-Renaissance ceilings, and stroll Střelecký Island.',
         alert: 'Supermarkets remain closed today. Petřín Funicular runs daily 07:00–22:15 (requires separate 90–100 CZK ticket or 24h PID pass).',
@@ -1079,7 +1523,7 @@
           },
           {
             id: 'd9-s2', time: '12:45–14:30', title: 'Holiday Lunch at Café Savoy',
-            category: 'food', lat: 50.0813, lng: 14.4063,
+            category: 'cafe', lat: 50.0813, lng: 14.4063,
             neighborhood: 'Vítězná 5, Malá Strana',
             tip: 'Beneath an 1893 Neo-Renaissance painted ceiling; order Wiener schnitzel, roast dishes, or thick Savoy hot chocolate.',
             booking: 'Reserve for 5 Ahead'
@@ -1099,7 +1543,7 @@
         fullDate: 'Sat 26 Dec 2026',
         country: 'CZ',
         region: 'Karlštejn',
-        mascot: 'krtek',
+        mascot: 'ferda',
         title: 'Karlštejn Castle',
         summary: 'Special Christmas week opening of Charles IV’s Gothic fortress, game lunch, and the flooded Velká Amerika quarry.',
         alert: 'Karlštejn opens specifically Dec 26–31 (10:00–15:00) for Imperial Residence tours—book timed tickets online ahead!',
@@ -1133,7 +1577,7 @@
         fullDate: 'Sun 27 Dec 2026',
         country: 'DE',
         region: 'Nuremberg, Germany',
-        mascot: 'nuremberg',
+        mascot: 'blaubaer',
         title: 'Nuremberg & the Karbsteins',
         summary: 'Cross west via D5/A6 into Franconia for wood-grilled bratwurst, half-timbered lanes, and catching up with the Karbsteins.',
         alert: 'The Christkindlesmarkt ends Dec 24, so Nuremberg is in relaxed post-Christmas mode—perfect for visiting with the Karbsteins.',
@@ -1167,7 +1611,7 @@
         fullDate: 'Mon 28 Dec 2026',
         country: 'DE',
         region: 'Nuremberg → Prague',
-        mascot: 'nuremberg',
+        mascot: 'pumuckl',
         title: 'Nuremberg Imperial Castle & Return',
         summary: 'Morning breakfast with the Karbsteins, tour the Kaiserburg fortress, grab red beer, and cruise back to Prague.',
         alert: 'Imperial Castle of Nuremberg is open 10:00–16:00 on Dec 28 (last entry 15:00).',
@@ -1190,7 +1634,7 @@
             id: 'd12-s3', time: '14:30–17:30', title: 'Return Drive to Prague via A6/D5',
             category: 'transit', lat: 50.0835, lng: 14.4260,
             neighborhood: 'Prague Return',
-            tip: 'About 3 hours east via A6/D5. Sleep back in Prague, at the river-boat room or the shared hotel, whichever night is booked.',
+            tip: 'About 3 hours east via A6/D5. All five sleep back at the Airbnb, Vinohradská 403/17.',
             booking: null
           }
         ]
@@ -1201,7 +1645,7 @@
         fullDate: 'Tue 29 Dec 2026',
         country: 'CZ',
         region: 'Kutná Hora',
-        mascot: 'pilsner',
+        mascot: 'maxipes',
         title: 'Kutná Hora Day Trip',
         summary: 'UNESCO silver-mining town: Sedlec Bone Church, St. Barbara’s Cathedral, Jesuit promenade, and medieval tavern feast.',
         alert: 'TICKET CATCH: You CANNOT buy Sedlec Ossuary tickets at the chapel door—buy timed e-tickets online ahead!',
@@ -1242,7 +1686,7 @@
         fullDate: 'Wed 30 Dec 2026',
         country: 'CZ',
         region: 'Flexible Day',
-        mascot: 'bobAndBobek',
+        mascot: 'ctyrlistek',
         title: 'Flexible Day: Modern Prague vs. Český Krumlov',
         summary: 'Switch between a relaxed low-driving Modern Prague day (recommended) or the 5h round-trip drive to Český Krumlov.',
         alert: 'Use the Interactive Toggle below: Český Krumlov is a 5h winter round-trip drive and main castle tours are closed for winter.',
@@ -1309,9 +1753,9 @@
         fullDate: 'Thu 31 Dec 2026',
         country: 'CZ',
         region: 'Prague (Silvestr)',
-        mascot: 'pilsner',
+        mascot: 'maus',
         title: "New Year's Eve / Silvestr",
-        summary: 'Dry-aged Czech beef feast at Čestr followed by a safe, scenic midnight toast overlooking Prague from Riegrovy sady.',
+        summary: 'Medieval Tour to Dětenice: meet the van at Hard Rock Cafe, feast and fire show at the castle, then a drop-off at the Airbnb and midnight in Riegrovy sady.',
         alert: 'SAFETY WARNING: Avoid Wenceslas Square & Old Town Square around midnight—crowds fire amateur pyrotechnics indiscriminately there.',
         stops: [
           {
@@ -1322,17 +1766,17 @@
             booking: null
           },
           {
-            id: 'd15-s2', time: '18:30–21:30', title: 'NYE Steakhouse Dinner at Čestr',
-            category: 'food', lat: 50.0795, lng: 14.4312,
-            neighborhood: 'Legerova 75 (Top of Wenceslas Sq)',
-            tip: 'Ambiente’s temple to dry-aged Czech Fleckvieh beef cuts and elevated Czech sides—book well in advance for Silvestr.',
-            booking: 'Mandatory Early NYE Booking'
+            id: 'd15-s2', time: '16:15–22:30', title: 'Medieval Tour: Castle, Brewery & Fire Show',
+            category: 'food', lat: 50.08667, lng: 14.41916,
+            neighborhood: 'Hard Rock Cafe, Malé náměstí 142/3',
+            tip: 'They do drive you out and back, but the pickup is not at the flat. Be at Hard Rock Cafe on Malé náměstí at 16:45. The published evening is a minivan to Dětenice Castle, the castle rooms, the brewery, then the feast and fire show from 19:00. They drop you at the Airbnb on Vinohradská around 22:00–22:30. The site lists this as a daily departure, so the ticket should name 31 Dec. Questions: +420 603 325 839.',
+            booking: 'Booked · medievaltour.cz'
           },
           {
             id: 'd15-s3', time: '23:30–00:30', title: 'Midnight Sparkling Wine at Riegrovy sady',
             category: 'holiday', lat: 50.0802, lng: 14.4418,
             neighborhood: 'Riegrovy sady, Vinohrady',
-            tip: 'Join local Praguers on the hillside lawn for a wide skyline panorama toward Prague Castle, clear of the chaotic street fireworks downtown.',
+            tip: 'The Airbnb is a short walk from the park. After the van drops you on Vinohradská, come up here for the skyline toast, away from the fireworks on Wenceslas Square and Old Town Square.',
             booking: null
           }
         ]
@@ -1343,14 +1787,14 @@
         fullDate: 'Fri 1 Jan 2027',
         country: 'CZ',
         region: 'Prague Center',
-        mascot: 'orloj',
+        mascot: 'maja',
         title: "New Year's Day",
         summary: 'Late First-Republic brunch, National Museum & Wenceslas Square stroll, and a warm farewell family dinner.',
         alert: 'Large supermarkets and retail stores are closed by law on Jan 1; cafés, restaurants, and major monuments remain open.',
         stops: [
           {
             id: 'd16-s1', time: '10:30–12:00', title: "New Year's Brunch at Café Louvre",
-            category: 'food', lat: 50.0818, lng: 14.4189,
+            category: 'cafe', lat: 50.0818, lng: 14.4189,
             neighborhood: 'Národní 22',
             tip: 'Celebrate the first morning of 2027 with eggs, pastries, and thick hot chocolate.',
             booking: 'Reserve Brunch for 5'
@@ -1377,16 +1821,16 @@
         fullDate: 'Sat 2 Jan 2027',
         country: 'CZ',
         region: 'PRG Departures',
-        mascot: 'krtek',
+        mascot: 'rakosnicek',
         title: 'Departures from Prague',
-        summary: 'Hotel check-out, final packing check, and smooth airport runs to Václav Havel Airport Prague.',
+        summary: 'Checkout from the Airbnb on Vinohradská, then the airport run to Václav Havel Airport Prague.',
         alert: 'Arrive at PRG Airport 2.5–3 hours before international flights.',
         stops: [
           {
-            id: 'd17-s1', time: '08:00–09:30', title: 'Hotel Check-out & Final Packing',
-            category: 'transit', lat: 50.0830, lng: 14.4220,
-            neighborhood: 'Prague Center',
-            tip: 'Double-check passports, chargers, and tax-free forms before loading the car.',
+            id: 'd17-s1', time: '08:00–09:30', title: 'Airbnb Check-out & Final Packing',
+            category: 'transit', lat: 50.07877, lng: 14.43489,
+            neighborhood: 'Vinohradská 403/17, Vinohrady',
+            tip: 'Check out of Vinohradská 403/17. Double-check passports, chargers, and tax-free forms before loading the car.',
             booking: null
           },
           {
@@ -1423,12 +1867,12 @@
       },
       {
         id: 'gem-kavarna', title: 'Kavárna co hledá jméno',
-        lat: 50.0713, lng: 14.4052, neighborhood: 'Stroupežnického 10, Smíchov', time: '10:30–12:00', category: 'food',
+        lat: 50.0713, lng: 14.4052, neighborhood: 'Stroupežnického 10, Smíchov', time: '10:30–12:00', category: 'cafe',
         tip: 'Hidden courtyard industrial-chic café in Smíchov beloved by Prague locals for brunch and specialty flat whites.'
       },
       {
         id: 'gem-eska', title: 'Eska Restaurant & Bakery',
-        lat: 50.0921, lng: 14.4508, neighborhood: 'Pernerova 49, Karlín', time: '11:30–13:00', category: 'food',
+        lat: 50.0921, lng: 14.4508, neighborhood: 'Pernerova 49, Karlín', time: '11:30–13:00', category: 'cafe',
         tip: 'Michelin Bib Gourmand Nordic-Czech bakery in Karlín—famous for sourdough bread, fermented veggies, and potatoes in ash.'
       },
       {
@@ -1448,7 +1892,7 @@
       },
       {
         id: 'gem-altstadthof', title: 'Hausbrauerei Altstadthof (Red Beer)',
-        lat: 49.4570, lng: 11.0747, neighborhood: 'Bergstraße 19, Nuremberg', time: '12:30–14:00', category: 'food',
+        lat: 49.4570, lng: 11.0747, neighborhood: 'Bergstraße 19, Nuremberg', time: '12:30–14:00', category: 'beer',
         tip: 'Just below Nuremberg Imperial Castle; brews organic Nuremberg Rotbier (red beer) with hearty Franconian food.'
       },
       {
@@ -1483,8 +1927,8 @@
      * CENTRAL EUROPE 6 REGIONAL HUBS
      */
     const REGIONAL_HUBS = [
-      { name: 'Mníšek pod Brdy', lat: 49.8665, lng: 14.2618, dayIdx: 0, note: 'Ethan\'s home. Debi and Tom stay here Dec 17–18.' },
-      { name: 'Prague', lat: 50.0865, lng: 14.4150, dayIdx: 2, note: 'From Dec 19. River-boat room first, then a hotel still to confirm. Ethan\'s home stays in Mníšek.' },
+      { name: 'Mníšek pod Brdy', lat: 49.870874, lng: 14.259746, dayIdx: 0, note: 'Ethan\'s home is Lhotecká 517, Stříbrná Lhota. Debi and Tom visit on Dec 17–18, then sleep on the boat.' },
+      { name: 'Prague', lat: 50.0865, lng: 14.4150, dayIdx: 2, note: 'Debi and Tom sleep on the river boat Dec 17–18. From Dec 19 all five stay at Vinohradská 403/17.' },
       { name: 'Karlštejn', lat: 49.9394, lng: 14.1881, dayIdx: 9, note: 'Advent Castle Tour (Dec 26)' },
       { name: 'Kutná Hora', lat: 49.9482, lng: 15.2665, dayIdx: 12, note: 'Bone Church & St. Barbara (Dec 29)' },
       { name: 'Dresden 🇩🇪', lat: 51.0519, lng: 13.7416, dayIdx: 5, note: 'Striezelmarkt Day Trip (Dec 22)' },
@@ -1492,7 +1936,7 @@
     ];
 
     const REGIONAL_ARCS = [
-      { from: [50.0865, 14.4150], to: [49.8665, 14.2618], label: '~35m D4' },
+      { from: [50.0865, 14.4150], to: [49.870874, 14.259746], label: '~35m D4' },
       { from: [50.0865, 14.4150], to: [49.9394, 14.1881], label: '~35m' },
       { from: [50.0865, 14.4150], to: [49.9482, 15.2665], label: '~1h D11' },
       { from: [50.0865, 14.4150], to: [51.0519, 13.7416], label: '~2h D8/A17' },
@@ -1503,26 +1947,26 @@
      * 16-ITEM BOOKINGS & WINTER HOLIDAY RULES CHECKLIST
      */
     const BOOKING_CHECKLIST = [
-      { id: 'chk-rental', day: 'Thu 17 Dec', title: 'Debi & Tom rental car, pickup at PRG', desc: 'One car for the airport, Mníšek, Dresden, Karlštejn, Nuremberg, and Kutná Hora. In Prague, park it at the boat or hotel and use trams and metro. Return it at PRG on Jan 2. Confirm it fits five plus bags for the Nuremberg night.' },
-      { id: 'chk-vignette', day: 'Pre-Trip', title: 'Czech Electronic Motorway Vignette (dálniční známka)', desc: 'Buy it for Debi and Tom\'s rental on edalnice.cz before the D4, D5, D8, or D11.' },
-      { id: 'chk-botel', day: 'Sat 19 Dec', title: 'Confirm the river-boat room for Debi & Tom', desc: 'Write down the boat name, address, and which nights. Keep this reservation until the shared Prague hotel is actually booked.' },
-      { id: 'chk-hotel', day: 'Sat 19 Dec', title: 'Confirm one Prague hotel for Debi, Tom, Olivia & Jordan', desc: 'This is the plan once Olivia and Jordan arrive, and it is not booked yet. Ethan\'s home stays in Mníšek.' },
+      { id: 'chk-rental', who: ['Debi', 'Tom'], day: 'Thu 17 Dec', title: 'Debi & Tom rental car, pickup at PRG', desc: 'One car for the airport, Mníšek, Dresden, Karlštejn, Nuremberg, and Kutná Hora. In Prague, use a spot if the Airbnb includes one, or a P+R at about 50 CZK for 24 hours, and ride trams and metro. Return it at PRG on Jan 2. Confirm it fits five plus bags for the Nuremberg night.' },
+      { id: 'chk-vignette', who: ['Debi', 'Tom'], day: 'Pre-Trip', title: 'Czech Electronic Motorway Vignette (dálniční známka)', desc: 'Buy it for the rental on edalnice.cz before the D4, D5, D8, or D11.' },
+      { id: 'chk-botel', who: ['Debi', 'Tom'], day: 'Thu 17 Dec', title: 'River-boat room on the Vltava', desc: 'You sleep here the nights of 17 and 18 Dec. Ethan sleeps at home in Mníšek. From the night of 19 Dec everyone is at the Airbnb. Write down the boat name and the gangway.' },
+      { id: 'chk-hotel', day: 'Sat 19 Dec', title: 'Airbnb at Vinohradská 403/17', desc: 'Booked for all five from the night of 19 Dec, in Vinohrady. The 17th and 18th are the river boat for Debi and Tom, and Ethan\'s house for Ethan. Check whether the listing includes a parking spot.' },
       { id: 'chk-nbergstay', day: 'Sun 27 Dec', title: 'Book one Nuremberg place for all five', desc: 'Everyone stays together the night of Dec 27, then drives back on Dec 28.' },
       { id: 'chk-litacka',  day: 'Pre-Trip', title: 'Install PID Lítačka App on Everyone’s Phones', desc: 'Activate tram/metro tickets in-app BEFORE boarding (inspectors patrol Castle trams).' },
       { id: 'chk-euronet',  day: 'Pre-Trip', title: 'Avoid Euronet ATMs & 100g Old Town Ham Stalls', desc: 'Use Czech bank ATMs (Česká spořitelna, ČSOB, KB), always choose CZK, and skip tourist chimney cakes.' },
-      { id: 'chk-mnisek',   day: 'Fri 18 Dec', title: 'Book Mníšek pod Brdy Chateau Friday Tour (24h Ahead)', desc: 'Friday winter tours (10:30, 12:00, 13:30) require advance phone/online reservation.' },
+      { id: 'chk-mnisek', who: ['Ethan', 'Debi', 'Tom'], day: 'Fri 18 Dec', title: 'Book Mníšek pod Brdy Chateau Friday Tour (24h Ahead)', desc: 'Friday winter tours (10:30, 12:00, 13:30) require advance phone/online reservation. Olivia and Jordan are not here yet.' },
       { id: 'chk-lokal',    day: 'Sat 19 Dec', title: 'Reserve Lokál Dlouhááá Table for 5', desc: 'Evening tank Pilsner & smažený sýr dinner—books out fast on pre-Christmas Saturday.' },
       { id: 'chk-kuchyn',   day: 'Mon 21 Dec', title: 'Reserve Kuchyň Lunch Table for 5 (Castle Gates)', desc: 'Hradčanské náměstí terrace lunch overlooking Prague.' },
       { id: 'chk-glaubicu', day: 'Mon 21 Dec', title: 'Reserve U Glaubiců Cellar Dinner for 5', desc: 'Malostranské náměstí 700-year-old vaulted cellar dinner.' },
       { id: 'chk-klem',     day: 'Wed 23 Dec', title: 'Buy Timed E-Tickets for Klementinum Guided Tour', desc: 'Winter Baroque Library slots sell out online ahead of time.' },
       { id: 'chk-dec24shop',day: 'Thu 24 Dec', title: 'Grocery & Water Run BEFORE 12:00 Noon Dec 24', desc: 'Czech law closes all shops >200 m² at noon Dec 24 through Dec 26!' },
-      { id: 'chk-cerveny',  day: 'Thu 24 Dec', title: 'Book Christmas Eve Dinner at Červený jelen', desc: 'Mandatory advance reservation for Dec 24 festive menu.' },
+      { id: 'chk-cerveny',  day: 'Thu 24 Dec', title: 'Christmas Eve dinner cruise, pier 3B at 19:00', desc: 'Prague Boats from Dvořákovo nábřeží by Čechův most. The ordinary daily dinner does not sail on 24 Dec, so the confirmation should name pier 3B and 19:00. Be there by 18:50.' },
       { id: 'chk-savoy',    day: 'Fri 25 Dec', title: 'Book Christmas Day Lunch at Café Savoy', desc: 'Also grab separate Petřín funicular tickets in PID Lítačka app.' },
       { id: 'chk-karlstejn',day: 'Sat 26 Dec', title: 'Buy Online Timed Tickets for Karlštejn Castle Tour', desc: 'Special Advent/Christmas opening Dec 26–31 (10:00–15:00).' },
       { id: 'chk-nuremberg',day: 'Sun 27 Dec', title: 'Confirm Nuremberg Lunch & Dinner with Karbsteins', desc: 'Old Town bratwurst lunch & evening dinner with the Karbsteins.' },
       { id: 'chk-sedlec',   day: 'Tue 29 Dec', title: 'Buy Online Timed E-Tickets for Sedlec Ossuary', desc: 'No tickets sold at the Bone Church door—book timed entry online!' },
       { id: 'chk-dacicky',  day: 'Tue 29 Dec', title: 'Reserve Restaurace Dačický Lunch for 5 (Kutná Hora)', desc: 'Historic Old Bohemian tavern lunch.' },
-      { id: 'chk-cestr',    day: 'Thu 31 Dec', title: 'Book New Year’s Eve Steakhouse Dinner at Čestr', desc: 'Book early for Silvestr; watch midnight skyline safely from Riegrovy sady.' }
+      { id: 'chk-cestr',    day: 'Thu 31 Dec', title: 'Medieval Tour: meet at Hard Rock Cafe, 16:45', desc: 'Pickup is Malé náměstí 142/3, not the Airbnb. Drop-off is at Vinohradská around 22:00–22:30, then midnight at Riegrovy sady. Confirm the ticket is for 31 Dec.' }
     ];
 
     /**
@@ -1910,27 +2354,30 @@
       }
     }
 
-    function lodgingNote(dayId) {
-      if (dayId === 'day-1' || dayId === 'day-2') {
-        return "Ethan's home in Mníšek. Debi and Tom stay with Ethan. Their rental car is with them from the airport.";
+    function lodgingNote(day) {
+      const user = state.activeUser;
+      const idx = TRIP_DAYS.findIndex(d => d.id === day.id);
+      if (!userIsHere(user, idx)) return '';
+      if (day.id === 'day-1' || day.id === 'day-2') {
+        return user === 'Ethan'
+          ? 'You sleep at home, Lhotecká 517 in Stříbrná Lhota.'
+          : 'You sleep on the river-boat hotel in Prague.';
       }
-      if (dayId === 'day-11') {
-        return 'All five together in Nuremberg tonight. Book one place, then drive back tomorrow.';
+      if (day.id === 'day-11') return 'All five sleep in Nuremberg tonight.';
+      if (day.id === 'day-12') return 'Drive back today. Tonight is the Airbnb, Vinohradská 403/17.';
+      if (day.id === 'day-17') {
+        return user === 'Ethan'
+          ? 'The others fly home today. You are not on the flight.'
+          : 'Checkout from Vinohradská. Debi and Tom return the rental at the airport.';
       }
-      if (dayId === 'day-12') {
-        return 'Leave Nuremberg after the castle and sleep back in Prague: the river-boat room, or the shared hotel if it is booked.';
-      }
-      if (dayId === 'day-17') {
-        return "Checkout morning. Return Debi and Tom's rental at the airport. Ethan stays in Mníšek.";
-      }
-      if (dayId === 'day-6') {
-        return 'Day trip only. Debi and Tom drive the rental both ways. Sleep back in Prague.';
-      }
-      return "Prague. Debi and Tom's first nights are a small river-boat room. The plan, still unconfirmed, is that Debi, Tom, Olivia, and Jordan then share one hotel. Ethan's home stays in Mníšek. Park the rental and use trams and metro in the center.";
+      if (day.id === 'day-6') return 'Day trip. Sleep back at the Airbnb, Vinohradská 403/17.';
+      return 'Tonight is the Airbnb, Vinohradská 403/17.';
     }
 
     function lodgingHtml(day) {
-      return `<div class="mt-2 px-2.5 py-2 rounded-xl bg-amber-50/90 border border-amber-200 text-[11px] text-amber-950 leading-relaxed"><strong>Where we sleep. </strong>${esc(lodgingNote(day.id))}</div>`;
+      const note = lodgingNote(day);
+      if (!note) return '';
+      return `<div class="mt-2 px-2.5 py-2 rounded-xl bg-amber-50/90 border border-amber-200 text-[11px] text-amber-950 leading-relaxed"><strong>Where we sleep. </strong>${esc(note)}</div>`;
     }
 
     /**
@@ -2038,7 +2485,9 @@
     };
 
     function getCategoryMicroSvg(cat) {
-      if (cat === 'food') return `<svg class="w-2.5 h-2.5" viewBox="0 0 24 24" fill="currentColor"><path d="M18 8h1a4 4 0 0 1 0 8h-1v1a3 3 0 0 1-3 3H8a3 3 0 0 1-3-3V8h13zm1 2h-1v4h1a2 2 0 0 0 0-4z"/></svg>`;
+      if (cat === 'beer') return `<svg class="w-2.5 h-2.5" viewBox="0 0 24 24" fill="currentColor"><path d="M18 8h1a4 4 0 0 1 0 8h-1v1a3 3 0 0 1-3 3H8a3 3 0 0 1-3-3V8h13zm1 2h-1v4h1a2 2 0 0 0 0-4z"/></svg>`;
+      if (cat === 'cafe') return `<svg class="w-2.5 h-2.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M6 8h10v6a4 4 0 0 1-4 4H10a4 4 0 0 1-4-4V8z"/><path d="M16 9h2a2 2 0 0 1 0 4h-2"/></svg>`;
+      if (cat === 'food') return `<svg class="w-2.5 h-2.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M4 10h16M6 10c0 5 2 8 6 8s6-3 6-8"/><path d="M12 4v3"/></svg>`;
       if (cat === 'walk') return `<svg class="w-2.5 h-2.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 17l6-6 4 4 8-8"/></svg>`;
       if (cat === 'transit') return `<svg class="w-2.5 h-2.5" viewBox="0 0 24 24" fill="currentColor"><path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99z"/></svg>`;
       if (cat === 'holiday') return `<svg class="w-2.5 h-2.5" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`;
@@ -2078,7 +2527,13 @@
       gemsLayerGroup = L.layerGroup().addTo(map);
       markersLayerGroup = L.layerGroup().addTo(map);
 
-      switchTileLayer(state.tileStyle || 'voyager');
+      switchTileLayer(deviceMapStyle(), false);
+      const scheme = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)');
+      if (scheme && scheme.addEventListener) {
+        scheme.addEventListener('change', () => {
+          if (!state.tileChosen) switchTileLayer(deviceMapStyle(), false);
+        });
+      }
 
       // Show/Hide District Cartographic Labels based on Zoom
       map.on('zoomend', updateDistrictCalloutsVisibility);
@@ -2096,10 +2551,20 @@
       renderMapLayers(true);
     }
 
-    function switchTileLayer(styleKey) {
-      state.tileStyle = styleKey;
-      document.getElementById('tileStyleSelect').value = styleKey;
-      persistState();
+    function deviceMapStyle() {
+      if (state.tileChosen && state.tileStyle) return state.tileStyle;
+      const dark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+      return dark ? 'night' : 'voyager';
+    }
+
+    function switchTileLayer(styleKey, fromUser) {
+      if (fromUser) {
+        state.tileChosen = true;
+        state.tileStyle = styleKey;
+        persistState();
+      }
+      const select = document.getElementById('tileStyleSelect');
+      if (select) select.value = styleKey;
 
       if (!map || typeof window.L === 'undefined') return;
       if (activeTileLayer) map.removeLayer(activeTileLayer);
@@ -2179,6 +2644,634 @@
       });
     }
 
+    /**
+     * Person on this phone, road routes, parking, photos, celebrations.
+     * Olivia and Jordan land Saturday 19 Dec (day index 2). Ethan lives in Mníšek.
+     */
+    const WHO_STORAGE_KEY = 'prague_winter_atlas_who_v1';
+    const ARRIVES = { Ethan: 0, Debi: 0, Tom: 0, Olivia: 2, Jordan: 2 };
+    const HOUSE = { lat: 49.870874, lng: 14.259746, name: 'Lhotecká 517, Mníšek', mapLabel: 'Lhotecká 517' };
+    const BOAT = { lat: 50.0708, lng: 14.4112, name: 'River-boat hotel, Vltava', mapLabel: 'Boat' };
+    const AIRBNB = { lat: 50.07877, lng: 14.43489, name: 'Airbnb, Vinohradská 403/17', mapLabel: 'Airbnb' };
+    const AIRPORT = { lat: 50.1008, lng: 14.26, name: 'Prague Airport', mapLabel: 'Airport' };
+    const NUREMBERG_STAY = { lat: 49.4505, lng: 11.0775, name: 'Nuremberg stay', mapLabel: 'Stay' };
+    const MASCOT_NAMES = {
+      krtek: 'Krtek',
+      rumcajs: 'Rumcajs',
+      bobAndBobek: 'Bob and Bobek',
+      vecernicek: 'Večerníček',
+      hurvinek: 'Hurvínek',
+      sandmann: 'Sandmännchen',
+      machSebestova: 'Mach and Šebestová',
+      kremilek: 'Křemílek and Vochomůrka',
+      patAndMat: 'Pat and Mat',
+      ferda: 'Ferda the Ant',
+      blaubaer: 'Käpt’n Blaubär',
+      pumuckl: 'Pumuckl',
+      maxipes: 'Maxipes Fík',
+      ctyrlistek: 'Čtyřlístek',
+      maus: 'Die Maus',
+      maja: 'Biene Maja',
+      rakosnicek: 'Rákosníček'
+    };
+    const MODE_META = {
+      walk: { key: 'walk', label: 'Walk', profile: 'foot', color: '#245C46', dash: null },
+      tram: { key: 'tram', label: 'Tram', profile: 'foot', color: '#C97A1E', dash: '7 6' },
+      metro: { key: 'metro', label: 'Metro', profile: 'foot', color: '#6D28D9', dash: '2 7' },
+      bus: { key: 'bus', label: 'Bus', profile: 'driving', color: '#255485', dash: '10 7' },
+      train: { key: 'train', label: 'Train', profile: null, color: '#0F766E', dash: '1 8' },
+      car: { key: 'car', label: 'Car', profile: 'driving', color: '#B8293D', dash: null }
+    };
+    const roadCache = {};
+    const photoCache = {};
+    let roadDrawToken = 0;
+
+    function userIsHere(user, dayIndex) {
+      return dayIndex >= (ARRIVES[user] == null ? 0 : ARRIVES[user]);
+    }
+
+    function dayUsesCar(day) {
+      if (day.id === 'day-14') {
+        return (state.dayVariants[day.id] || day.activeVariant || 'prague') === 'krumlov';
+      }
+      return ['day-1', 'day-6', 'day-10', 'day-11', 'day-12', 'day-13', 'day-17'].indexOf(day.id) !== -1;
+    }
+
+    function onTheBoat(user) {
+      return user === 'Debi' || user === 'Tom';
+    }
+
+    function routeStart(user, day) {
+      const idx = TRIP_DAYS.findIndex(d => d.id === day.id);
+      if (!userIsHere(user, idx)) return null;
+      if (day.id === 'day-12') return NUREMBERG_STAY;
+      if (day.id === 'day-1') return user === 'Ethan' ? HOUSE : AIRPORT;
+      if (day.id === 'day-2') return onTheBoat(user) ? BOAT : HOUSE;
+      if (day.id === 'day-3' && onTheBoat(user)) return BOAT;
+      return AIRBNB;
+    }
+
+    function routeEnd(user, day) {
+      if ((day.id === 'day-1' || day.id === 'day-2') && onTheBoat(user)) return BOAT;
+      return null;
+    }
+
+    function routeVoice(day) {
+      const idx = TRIP_DAYS.findIndex(d => d.id === day.id);
+      return userIsHere(state.activeUser, idx) ? state.activeUser : 'Debi';
+    }
+
+    function includeInRoute(user, stop, day) {
+      if (user === 'Ethan' && day.id === 'day-1' && stop.id === 'd1-s1') return false;
+      return true;
+    }
+
+    function routeNote(user, stop, day) {
+      if (user === 'Ethan' && day.id === 'day-1' && stop.id === 'd1-s1') {
+        return 'Debi and Tom land here and drive to you. Your line stays in Mníšek.';
+      }
+      return '';
+    }
+
+    function fromHouse(point) {
+      return !!(point && point.name && point.name.indexOf('Mníšek') !== -1);
+    }
+
+    function pragueTransitDay(day) {
+      return day.country === 'CZ' && !dayUsesCar(day) && day.id !== 'day-1' && day.id !== 'day-2';
+    }
+
+    function legPlan(user, from, to, day) {
+      const km = haversineKm(from.lat, from.lng, to.lat, to.lng);
+      if (km < 0.15) return null;
+      if (fromHouse(from) && user === 'Ethan' && !dayUsesCar(day) && km > 8) return MODE_META.bus;
+      if (dayUsesCar(day) && km > 8) return MODE_META.car;
+      if (pragueTransitDay(day)) {
+        if (km < 0.9) return MODE_META.walk;
+        if (km < 3.2) return MODE_META.tram;
+        if (km < 16) return MODE_META.metro;
+      }
+      if (km < 8) return MODE_META.walk;
+      if (km > 120 && day.country === 'DE') return MODE_META.train;
+      return MODE_META.car;
+    }
+
+    function legClock(km, plan) {
+      const speeds = { walk: 4.4, tram: 14, metro: 30, bus: 32, train: 110, car: 75 };
+      let speed = speeds[plan.key] || 20;
+      if (plan.key === 'car' && km > 80) speed = 90;
+      else if (plan.key === 'car') speed = 50;
+      const mins = Math.max(2, Math.round((km / speed) * 60));
+      if (mins >= 60) {
+        const h = Math.floor(mins / 60);
+        const m = mins % 60;
+        return m ? (h + 'h ' + m + 'm') : (h + 'h');
+      }
+      return mins + 'm';
+    }
+
+    function legDistanceLabel(km) {
+      if (km < 1) return Math.round(km * 1000) + 'm';
+      if (km < 10) return km.toFixed(1) + 'km';
+      return Math.round(km) + 'km';
+    }
+
+    function connectorHtml(from, to, day) {
+      const who = routeVoice(day);
+      const plan = legPlan(who, from, to, day);
+      if (!plan) return '';
+      const km = haversineKm(from.lat, from.lng, to.lat, to.lng);
+      return `
+        <div class="flex items-center gap-2 pl-5 py-0.5">
+          <div class="w-0.5 h-4" style="background:${plan.color}"></div>
+          <span class="font-mono text-[10px] font-medium px-2 py-0.5 rounded-full bg-vltava/5 text-slate-700">
+            &darr; ${esc(plan.label)} &bull; ${legDistanceLabel(km)} &bull; ${esc(legClock(km, plan))}
+          </span>
+        </div>`;
+    }
+
+    function routeBlurb(user, day) {
+      const idx = TRIP_DAYS.findIndex(d => d.id === day.id);
+      const here = userIsHere(user, idx);
+      const who = here ? user : 'Debi';
+      if (here && user === 'Ethan' && day.id === 'day-1') {
+        return 'You are already home in Mníšek. Debi and Tom drive down for the afternoon and dinner, then back to their boat in Prague.';
+      }
+      if (here && user === 'Ethan' && day.id === 'day-2') {
+        return 'You start at home in Mníšek. Debi and Tom drive out from the river boat in the morning and sleep back on the boat.';
+      }
+      const stops = getDayStops(day).filter(s => includeInRoute(who, s, day));
+      const origin = routeStart(who, day);
+      const points = [];
+      if (origin) points.push(origin);
+      stops.forEach(s => points.push(s));
+      const labels = [];
+      for (let i = 1; i < points.length; i++) {
+        const plan = legPlan(who, points[i - 1], points[i], day);
+        if (plan && labels.indexOf(plan.label) === -1) labels.push(plan.label);
+      }
+      const end = routeEnd(who, day);
+      if (end) {
+        const plan = legPlan(who, points[points.length - 1], end, day);
+        if (plan && labels.indexOf(plan.label) === -1) labels.push(plan.label);
+      }
+      const start = origin ? origin.name : 'the first stop';
+      const modes = labels.length ? labels.join(' → ') : 'a short hop';
+      const boatNote = origin === AIRBNB
+        ? ' The flat is Vinohradská 403/17 in Vinohrady.'
+        : (end === BOAT ? ' Tonight is the river-boat hotel on the Vltava.' : (origin === BOAT ? ' You leave from the river-boat hotel.' : ''));
+      if (!here) return 'While you are away, the family starts at ' + start + '. ' + modes + '.' + boatNote;
+      return 'Start at ' + start + '. ' + modes + '.' + boatNote;
+    }
+
+    function parkingCopy(user, dayIndex, day) {
+      if (!userIsHere(user, dayIndex)) return '';
+      const drives = user === 'Debi' || user === 'Tom';
+      if (!drives) {
+        if (user === 'Ethan' && dayIndex <= 1) return 'The rental goes back to the boat with Debi and Tom.';
+        if ((user === 'Olivia' || user === 'Jordan') && day.id === 'day-3') return 'Debi and Tom handle the car. You ride with them on the long days.';
+        return '';
+      }
+      if (dayIndex <= 1) return 'Park in the boat’s own spot. If the booking has none, a park-and-ride is about 50 CZK for 24 hours. The embankment is not free overnight.';
+      if (day.id === 'day-3' || day.id === 'day-12') return 'Tonight use the Airbnb spot if the listing has one. Otherwise a park-and-ride is about 50 CZK for the first 24 hours.';
+      if (day.id === 'day-6') return 'A Dresden garage is fine for the day. Bring the car back to the Airbnb spot, or a Prague park-and-ride.';
+      if (day.id === 'day-11') return 'Use the parking that comes with the Nuremberg place, or a station park-and-ride.';
+      if (day.id === 'day-17') return 'Return the rental at the airport today.';
+      return '';
+    }
+
+    function personDayCards(day) {
+      const idx = TRIP_DAYS.findIndex(d => d.id === day.id);
+      const user = state.activeUser;
+      let html = '';
+      if (!userIsHere(user, idx)) {
+        const arrive = ARRIVES[user];
+        const when = TRIP_DAYS[arrive] ? TRIP_DAYS[arrive].fullDate : 'Sat 19 Dec 2026';
+        html += `
+          <div class="p-3 rounded-2xl bg-amber-50 border border-amber-300 text-xs text-amber-950 leading-relaxed">
+            <div class="font-bold">${esc(user)}, you are not in Czechia yet.</div>
+            <p class="mt-1">You land ${esc(when)}. The stops below are the family plan. Your own routes start on your first day.</p>
+            <button type="button" onclick="selectDay(${arrive})" class="mt-2 px-2.5 py-1.5 rounded-lg bg-vltava text-amber-100 text-[11px] font-bold">Jump to your first day</button>
+          </div>`;
+      }
+      const park = parkingCopy(user, idx, day);
+      if (park) {
+        html += `
+          <div class="p-3 rounded-2xl bg-white border border-vltava/10 text-xs text-slate-700 leading-relaxed">
+            <div class="text-[10px] font-extrabold uppercase tracking-wider text-cobalt">Overnight parking</div>
+            <p class="mt-1">${esc(park)}</p>
+          </div>`;
+      }
+      const blurb = routeBlurb(user, day);
+      if (blurb) {
+        html += `
+          <div class="p-3 rounded-2xl bg-white/90 border border-vltava/10 text-xs text-slate-700 leading-relaxed">
+            <div class="text-[10px] font-extrabold uppercase tracking-wider text-garnet">${userIsHere(user, idx) ? 'Your route' : 'Family route'}</div>
+            <p class="mt-1">${esc(blurb)}</p>
+          </div>`;
+      }
+      return html;
+    }
+
+    function paintHeaderMascot() {
+      const day = getCurrentDay();
+      const key = day.mascot;
+      const fn = CZECH_GERMAN_SVGS[key] || CZECH_GERMAN_SVGS.krtek;
+      const slot = document.getElementById('headerKrtekSlot');
+      if (!slot) return;
+      slot.innerHTML = fn();
+      slot.title = (MASCOT_NAMES[key] || 'Guide') + ' — ' + day.shortDate;
+    }
+
+    function openWhoModal(required) {
+      const modal = document.getElementById('whoModal');
+      if (!modal) return;
+      modal.classList.remove('hidden');
+      const skip = document.getElementById('whoSkip');
+      if (skip) skip.classList.toggle('hidden', !!required);
+    }
+
+    function closeWhoModal() {
+      const modal = document.getElementById('whoModal');
+      if (modal) modal.classList.add('hidden');
+    }
+
+    function chooseWho(userId) {
+      if (!knownMember(userId)) return;
+      state.activeUser = legacyMember(userId);
+      try { localStorage.setItem(WHO_STORAGE_KEY, state.activeUser); } catch (e) {}
+      const arrive = ARRIVES[state.activeUser] || 0;
+      if (state.selectedDayIndex < arrive) {
+        state.selectedDayIndex = arrive;
+        state.overviewMode = false;
+      }
+      closeWhoModal();
+      const stops = getDayStops(getCurrentDay());
+      if (stops.length && !stops.some(s => s.id === state.selectedStopId)) state.selectedStopId = stops[0].id;
+      persistState();
+      renderAllUI();
+      renderMapLayers(true);
+      showToast('Routes for ' + state.activeUser);
+    }
+
+    function roadKey(profile, a, b) {
+      const r = n => Math.round(n * 1000) / 1000;
+      return profile + ':' + r(a.lat) + ',' + r(a.lng) + '>' + r(b.lat) + ',' + r(b.lng);
+    }
+
+    function decodePolyline(str, precision) {
+      const factor = Math.pow(10, precision);
+      let index = 0;
+      let lat = 0;
+      let lng = 0;
+      const coords = [];
+      while (index < str.length) {
+        let shift = 0;
+        let result = 0;
+        let bite = 0;
+        do {
+          bite = str.charCodeAt(index++) - 63;
+          result |= (bite & 0x1f) << shift;
+          shift += 5;
+        } while (bite >= 0x20);
+        const dlat = (result & 1) ? ~(result >> 1) : (result >> 1);
+        shift = 0;
+        result = 0;
+        do {
+          bite = str.charCodeAt(index++) - 63;
+          result |= (bite & 0x1f) << shift;
+          shift += 5;
+        } while (bite >= 0x20);
+        const dlng = (result & 1) ? ~(result >> 1) : (result >> 1);
+        lat += dlat;
+        lng += dlng;
+        coords.push([lat / factor, lng / factor]);
+      }
+      return coords;
+    }
+
+    function lineKm(line) {
+      let km = 0;
+      for (let i = 1; i < line.length; i++) {
+        km += haversineKm(line[i - 1][0], line[i - 1][1], line[i][0], line[i][1]);
+      }
+      return km;
+    }
+
+    async function fetchFootpath(a, b) {
+      const ctrl = new AbortController();
+      const timer = setTimeout(() => ctrl.abort(), 8000);
+      try {
+        const res = await fetch('https://valhalla1.openstreetmap.de/route', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          signal: ctrl.signal,
+          body: JSON.stringify({
+            locations: [{ lon: a.lng, lat: a.lat }, { lon: b.lng, lat: b.lat }],
+            costing: 'pedestrian',
+            costing_options: {
+              pedestrian: {
+                walking_speed: 4.5,
+                walkway_factor: 0.1,
+                sidewalk_factor: 0.2,
+                alley_factor: 4,
+                driveway_factor: 8,
+                step_penalty: 4,
+                use_tracks: 0.45,
+                use_living_streets: 0.5,
+                use_hills: 0.6,
+                use_ferry: 0.5
+              }
+            }
+          })
+        });
+        clearTimeout(timer);
+        if (!res.ok) return null;
+        const data = await res.json();
+        const shape = data && data.trip && data.trip.legs && data.trip.legs[0] && data.trip.legs[0].shape;
+        if (!shape) return null;
+        const line = decodePolyline(shape, 6);
+        if (line.length < 2) return null;
+        const straight = haversineKm(a.lat, a.lng, b.lat, b.lng);
+        if (lineKm(line) > Math.max(straight * 2.8, straight + 2.5)) return null;
+        return line;
+      } catch (e) {
+        clearTimeout(timer);
+        return null;
+      }
+    }
+
+    async function fetchRoad(plan, a, b) {
+      const straight = [[a.lat, a.lng], [b.lat, b.lng]];
+      const profile = plan && plan.profile;
+      if (!profile) return straight;
+      const key = roadKey(plan.key === 'walk' ? 'walkpath' : profile, a, b);
+      if (roadCache[key]) return roadCache[key];
+      if (plan.key === 'walk') {
+        const walked = await fetchFootpath(a, b);
+        if (walked) {
+          roadCache[key] = walked;
+          return walked;
+        }
+      }
+      const url = 'https://router.project-osrm.org/route/v1/' + profile + '/' +
+        a.lng + ',' + a.lat + ';' + b.lng + ',' + b.lat + '?overview=full&geometries=geojson';
+      try {
+        const ctrl = new AbortController();
+        const timer = setTimeout(() => ctrl.abort(), 8000);
+        const res = await fetch(url, { signal: ctrl.signal });
+        clearTimeout(timer);
+        if (!res.ok) return straight;
+        const data = await res.json();
+        const coords = data && data.routes && data.routes[0] && data.routes[0].geometry && data.routes[0].geometry.coordinates;
+        if (!coords || !coords.length) return straight;
+        const line = coords.map(c => [c[1], c[0]]);
+        roadCache[key] = line;
+        return line;
+      } catch (e) {
+        return straight;
+      }
+    }
+
+    function markOrigin(origin) {
+      if (!origin || !markersLayerGroup || typeof window.L === 'undefined') return;
+      const icon = L.divIcon({
+        className: '',
+        html: `<div class="px-2 py-0.5 rounded-full bg-white text-vltava border border-vltava/20 shadow text-[10px] font-bold whitespace-nowrap">${esc(origin.mapLabel || origin.name)}</div>`,
+        iconSize: [72, 22],
+        iconAnchor: [36, 11]
+      });
+      L.marker([origin.lat, origin.lng], { icon: icon, interactive: false }).addTo(markersLayerGroup);
+    }
+
+    async function drawRoutedLegs(token, pairs) {
+      for (let i = 0; i < pairs.length; i++) {
+        if (token !== roadDrawToken || !routeLayerGroup) return;
+        const pair = pairs[i];
+        const line = await fetchRoad(pair.plan, pair.from, pair.to);
+        if (token !== roadDrawToken || !routeLayerGroup) return;
+        L.polyline(line, {
+          color: pair.plan.color, weight: 7, opacity: 0.18, lineCap: 'round', lineJoin: 'round'
+        }).addTo(routeLayerGroup);
+        L.polyline(line, {
+          color: pair.plan.color, weight: 3.5, opacity: 0.95,
+          dashArray: pair.plan.dash || null, lineCap: 'round', lineJoin: 'round'
+        }).addTo(routeLayerGroup);
+        const mid = line[Math.floor(line.length / 2)];
+        const km = haversineKm(pair.from.lat, pair.from.lng, pair.to.lat, pair.to.lng);
+        const text = pair.label
+          ? pair.label
+          : (pair.plan.label + ' · ' + legDistanceLabel(km) + ' · ' + legClock(km, pair.plan));
+        const icon = L.divIcon({
+          className: '',
+          html: `<div class="leg-midpoint-pill">${esc(text)}</div>`,
+          iconSize: [150, 20],
+          iconAnchor: [75, 10]
+        });
+        L.marker(mid, { icon: icon, interactive: false }).addTo(routeLayerGroup);
+      }
+    }
+
+    function drawOverviewRoads() {
+      const token = ++roadDrawToken;
+      const pairs = REGIONAL_ARCS.map(arc => ({
+        from: { lat: arc.from[0], lng: arc.from[1] },
+        to: { lat: arc.to[0], lng: arc.to[1] },
+        plan: MODE_META.car,
+        label: arc.label
+      }));
+      drawRoutedLegs(token, pairs);
+    }
+
+    function drawDayRoads(day, stops) {
+      const token = ++roadDrawToken;
+      const who = routeVoice(day);
+      const here = who === state.activeUser;
+      const origin = routeStart(who, day);
+      const end = routeEnd(who, day);
+      if (here && origin) markOrigin(origin);
+      if (here && end && (!origin || end.lat !== origin.lat || end.lng !== origin.lng)) markOrigin(end);
+      const points = [];
+      if (origin) points.push(origin);
+      stops.forEach(s => { if (includeInRoute(who, s, day)) points.push(s); });
+      if (end) points.push(end);
+      const pairs = [];
+      for (let i = 1; i < points.length; i++) {
+        const plan = legPlan(who, points[i - 1], points[i], day);
+        if (!plan) continue;
+        pairs.push({ from: points[i - 1], to: points[i], plan: plan });
+      }
+      drawRoutedLegs(token, pairs);
+    }
+
+    function foldText(value) {
+      return String(value || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    }
+
+    function photoWords(value) {
+      const drop = { dinner: 1, lunch: 1, breakfast: 1, brunch: 1, walk: 1, stroll: 1, hike: 1, tour: 1, guided: 1, sunrise: 1, sunset: 1, evening: 1, morning: 1, farewell: 1, family: 1, holiday: 1, arrival: 1, pickup: 1, drive: 1, pastries: 1, hidden: 1, with: 1, from: 1, near: 1, prague: 1, praha: 1, that: 1, this: 1 };
+      return foldText(value).split(/[^a-z0-9]+/).filter(word => word.length > 3 && !drop[word]);
+    }
+
+    function photoQuery(stop) {
+      let title = String(stop.title || '').replace(/\([^)]*\)/g, ' ');
+      title = title.replace(/\b(sunrise|sunset|evening|morning|afternoon|farewell|family|holiday|guided|hidden|stroll|hike|arrival|pickup|pastries|drive|local|christmas|market|fortress|baroque|pilgrimage|walk|town)\b/gi, ' ');
+      title = title.replace(/^(dinner|lunch|breakfast|brunch|walk|tour)\b/gi, ' ');
+      title = title.replace(/\b(at|on|in|the|and|a|of|for|with|from|to|near)\b/gi, ' ');
+      title = title.replace(/[^0-9A-Za-zÀ-žÁ-ž\s'-]/g, ' ').replace(/\s+/g, ' ').trim();
+      return title.length > 3 ? title : String(stop.title || '');
+    }
+
+    function photoPlaceBonus(fileTitle, stop) {
+      const name = foldText(fileTitle);
+      const context = foldText((stop.title || '') + ' ' + (stop.neighborhood || ''));
+      let bonus = 0;
+      const elsewhere = ['svitavy', 'brno', 'plzen', 'pilsen', 'wien', 'vienna', 'berlin', 'dresden', 'nurnberg', 'munchen'];
+      elsewhere.forEach(city => {
+        if (name.indexOf(city) !== -1 && context.indexOf(city) === -1) bonus -= 14;
+      });
+      if ((name.indexOf('prague') !== -1 || name.indexOf('praha') !== -1) && context.indexOf('nurnberg') === -1 && context.indexOf('dresden') === -1) bonus += 6;
+      return bonus;
+    }
+
+    function fileScore(fileTitle, words) {
+      const name = foldText(fileTitle);
+      if (/\.svg$|map\b|flag of|locator|coat of arms|logo|icon|diagram|planek|plan of/.test(name)) return 0;
+      if (!/\.(jpe?g|png|webp)$/.test(name)) return 0;
+      const looseName = name.replace(/(.)\1+/g, '$1');
+      const hits = [];
+      words.forEach(word => {
+        const looseWord = word.replace(/(.)\1+/g, '$1');
+        if (hits.indexOf(looseWord) === -1 && looseName.indexOf(looseWord) !== -1) hits.push(looseWord);
+      });
+      if (!hits.length) return 0;
+      if (hits.length >= 2) {
+        const ranked = hits.slice().sort((a, b) => b.length - a.length);
+        const gap = Math.abs(looseName.indexOf(ranked[0]) - looseName.indexOf(ranked[1]));
+        if (gap > 22) return 0;
+      }
+      return hits.reduce((sum, word) => sum + word.length, 0);
+    }
+
+    async function commonsFiles(query) {
+      const url = 'https://commons.wikimedia.org/w/api.php?action=query&format=json&origin=*&list=search&srnamespace=6&srlimit=6&srsearch=' + encodeURIComponent(query);
+      const data = await fetch(url).then(r => r.json());
+      return ((data.query && data.query.search) || []).map(hit => hit.title);
+    }
+
+    async function commonsThumb(fileTitle) {
+      const url = 'https://commons.wikimedia.org/w/api.php?action=query&format=json&origin=*&prop=imageinfo&iiprop=url&iiurlwidth=960&titles=' + encodeURIComponent(fileTitle);
+      const data = await fetch(url).then(r => r.json());
+      const page = Object.values((data.query && data.query.pages) || {})[0];
+      const info = page && page.imageinfo && page.imageinfo[0];
+      return info ? (info.thumburl || info.url || '') : '';
+    }
+
+    async function requestStopPhoto(stop) {
+      if (!stop) return;
+      const key = stop.id || (stop.lat + ',' + stop.lng);
+      if (photoCache[key] && photoCache[key] !== 'pending') {
+        paintStopPhoto(stop, photoCache[key]);
+        return;
+      }
+      if (photoCache[key] === 'pending') return;
+      photoCache[key] = 'pending';
+      const query = photoQuery(stop);
+      const words = photoWords(query + ' ' + (stop.neighborhood || '') + ' ' + (stop.title || ''));
+      try {
+        const queries = [query];
+        const loose = foldText(query).replace(/(.)\1+/g, '$1');
+        if (loose && queries.indexOf(loose) === -1) queries.push(loose);
+        const place = String(stop.neighborhood || '').split(',')[0].trim();
+        if (place && query.toLowerCase().indexOf(place.toLowerCase()) === -1) queries.push(query + ' ' + place);
+        if (foldText(query).indexOf('prague') === -1 && foldText(query).indexOf('praha') === -1) queries.push(query + ' Prague');
+        let best = '';
+        let bestScore = 0;
+        for (let i = 0; i < queries.length; i++) {
+          const files = await commonsFiles(queries[i]);
+          files.forEach(file => {
+            const score = fileScore(file, words) + photoPlaceBonus(file, stop);
+            if (score > bestScore) {
+              bestScore = score;
+              best = file;
+            }
+          });
+        }
+        const src = best ? await commonsThumb(best) : '';
+        photoCache[key] = src ? { src: src, title: best.replace(/^File:/, '') } : { src: '' };
+        paintStopPhoto(stop, photoCache[key]);
+      } catch (e) {
+        photoCache[key] = { src: '' };
+      }
+    }
+
+    function paintStopPhoto(stop, photo) {
+      if (!photo || !photo.src) return;
+      const id = safeDomId(stop.id);
+      document.querySelectorAll('[data-stop-photo="' + id + '"]').forEach(img => {
+        img.src = photo.src;
+        img.alt = photo.title || stop.title;
+        img.classList.remove('hidden');
+        const cap = img.nextElementSibling;
+        if (cap && cap.hasAttribute('data-photo-credit')) {
+          cap.textContent = 'Photo of this place, from Wikimedia Commons.';
+          cap.classList.remove('hidden');
+        }
+      });
+    }
+
+    function spawnConfetti(count) {
+      const layer = document.getElementById('celebrateLayer');
+      if (!layer) return;
+      const colors = ['#B8293D', '#FBBF24', '#245C46', '#255485', '#C97A1E', '#6D28D9'];
+      for (let i = 0; i < count; i++) {
+        const bit = document.createElement('span');
+        bit.className = 'confetti-bit';
+        bit.style.left = (Math.random() * 100) + '%';
+        bit.style.background = colors[i % colors.length];
+        bit.style.animationDelay = (Math.random() * 0.18) + 's';
+        layer.appendChild(bit);
+        setTimeout(() => bit.remove(), 1500);
+      }
+    }
+
+    function celebrate(kind, day) {
+      const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const slot = document.getElementById('headerKrtekSlot');
+      if (slot && !reduce) {
+        slot.classList.remove('mascot-hop');
+        void slot.offsetWidth;
+        slot.classList.add('mascot-hop');
+      }
+      if (!reduce) spawnConfetti(kind === 'stop' ? 16 : 32);
+      if (kind === 'day') showToast((MASCOT_NAMES[day.mascot] || 'Today') + ' says this day is done.');
+      if (kind === 'trip') openTripDone(day);
+    }
+
+    function personTripDone(user) {
+      return TRIP_DAYS.every((day, i) => {
+        if (!userIsHere(user, i)) return true;
+        const stops = getDayStops(day);
+        return stops.length > 0 && stops.every(s => state.completedStops[s.id]);
+      });
+    }
+
+    function openTripDone(day) {
+      const el = document.getElementById('tripCelebrate');
+      const art = document.getElementById('tripCelebrateArt');
+      if (!el || !art) return;
+      const fn = CZECH_GERMAN_SVGS[day.mascot] || CZECH_GERMAN_SVGS.krtek;
+      art.innerHTML = fn();
+      const copy = document.getElementById('tripCelebrateCopy');
+      if (copy) copy.textContent = state.activeUser + ', every day on your trip is checked off. A je to!';
+      el.classList.remove('hidden');
+    }
+
+    function closeTripCelebrate() {
+      const el = document.getElementById('tripCelebrate');
+      if (el) el.classList.add('hidden');
+    }
+
     function renderMapLayers(shouldFitBounds = true) {
       if (!map || typeof window.L === 'undefined') return;
       routeLayerGroup.clearLayers();
@@ -2190,26 +3283,7 @@
       if (state.overviewMode) {
         const boundsPts = [];
 
-        REGIONAL_ARCS.forEach(arc => {
-          // Outer soft casing
-          L.polyline([arc.from, arc.to], {
-            color: '#B8293D', weight: 6, opacity: 0.18, lineCap: 'round'
-          }).addTo(routeLayerGroup);
-          // Dashed highway line
-          L.polyline([arc.from, arc.to], {
-            color: '#B8293D', weight: 2.5, opacity: 0.85, dashArray: '7, 7', lineCap: 'round'
-          }).addTo(routeLayerGroup);
-
-          const midLat = (arc.from[0] + arc.to[0]) / 2;
-          const midLng = (arc.from[1] + arc.to[1]) / 2;
-          const pillIcon = L.divIcon({
-            className: '',
-            html: `<div class="leg-midpoint-pill">${arc.label}</div>`,
-            iconSize: [74, 20],
-            iconAnchor: [37, 10]
-          });
-          L.marker([midLat, midLng], { icon: pillIcon, interactive: false }).addTo(routeLayerGroup);
-        });
+        drawOverviewRoads();
 
         REGIONAL_HUBS.forEach(hub => {
           boundsPts.push([hub.lat, hub.lng]);
@@ -2251,36 +3325,11 @@
 
       const latLngs = stops.map(s => [s.lat, s.lng]);
 
-      // Multi-layer route polyline (outer glow casing + crisp dashed foreground)
-      if (latLngs.length >= 2) {
-        const strokeColor = day.country === 'DE' ? '#255485' : '#B8293D';
-        L.polyline(latLngs, {
-          color: strokeColor, weight: 8, opacity: 0.18, lineCap: 'round', lineJoin: 'round'
-        }).addTo(routeLayerGroup);
-
-        L.polyline(latLngs, {
-          color: strokeColor, weight: 3.2, opacity: 0.88, dashArray: '8, 7', lineCap: 'round', lineJoin: 'round'
-        }).addTo(routeLayerGroup);
-
-        // Midpoint Haversine Distance & Duration Badges
-        for (let i = 1; i < stops.length; i++) {
-          const p1 = stops[i - 1];
-          const p2 = stops[i];
-          const km = haversineKm(p1.lat, p1.lng, p2.lat, p2.lng);
-          if (km < 0.04) continue;
-          const leg = formatLegDuration(km);
-          const midLat = (p1.lat + p2.lat) / 2;
-          const midLng = (p1.lng + p2.lng) / 2;
-
-          const legIcon = L.divIcon({
-            className: '',
-            html: `<div class="leg-midpoint-pill">${leg.dist} &bull; ${leg.time}</div>`,
-            iconSize: [96, 20],
-            iconAnchor: [48, 10]
-          });
-          L.marker([midLat, midLng], { icon: legIcon, interactive: false }).addTo(routeLayerGroup);
-        }
-      }
+      const originForBounds = routeStart(routeVoice(day), day);
+      if (originForBounds) latLngs.push([originForBounds.lat, originForBounds.lng]);
+      const endForBounds = routeEnd(routeVoice(day), day);
+      if (endForBounds) latLngs.push([endForBounds.lat, endForBounds.lng]);
+      drawDayRoads(day, stops);
 
       // Numbered Stop Markers
       stops.forEach((stop, idx) => {
@@ -2313,6 +3362,8 @@
               <span class="text-[10px] font-semibold text-slate-500">${esc(stop.neighborhood)}</span>
             </div>
             <h4 class="font-display font-bold text-sm text-vltava leading-snug">${esc(stop.title)}</h4>
+            <img data-stop-photo="${safeDomId(stop.id)}" alt="" class="hidden w-full h-28 object-cover rounded-xl" />
+            <p data-photo-credit class="hidden text-[10px] text-slate-400"></p>
             <p class="text-xs text-slate-700 leading-relaxed">${esc(stop.tip)}</p>
             <div class="pt-1.5 flex items-center gap-1.5">
               <a href="https://www.google.com/maps/search/?api=1&query=${safeCoord(stop.lat)},${safeCoord(stop.lng)}" target="_blank" rel="noopener noreferrer"
@@ -2336,6 +3387,7 @@
           const card = document.getElementById(`stop-card-${safeDomId(stop.id)}`);
           if (card) card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         });
+        marker.on('popupopen', () => requestStopPhoto(stop));
         markerRefsById[stop.id] = marker;
       });
 
@@ -2508,8 +3560,39 @@
      * 8. UI RENDERING: COMMAND DOCK, 17-DAY RIBBON & ITINERARY DRAWER
      * =========================================================================
      */
+    const WHO_CAST = ['krtek', 'rumcajs', 'bobAndBobek', 'vecernicek', 'hurvinek', 'sandmann', 'machSebestova', 'kremilek', 'patAndMat', 'ferda', 'blaubaer', 'pumuckl', 'maxipes', 'ctyrlistek', 'maus', 'maja', 'rakosnicek'];
+    let whoFaces = null;
+
+    function shuffledCast() {
+      const copy = WHO_CAST.slice();
+      for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        const swap = copy[i];
+        copy[i] = copy[j];
+        copy[j] = swap;
+      }
+      return copy;
+    }
+
+    function paintWhoFaces() {
+      if (!whoFaces) {
+        const dealt = shuffledCast();
+        whoFaces = {};
+        FAMILY_MEMBERS.forEach((member, index) => { whoFaces[member.id] = dealt[index]; });
+      }
+      document.querySelectorAll('[data-who-face]').forEach(slot => {
+        const key = whoFaces[slot.getAttribute('data-who-face')];
+        const draw = CZECH_GERMAN_SVGS[key];
+        if (!draw) return;
+        slot.innerHTML = draw();
+        const button = slot.closest('button');
+        if (button) button.title = (MASCOT_NAMES[key] || 'Cartoon') + ' is with ' + slot.getAttribute('data-who-face');
+      });
+    }
+
     function injectBespokeBrandIcons() {
-      document.getElementById('headerKrtekSlot').innerHTML = CZECH_GERMAN_SVGS.krtek();
+      paintWhoFaces();
+      paintHeaderMascot();
       document.getElementById('btnBobekIcon').innerHTML = CZECH_GERMAN_SVGS.bobAndBobek();
       document.getElementById('btnPatMatIcon').innerHTML = CZECH_GERMAN_SVGS.patAndMat();
       document.getElementById('modalPatMatArt').innerHTML = CZECH_GERMAN_SVGS.patAndMat();
@@ -2528,15 +3611,18 @@
           </button>`;
       }).join('');
       document.getElementById('mobileVoterSelect').value = state.activeUser;
+      const chip = document.getElementById('whoChipName');
+      if (chip) chip.textContent = state.activeUser;
     }
 
     function setActiveUser(userId) {
       if (!knownMember(userId)) return;
       state.activeUser = legacyMember(userId);
+      try { localStorage.setItem(WHO_STORAGE_KEY, state.activeUser); } catch (e) {}
       persistState();
-      renderVoterControls();
-      renderDrawerContent();
-      showToast(`Voting as ${userId}`);
+      renderAllUI();
+      renderMapLayers(true);
+      showToast('Routes for ' + state.activeUser);
     }
 
     function updateScopeButtonsUI() {
@@ -2580,9 +3666,14 @@
       renderGemsOverlay();
     }
 
+    function checklistForUser(user) {
+      return BOOKING_CHECKLIST.filter(item => !item.who || item.who.indexOf(user) !== -1);
+    }
+
     function updateHeaderChecklistBadge() {
-      const done = BOOKING_CHECKLIST.filter(i => state.checkedBookings[i.id]).length;
-      document.getElementById('headerChecklistCount').textContent = `${done}/${BOOKING_CHECKLIST.length}`;
+      const mine = checklistForUser(state.activeUser);
+      const done = mine.filter(i => state.checkedBookings[i.id]).length;
+      document.getElementById('headerChecklistCount').textContent = `${done}/${mine.length}`;
     }
 
     // SVG Circular Progress Ring for Day Ribbon Pills
@@ -2607,23 +3698,21 @@
         const stops = getDayStops(day);
         const doneCount = stops.filter(s => state.completedStops[s.id]).length;
         const isActive = idx === state.selectedDayIndex && !state.overviewMode;
+        const here = userIsHere(state.activeUser, idx);
         const flag = day.country === 'DE' ? '🇩🇪' : '🇨🇿';
 
         return `
           <button id="ribbon-day-${idx}" onclick="selectDay(${idx})"
-            class="shrink-0 px-2.5 py-1.5 rounded-xl border text-left transition flex items-center gap-2 ${
+            class="shrink-0 w-[9.5rem] px-2 py-1.5 rounded-xl border transition flex items-center justify-center gap-1.5 text-center ${
               isActive
                 ? 'bg-vltava text-parchment border-vltava shadow-md'
                 : 'bg-white/80 hover:bg-white text-vltava border-vltava/12'
-            }">
+            } ${here ? '' : 'opacity-60'}">
             ${renderProgressRing(doneCount, stops.length, isActive)}
-            <div class="min-w-0">
-              <div class="flex items-center gap-1">
-                <span class="font-mono text-[11px] font-bold tracking-tight">${day.shortDate}</span>
-                <span class="text-[11px]">${flag}</span>
-              </div>
-              <div class="text-[10px] truncate max-w-[92px] ${isActive ? 'text-amber-200 font-medium' : 'text-slate-500'}">
-                ${day.region}
+            <div class="leading-none text-center">
+              <div class="font-mono text-[11px] font-bold tracking-tight whitespace-nowrap">${day.shortDate} ${flag}</div>
+              <div class="text-[10px] mt-1 whitespace-nowrap ${isActive ? 'text-amber-200 font-medium' : 'text-slate-500'}">
+                ${here ? day.region : 'Away'}
               </div>
             </div>
           </button>`;
@@ -2644,6 +3733,7 @@
         state.selectedStopId = nextPending.id;
       }
       persistState();
+      paintHeaderMascot();
       renderDayRibbon();
       renderDrawerContent();
       renderMapLayers(true);
@@ -2674,6 +3764,7 @@
                 <span class="text-[11px] font-bold ${day.country === 'DE' ? 'text-cobalt' : 'text-linden'}">
                   ${day.region}
                 </span>
+                <span class="text-[11px] font-semibold text-amber-900">${esc(MASCOT_NAMES[day.mascot] || '')}</span>
               </div>
               <h2 class="font-display font-bold text-base sm:text-lg text-vltava mt-1 leading-snug">
                 ${esc(day.title)}
@@ -2726,6 +3817,8 @@
           </div>`;
       }
 
+      html += personDayCards(day);
+
       // "Up Next" Live Highlight Card
       const upNext = stops.find(s => !state.completedStops[s.id]);
       if (upNext) {
@@ -2766,6 +3859,7 @@
       }
 
       // Chronological Stop Cards + Leg Distance Connectors
+      let prevPoint = routeStart(routeVoice(day), day);
       stops.forEach((stop, idx) => {
         const stopNum = idx + 1;
         const isDone = !!state.completedStops[stop.id];
@@ -2774,19 +3868,10 @@
         const votes = (state.stopVotes[stop.id] || []).map(legacyMember).filter(name => FAMILY_MEMBERS.some(m => m.id === name));
         const hasVoted = votes.includes(state.activeUser);
         const pinColor = isDone ? '#245C46' : (day.country === 'DE' && stop.category === 'sight' ? '#255485' : cat.color);
+        const onRoute = includeInRoute(routeVoice(day), stop, day);
 
-        if (idx > 0) {
-          const prev = stops[idx - 1];
-          const km = haversineKm(prev.lat, prev.lng, stop.lat, stop.lng);
-          const leg = formatLegDuration(km);
-          html += `
-            <div class="flex items-center gap-2 pl-5 py-0.5">
-              <div class="w-0.5 h-4 bg-vltava/15"></div>
-              <span class="font-mono text-[10px] font-medium px-2 py-0.5 rounded-full bg-vltava/5 text-slate-600">
-                &darr; ${leg.dist} &bull; ${leg.time}
-              </span>
-            </div>`;
-        }
+        if (onRoute && prevPoint) html += connectorHtml(prevPoint, stop, day);
+        if (onRoute) prevPoint = stop;
 
         html += `
           <article id="stop-card-${safeDomId(stop.id)}" onclick="focusStop('${safeDomId(stop.id)}', true)"
@@ -2830,7 +3915,10 @@
                     <span>&#9733; ${esc(stop.booking)}</span>
                   </div>` : ''}
 
+                <img data-stop-photo="${safeDomId(stop.id)}" alt="" class="hidden mt-2 w-full h-40 object-cover rounded-xl border border-stone-200" />
+                <p data-photo-credit class="hidden text-[10px] text-slate-400 mt-1"></p>
                 <p class="text-xs text-slate-600 mt-2 leading-relaxed">${esc(stop.tip)}</p>
+                ${routeNote(state.activeUser, stop, day) ? `<p class="text-[11px] font-medium text-cobalt mt-1.5">${esc(routeNote(state.activeUser, stop, day))}</p>` : ''}
 
                 <!-- Card Footer: Family Upvotes & Direct Maps Deep Links -->
                 <div class="mt-2.5 pt-2 border-t border-vltava/8 flex items-center justify-between gap-2 flex-wrap">
@@ -2861,6 +3949,9 @@
           </article>`;
       });
 
+      const endPoint = routeEnd(routeVoice(day), day);
+      if (endPoint && prevPoint) html += connectorHtml(prevPoint, endPoint, day);
+
       // Day Notes Scratchpad
       const curNote = state.dayNotes[day.id] || '';
       html += `
@@ -2879,6 +3970,7 @@
         </div>`;
 
       feed.innerHTML = html;
+      stops.forEach(stop => requestStopPhoto(stop));
     }
 
     function updateDayNote(dayId, val) {
@@ -2890,12 +3982,19 @@
     function toggleStopComplete(stopId) {
       stopId = safeDomId(stopId);
       state.completedStops[stopId] = !state.completedStops[stopId];
-      if (!state.completedStops[stopId]) delete state.completedStops[stopId];
+      const turnedOn = !!state.completedStops[stopId];
+      if (!turnedOn) delete state.completedStops[stopId];
       stamp('c', stopId);
       persistState();
       renderDayRibbon();
       renderDrawerContent();
       renderMapLayers(false);
+      if (turnedOn) {
+        const day = getCurrentDay();
+        if (personTripDone(state.activeUser)) celebrate('trip', day);
+        else if (getDayStops(day).every(s => state.completedStops[s.id])) celebrate('day', day);
+        else celebrate('stop', day);
+      }
     }
 
     function resetDayStops() {
@@ -3009,7 +4108,8 @@
       const body = document.getElementById('toolsModalBody');
 
       if (tab === 'checklist') {
-        body.innerHTML = BOOKING_CHECKLIST.map(item => {
+        const mine = checklistForUser(state.activeUser);
+        body.innerHTML = `<p class="text-[11px] text-slate-500 px-1">Showing what ${esc(state.activeUser)} needs to handle.</p>` + mine.map(item => {
           const checked = !!state.checkedBookings[item.id];
           return `
             <label onclick="toggleBookingItem('${item.id}')"
@@ -3341,6 +4441,7 @@
      * =========================================================================
      */
     function renderAllUI() {
+      paintHeaderMascot();
       renderVoterControls();
       updateScopeButtonsUI();
       updateHeaderChecklistBadge();
@@ -3365,6 +4466,14 @@
       const initialStops = getDayStops(getCurrentDay());
       if (initialStops.length && !initialStops.some(s => s.id === state.selectedStopId)) {
         state.selectedStopId = initialStops[0].id;
+      }
+
+      try {
+        const savedWho = localStorage.getItem(WHO_STORAGE_KEY);
+        if (knownMember(savedWho)) state.activeUser = legacyMember(savedWho);
+        else openWhoModal(true);
+      } catch (e) {
+        openWhoModal(true);
       }
 
       injectBespokeBrandIcons();
