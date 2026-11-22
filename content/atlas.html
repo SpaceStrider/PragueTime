@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Prague &amp; Beyond — Family Winter Atlas (Dec 17, 2026 – Jan 2, 2027)</title>
+  <title>Prague Time</title>
   <link rel="icon" href="favicon.ico" sizes="32x32" />
   <link rel="icon" type="image/png" href="favicon.png" sizes="64x64" />
   <link rel="apple-touch-icon" href="apple-touch-icon.png" />
@@ -317,7 +317,7 @@
         <div class="min-w-0">
           <div class="flex items-center gap-2">
             <h1 class="font-display font-bold text-sm sm:text-base md:text-lg tracking-tight text-vltava truncate">
-              Prague &amp; Beyond <span class="hidden sm:inline font-normal italic text-garnet">— Family Winter Atlas</span>
+              Prague Time
             </h1>
             <span class="hidden 2xl:inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-mono font-medium bg-vltava/5 text-vltava/80 border border-vltava/10">
               Dec 17, 2026 – Jan 2, 2027
@@ -3703,18 +3703,15 @@
 
         return `
           <button id="ribbon-day-${idx}" onclick="selectDay(${idx})"
-            class="shrink-0 px-2.5 py-1.5 rounded-xl border text-left transition flex items-center gap-2 ${
+            class="shrink-0 w-[9.5rem] px-2 py-1.5 rounded-xl border transition flex items-center justify-center gap-1.5 text-center ${
               isActive
                 ? 'bg-vltava text-parchment border-vltava shadow-md'
                 : 'bg-white/80 hover:bg-white text-vltava border-vltava/12'
             } ${here ? '' : 'opacity-60'}">
             ${renderProgressRing(doneCount, stops.length, isActive)}
-            <div class="min-w-0">
-              <div class="flex items-center gap-1">
-                <span class="font-mono text-[11px] font-bold tracking-tight">${day.shortDate}</span>
-                <span class="text-[11px]">${flag}</span>
-              </div>
-              <div class="text-[10px] truncate max-w-[92px] ${isActive ? 'text-amber-200 font-medium' : 'text-slate-500'}">
+            <div class="leading-none text-center">
+              <div class="font-mono text-[11px] font-bold tracking-tight whitespace-nowrap">${day.shortDate} ${flag}</div>
+              <div class="text-[10px] mt-1 whitespace-nowrap ${isActive ? 'text-amber-200 font-medium' : 'text-slate-500'}">
                 ${here ? day.region : 'Away'}
               </div>
             </div>
