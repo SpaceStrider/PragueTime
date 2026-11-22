@@ -1,0 +1,3377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Prague &amp; Beyond — Family Winter Atlas (Dec 17, 2026 – Jan 2, 2027)</title>
+
+  <!-- Editorial & Technical Typography: Fraunces, Plus Jakarta Sans, JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <!-- Leaflet 1.9.4 Retina Cartography -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            display: ['Fraunces', 'Georgia', 'serif'],
+            sans: ['Plus Jakarta Sans', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+            mono: ['JetBrains Mono', 'ui-monospace', 'SFMono-Regular', 'monospace']
+          },
+          colors: {
+            vltava: '#141923',
+            garnet: '#B8293D',
+            pilsner: '#C97A1E',
+            linden: '#245C46',
+            cobalt: '#255485',
+            parchment: '#FCFAF6'
+          }
+        }
+      }
+    };
+  </script>
+
+  <style>
+    :root {
+      --glass-bg: rgba(252, 250, 246, 0.92);
+      --glass-border: rgba(20, 25, 35, 0.11);
+      --vltava-ink: #141923;
+      --garnet-crimson: #B8293D;
+      --pilsner-amber: #C97A1E;
+      --linden-forest: #245C46;
+      --cobalt-blue: #255485;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      color: var(--vltava-ink);
+      background-color: #141923;
+    }
+
+    /* Full-Bleed Map Viewport */
+    #map {
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 1;
+      background: #e9e4da;
+    }
+
+    #map.drop-pin-mode,
+    #map.drop-pin-mode .leaflet-grab {
+      cursor: crosshair !important;
+    }
+
+    /* Glassmorphic HUD Surface + Subtle Cartographic Paper Grain */
+    .atlas-glass {
+      background: var(--glass-bg);
+      backdrop-filter: blur(18px) saturate(165%);
+      -webkit-backdrop-filter: blur(18px) saturate(165%);
+      border: 1px solid var(--glass-border);
+      box-shadow: 0 12px 34px -8px rgba(20, 25, 35, 0.18), 0 2px 8px -2px rgba(20, 25, 35, 0.08);
+      position: relative;
+    }
+
+    .atlas-glass::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      pointer-events: none;
+      opacity: 0.032;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)'/%3E%3C/svg%3E");
+    }
+
+    .atlas-glass-dark {
+      background: rgba(20, 25, 35, 0.90);
+      backdrop-filter: blur(18px) saturate(160%);
+      -webkit-backdrop-filter: blur(18px) saturate(160%);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      box-shadow: 0 14px 36px -8px rgba(0, 0, 0, 0.42);
+    }
+
+    /* Custom Scrollbars */
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+    .atlas-scroll::-webkit-scrollbar { width: 5px; height: 5px; }
+    .atlas-scroll::-webkit-scrollbar-track { background: transparent; }
+    .atlas-scroll::-webkit-scrollbar-thumb {
+      background: rgba(20, 25, 35, 0.22);
+      border-radius: 9999px;
+    }
+    .atlas-scroll::-webkit-scrollbar-thumb:hover {
+      background: rgba(20, 25, 35, 0.38);
+    }
+
+    /* Custom Leaflet Pin & Pulse Animations */
+    @keyframes atlasPulse {
+      0% { transform: scale(0.95); opacity: 0.75; }
+      70% { transform: scale(1.75); opacity: 0; }
+      100% { transform: scale(1.75); opacity: 0; }
+    }
+
+    .pin-pulse-ring {
+      position: absolute;
+      inset: -5px;
+      border-radius: 9999px;
+      border: 2.5px solid #B8293D;
+      animation: atlasPulse 1.9s cubic-bezier(0.24, 0, 0.38, 1) infinite;
+      pointer-events: none;
+    }
+
+    .district-callout {
+      font-family: 'Fraunces', Georgia, serif;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: rgba(20, 25, 35, 0.46);
+      text-shadow: 0 1px 0 rgba(255, 255, 255, 0.85), 0 -1px 0 rgba(255, 255, 255, 0.85), 1px 0 0 rgba(255, 255, 255, 0.85), -1px 0 0 rgba(255, 255, 255, 0.85);
+      white-space: nowrap;
+      pointer-events: none;
+      user-select: none;
+    }
+
+    .night-mode .district-callout {
+      color: rgba(252, 250, 246, 0.52);
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
+    }
+
+    .leg-midpoint-pill {
+      background: rgba(20, 25, 35, 0.88);
+      color: #FCFAF6;
+      border: 1px solid rgba(252, 250, 246, 0.22);
+      border-radius: 9999px;
+      padding: 2px 8px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      font-weight: 500;
+      white-space: nowrap;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.22);
+      backdrop-filter: blur(8px);
+    }
+
+    /* Leaflet Popup Editorial Styling */
+    .leaflet-popup-content-wrapper {
+      background: rgba(252, 250, 246, 0.97) !important;
+      color: #141923 !important;
+      border-radius: 16px !important;
+      border: 1px solid rgba(20, 25, 35, 0.12) !important;
+      box-shadow: 0 18px 40px -10px rgba(20, 25, 35, 0.28) !important;
+      font-family: 'Plus Jakarta Sans', sans-serif !important;
+    }
+    .leaflet-popup-tip {
+      background: rgba(252, 250, 246, 0.97) !important;
+    }
+    .leaflet-container a.leaflet-popup-close-button {
+      color: #64748b !important;
+      padding: 6px 8px 0 0 !important;
+    }
+
+    /* Position Leaflet Zoom Bottom-Right out of the way of Floating HUD */
+    .leaflet-bottom.leaflet-right {
+      margin-bottom: 14px;
+      margin-right: 12px;
+    }
+    @media (max-width: 1023px) {
+      .leaflet-bottom.leaflet-right {
+        margin-bottom: auto;
+        top: 132px;
+        bottom: auto;
+      }
+    }
+  </style>
+</head>
+<body class="antialiased selection:bg-amber-200 selection:text-vltava">
+
+  <!-- ==================== 1. FULL-BLEED INTERACTIVE MAP VIEWPORT ==================== -->
+  <div id="map" role="region" aria-label="Interactive Central Europe & Prague Winter Atlas Map"></div>
+
+  <!-- Drop-Pin Active Crosshair Banner -->
+  <div id="dropPinBanner" class="hidden fixed top-32 left-1/2 -translate-x-1/2 z-[600] bg-garnet text-white px-4 py-2.5 rounded-2xl shadow-2xl border border-white/25 flex items-center gap-3 text-xs font-bold">
+    <span class="w-2.5 h-2.5 rounded-full bg-amber-300 animate-ping"></span>
+    <span>Click anywhere on the map to drop a custom pin</span>
+    <button onclick="cancelDropPinMode()" class="px-2.5 py-1 rounded-lg bg-vltava/90 hover:bg-vltava text-amber-200 text-[11px] font-semibold transition">
+      Cancel
+    </button>
+  </div>
+
+  <!-- ==================== 2. FLOATING TOP COMMAND DOCK ==================== -->
+  <header class="fixed top-2.5 left-2.5 right-2.5 z-[500] pointer-events-none flex flex-col gap-2">
+    <div class="atlas-glass rounded-2xl px-3 sm:px-4 py-2 flex items-center justify-between gap-2 pointer-events-auto">
+      <!-- Left: Krtek Emblem & Editorial Atlas Title -->
+      <div class="flex items-center gap-2.5 min-w-0">
+        <div id="headerKrtekSlot" class="w-10 h-10 rounded-xl bg-amber-50 border border-amber-200/80 flex items-center justify-center shrink-0 shadow-2xs" title="Krtek — Your Bohemian Winter Guide"></div>
+        <div class="min-w-0">
+          <div class="flex items-center gap-2">
+            <h1 class="font-display font-bold text-sm sm:text-base md:text-lg tracking-tight text-vltava truncate">
+              Prague &amp; Beyond <span class="hidden sm:inline font-normal italic text-garnet">— Family Winter Atlas</span>
+            </h1>
+            <span class="hidden 2xl:inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-mono font-medium bg-vltava/5 text-vltava/80 border border-vltava/10">
+              Dec 17, 2026 – Jan 2, 2027
+            </span>
+          </div>
+          <p class="text-[11px] text-slate-600 truncate">
+            Ethan, Debi, Tom, Olivia &amp; Jordan &bull; <span id="syncStatusLabel" class="font-medium text-linden">Connecting live sync…</span>
+          </p>
+        </div>
+      </div>
+
+      <!-- Center / Right Controls -->
+      <div class="flex items-center gap-1.5 sm:gap-2 shrink-0 flex-wrap justify-end">
+        <!-- View Scope Toggle: Day Route vs Central Europe Overview -->
+        <div class="hidden xl:inline-flex rounded-xl bg-vltava/5 p-1 border border-vltava/10">
+          <button id="btnScopeDay" onclick="setOverviewMode(false)" class="px-2.5 py-1 rounded-lg text-xs font-bold transition bg-vltava text-parchment shadow-2xs">
+            Day Route
+          </button>
+          <button id="btnScopeOverview" onclick="setOverviewMode(true)" class="px-2.5 py-1 rounded-lg text-xs font-semibold transition text-slate-700 hover:text-vltava">
+            Central Europe Overview
+          </button>
+        </div>
+
+        <!-- Compact Overview Toggle for Medium/Small Screens -->
+        <button id="btnScopeCompact" onclick="toggleOverviewMode()" class="xl:hidden flex items-center gap-1 px-2.5 py-2 rounded-xl bg-white/80 hover:bg-white text-vltava border border-vltava/15 text-xs font-bold transition" title="Toggle Day Route vs Central Europe Overview">
+          <svg class="w-3.5 h-3.5 text-garnet" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+          <span class="hidden sm:inline" id="compactScopeLabel">Overview</span>
+        </button>
+
+        <!-- Map Tile Style Switcher -->
+        <div class="relative">
+          <select id="tileStyleSelect" onchange="switchTileLayer(this.value)" aria-label="Map Cartographic Style"
+            class="appearance-none bg-white/85 hover:bg-white text-vltava text-xs font-bold rounded-xl pl-2.5 pr-7 py-2 border border-vltava/15 focus:outline-none focus:border-garnet cursor-pointer transition">
+            <option value="voyager">Street Map</option>
+            <option value="editorial">Clear Streets</option>
+            <option value="topo">Topo Trails</option>
+            <option value="night">Night Walk</option>
+          </select>
+          <svg class="w-3.5 h-3.5 text-slate-500 absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+
+        <!-- Active Family Member Voter Selector -->
+        <div class="hidden lg:flex items-center bg-white/75 border border-vltava/15 rounded-xl p-0.5 gap-0.5" title="Select active family member to vote on stops">
+          <div id="desktopVoterPills" class="flex items-center gap-0.5"></div>
+        </div>
+        <select id="mobileVoterSelect" onchange="setActiveUser(this.value)" aria-label="Select active family member"
+          class="lg:hidden bg-white/85 text-vltava text-xs font-bold rounded-xl px-2 py-2 border border-vltava/15 focus:outline-none">
+          <option value="Ethan">Ethan</option>
+          <option value="Debi">Debi</option>
+          <option value="Tom">Tom</option>
+          <option value="Olivia">Olivia</option>
+          <option value="Jordan">Jordan</option>
+        </select>
+
+        <!-- Honest Guide Gems Toggle (Bob & Bobek Icon) -->
+        <button id="btnGemsToggle" onclick="toggleHonestGems()"
+          class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-linden text-white border border-linden text-xs font-bold transition shadow-2xs"
+          title="Toggle Bob & Bobek's Honest Guide Hidden Gems (+ pins)">
+          <span id="btnBobekIcon" class="w-5 h-5 flex items-center justify-center shrink-0"></span>
+          <span class="hidden md:inline">Gems</span>
+          <span id="gemsStatusBadge" class="text-[10px] font-mono bg-white/20 px-1.5 py-0.2 rounded">ON</span>
+        </button>
+
+        <!-- Tools & Checklist Drawer Button (Pat & Mat Icon) -->
+        <button onclick="openToolsModal('checklist')"
+          class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-amber-50 hover:bg-amber-100 text-vltava border border-amber-300/80 text-xs font-bold transition shadow-2xs"
+          title="Pat & Mat's Trip Prep Checklist, CZK Converter & Near Me Finder">
+          <span id="btnPatMatIcon" class="w-5 h-5 flex items-center justify-center shrink-0"></span>
+          <span class="hidden md:inline">Tools</span>
+          <span id="headerChecklistCount" class="text-[10px] font-mono font-bold bg-pilsner text-white px-1.5 py-0.5 rounded-full">0/20</span>
+        </button>
+
+        <!-- Prominent Share Sync Link Button -->
+        <button onclick="triggerQuickShareSync()"
+          class="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-garnet hover:bg-[#9e2032] text-white text-xs font-bold transition shadow-md border border-white/15"
+          title="Copy the family link. Votes, checkmarks, and notes already sync across phones.">
+          <svg class="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+            <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+          </svg>
+          <span class="hidden sm:inline">Share Sync Link</span>
+          <span class="sm:hidden">Sync</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- ==================== 3. FLOATING HORIZONTAL 17-DAY RIBBON ==================== -->
+    <div class="atlas-glass rounded-2xl px-2 py-1.5 flex items-center gap-1.5 pointer-events-auto">
+      <button onclick="scrollDayRibbon(-280)" aria-label="Previous days"
+        class="hidden sm:flex w-7 h-7 rounded-lg bg-white/80 hover:bg-white text-vltava border border-vltava/10 items-center justify-center shrink-0 transition">
+        <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+
+      <div id="dayRibbonScroll" class="flex items-center gap-1.5 overflow-x-auto no-scrollbar flex-1">
+        <!-- 17 Day Pills Injected Dynamically -->
+      </div>
+
+      <button onclick="scrollDayRibbon(280)" aria-label="Next days"
+        class="hidden sm:flex w-7 h-7 rounded-lg bg-white/80 hover:bg-white text-vltava border border-vltava/10 items-center justify-center shrink-0 transition">
+        <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><polyline points="9 18 15 12 9 6"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- ==================== 4. FLOATING LEFT / BOTTOM ITINERARY DRAWER ==================== -->
+  <!-- Desktop Collapse/Expand Pill -->
+  <button id="desktopDrawerToggle" onclick="toggleDesktopDrawer()"
+    class="hidden lg:flex fixed left-3 top-[134px] z-[460] atlas-glass px-3 py-2 rounded-xl items-center gap-2 text-xs font-bold text-vltava hover:bg-white transition"
+    title="Collapse or expand itinerary drawer">
+    <svg id="desktopDrawerChevron" class="w-3.5 h-3.5 text-garnet transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+    <span id="desktopDrawerToggleLabel">Hide Itinerary</span>
+  </button>
+
+  <aside id="itineraryDrawer"
+    class="fixed z-[450] left-2.5 right-2.5 bottom-2.5 lg:right-auto lg:top-[176px] lg:bottom-3 lg:w-[435px] xl:w-[465px] h-[52vh] lg:h-auto atlas-glass rounded-3xl flex flex-col overflow-hidden transition-all duration-300">
+
+    <!-- Mobile Bottom-Sheet Drag / Snap Handle -->
+    <div class="lg:hidden flex items-center justify-between px-4 pt-2.5 pb-1.5 border-b border-vltava/10 shrink-0 bg-white/40">
+      <button onclick="cycleMobileSheetHeight()" class="flex items-center gap-2 text-[11px] font-bold text-slate-600">
+        <span class="w-8 h-1 rounded-full bg-vltava/25 inline-block"></span>
+        <span id="mobileSheetStateLabel">Half Sheet (Tap to Expand/Minimize)</span>
+      </button>
+      <div class="flex items-center gap-1">
+        <button onclick="setMobileSheetHeight('peek')" class="px-2 py-0.5 rounded-md bg-white/80 border border-vltava/10 text-[10px] font-bold text-vltava">Map</button>
+        <button onclick="setMobileSheetHeight('half')" class="px-2 py-0.5 rounded-md bg-white/80 border border-vltava/10 text-[10px] font-bold text-vltava">Split</button>
+        <button onclick="setMobileSheetHeight('full')" class="px-2 py-0.5 rounded-md bg-white/80 border border-vltava/10 text-[10px] font-bold text-vltava">Full</button>
+      </div>
+    </div>
+
+    <!-- Active Day Editorial Header -->
+    <div id="drawerDayHeader" class="px-4 py-3.5 border-b border-vltava/10 shrink-0 bg-white/50">
+      <!-- Populated Dynamically -->
+    </div>
+
+    <!-- Scrollable Itinerary Content -->
+    <div id="drawerStopsFeed" class="flex-1 overflow-y-auto atlas-scroll p-3.5 sm:p-4 space-y-3 pb-10">
+      <!-- Populated Dynamically -->
+    </div>
+  </aside>
+
+  <!-- ==================== 5. TOOLS & CHECKLIST MODAL (PAT & MAT + HONEST GUIDE) ==================== -->
+  <div id="toolsModal" class="hidden fixed inset-0 z-[800] bg-vltava/70 backdrop-blur-xs flex items-center justify-center p-3 sm:p-5">
+    <div class="bg-parchment text-vltava rounded-3xl max-w-2xl w-full max-h-[88vh] flex flex-col shadow-2xl border border-vltava/15 overflow-hidden">
+      <!-- Modal Header -->
+      <div class="px-5 py-4 bg-vltava text-parchment flex items-center justify-between gap-3">
+        <div class="flex items-center gap-3">
+          <div id="modalPatMatArt" class="w-11 h-11 rounded-2xl bg-amber-100/15 border border-white/15 flex items-center justify-center shrink-0"></div>
+          <div>
+            <h2 class="font-display font-bold text-lg text-amber-200 leading-tight">A je to! Family Field Toolkit</h2>
+            <p class="text-xs text-slate-300">Bookings checklist, CZK currency math, Czech menu decoder &amp; Near Me radar</p>
+          </div>
+        </div>
+        <button onclick="closeModal('toolsModal')" class="w-9 h-9 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-lg flex items-center justify-center transition">&times;</button>
+      </div>
+
+      <!-- Sub-Navigation Tabs -->
+      <div class="px-4 py-2.5 bg-stone-100 border-b border-stone-200 flex items-center gap-1.5 overflow-x-auto no-scrollbar shrink-0">
+        <button id="tabBtn-checklist" onclick="switchToolsTab('checklist')" class="px-3 py-1.5 rounded-xl text-xs font-bold transition bg-vltava text-white">
+          Bookings &amp; Holiday Rules
+        </button>
+        <button id="tabBtn-currency" onclick="switchToolsTab('currency')" class="px-3 py-1.5 rounded-xl text-xs font-bold transition text-slate-700 hover:bg-white">
+          CZK Converter &amp; Decoder
+        </button>
+        <button id="tabBtn-nearme" onclick="switchToolsTab('nearme')" class="px-3 py-1.5 rounded-xl text-xs font-bold transition text-slate-700 hover:bg-white">
+          Near Me Radar
+        </button>
+      </div>
+
+      <!-- Tab Content Container -->
+      <div id="toolsModalBody" class="flex-1 overflow-y-auto atlas-scroll p-4 sm:p-5 space-y-4">
+        <!-- Populated Dynamically -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== 6. SHARE & GITHUB PAGES SYNC MODAL ==================== -->
+  <div id="shareSyncModal" class="hidden fixed inset-0 z-[800] bg-vltava/70 backdrop-blur-xs flex items-center justify-center p-3 sm:p-5">
+    <div class="bg-parchment text-vltava rounded-3xl max-w-xl w-full max-h-[90vh] flex flex-col shadow-2xl border border-vltava/15 overflow-hidden">
+      <div class="px-5 py-4 bg-vltava text-parchment flex items-center justify-between">
+        <div>
+          <h2 class="font-display font-bold text-lg text-amber-200">Share &amp; Sync Family Atlas</h2>
+          <p class="text-xs text-slate-300">One link for every phone. Hearts, checks, and notes stay together.</p>
+        </div>
+        <button onclick="closeModal('shareSyncModal')" class="w-9 h-9 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-lg flex items-center justify-center transition">&times;</button>
+      </div>
+
+      <div class="flex-1 overflow-y-auto atlas-scroll p-4 sm:p-5 space-y-4 text-xs">
+        <!-- Compressed URL Box + Instant QR Code -->
+        <div class="bg-white rounded-2xl p-4 border border-stone-200 shadow-2xs space-y-3">
+          <div class="flex items-start justify-between gap-3">
+            <div class="space-y-1">
+              <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-linden/10 text-linden font-bold text-[11px]">
+                &#10003; Compressed State Link Ready
+              </span>
+              <h3 class="font-bold text-sm text-vltava">Text this to Debi, Tom, Olivia &amp; Jordan</h3>
+              <p class="text-slate-600 leading-relaxed">
+                The plan is on this link. Hearts, finished stops, notes, custom pins, and the Dec 30 choice sync on their own. Each person taps their own name.
+              </p>
+            </div>
+            <!-- Scannable Canvas QR Code -->
+            <div class="shrink-0 flex flex-col items-center bg-parchment p-2 rounded-xl border border-stone-200">
+              <canvas id="syncQrCanvas" width="96" height="96" class="rounded"></canvas>
+              <span class="text-[9px] font-mono text-slate-500 mt-1">Scan at Table</span>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <input id="shareUrlInput" type="text" readonly class="flex-1 px-3 py-2 rounded-xl bg-stone-100 border border-stone-300 font-mono text-[11px] text-slate-700 focus:outline-none" />
+            <button onclick="copyShareUrlFromInput()" class="px-3.5 py-2 rounded-xl bg-garnet hover:bg-[#9e2032] text-white font-bold text-xs shrink-0 transition shadow-2xs">
+              Copy Link
+            </button>
+          </div>
+
+          <div class="flex flex-wrap items-center justify-between gap-2 pt-1 border-t border-stone-100">
+            <button onclick="copyPlainTextDaySummary()" class="text-cobalt hover:underline font-bold">
+              Copy Plain-Text Day Schedule for WhatsApp &rarr;
+            </button>
+            <button onclick="copySnapshotLink()" class="text-slate-500 hover:underline font-bold">
+              Copy backup snapshot
+            </button>
+            <span id="syncByteCount" class="font-mono text-[10px] text-slate-400">0 bytes</span>
+          </div>
+        </div>
+
+        <!-- JSON Export / Import Backup -->
+        <div class="bg-white rounded-2xl p-4 border border-stone-200 shadow-2xs flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h4 class="font-bold text-sm text-vltava">JSON Trip File Backup</h4>
+            <p class="text-slate-600 mt-0.5">Save a backup file or restore from an exported <code class="font-mono">.json</code> snapshot.</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <button onclick="exportTripJson()" class="px-3 py-2 rounded-xl bg-vltava hover:bg-slate-800 text-white font-bold text-xs transition">
+              Export .json
+            </button>
+            <label class="px-3 py-2 rounded-xl bg-stone-100 hover:bg-stone-200 text-vltava border border-stone-300 font-bold text-xs cursor-pointer transition">
+              Import .json
+              <input type="file" accept=".json,application/json" onchange="importTripJson(event)" class="hidden" />
+            </label>
+          </div>
+        </div>
+
+        <div class="bg-amber-50/75 rounded-2xl p-4 border border-amber-200/90 space-y-2.5">
+          <div class="flex items-center justify-between">
+            <h4 class="font-bold text-sm text-vltava">Live sync across phones</h4>
+            <span id="syncBadge" class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-stone-200 text-slate-700">Connecting</span>
+          </div>
+          <p class="text-slate-700 leading-relaxed">
+            Hearts, checkmarks, notes, custom pins, and the Dec 30 choice are shared. The day open on this phone stays on this phone.
+          </p>
+          <div id="syncLiveState" class="hidden text-linden font-bold">This phone is on the shared family copy.</div>
+          <div id="syncNeedsPin" class="space-y-2">
+            <p class="text-slate-700">On a public family link, enter the PIN once on this phone. A private signed-in link syncs without it.</p>
+            <div class="flex items-center gap-2">
+              <input id="familyPinInput" type="password" autocomplete="current-password" maxlength="40" placeholder="Family PIN" class="flex-1 px-3 py-2 rounded-xl bg-white border border-amber-300 font-mono text-[11px]" />
+              <button type="button" onclick="saveFamilyPin()" class="px-3.5 py-2 rounded-xl bg-linden hover:bg-[#1c4837] text-white font-bold shadow-2xs">Sync this phone</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== 7. DROP CUSTOM PIN MODAL ==================== -->
+  <div id="customPinModal" class="hidden fixed inset-0 z-[800] bg-vltava/70 backdrop-blur-xs flex items-center justify-center p-3 sm:p-5">
+    <div class="bg-parchment text-vltava rounded-3xl max-w-md w-full flex flex-col shadow-2xl border border-vltava/15 overflow-hidden">
+      <div class="px-5 py-4 bg-vltava text-parchment flex items-center justify-between">
+        <div>
+          <h2 class="font-display font-bold text-lg text-amber-200">Add Custom Stop</h2>
+          <p id="customPinModalSub" class="text-xs text-slate-300">Pinning onto active day itinerary</p>
+        </div>
+        <button onclick="closeModal('customPinModal')" class="w-9 h-9 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-lg flex items-center justify-center">&times;</button>
+      </div>
+      <form onsubmit="handleCustomPinSubmit(event)" class="p-4 sm:p-5 space-y-3 text-xs">
+        <div>
+          <label class="block font-bold text-vltava mb-1">Place or Activity Name *</label>
+          <input id="cpTitle" type="text" required placeholder="e.g., Coffee at Kavárna co hledá jméno" class="w-full px-3 py-2 rounded-xl bg-white border border-stone-300 text-sm focus:outline-none focus:border-garnet" />
+        </div>
+        <div class="grid grid-cols-2 gap-2.5">
+          <div>
+            <label class="block font-bold text-vltava mb-1">Time Window</label>
+            <input id="cpTime" type="text" value="15:30–16:30" class="w-full px-3 py-2 rounded-xl bg-white border border-stone-300 font-mono text-xs focus:outline-none focus:border-garnet" />
+          </div>
+          <div>
+            <label class="block font-bold text-vltava mb-1">Category</label>
+            <select id="cpCategory" class="w-full px-3 py-2 rounded-xl bg-white border border-stone-300 text-xs font-semibold focus:outline-none focus:border-garnet">
+              <option value="food">Food / Café / Beer</option>
+              <option value="sight">Castle / Culture</option>
+              <option value="walk">Walk / Viewpoint</option>
+              <option value="transit">Transit / Drive</option>
+              <option value="holiday">Holiday Special</option>
+            </select>
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-2.5">
+          <div>
+            <label class="block font-bold text-vltava mb-1">Latitude</label>
+            <input id="cpLat" type="number" step="0.0001" required class="w-full px-3 py-2 rounded-xl bg-stone-100 border border-stone-300 font-mono text-xs" />
+          </div>
+          <div>
+            <label class="block font-bold text-vltava mb-1">Longitude</label>
+            <input id="cpLng" type="number" step="0.0001" required class="w-full px-3 py-2 rounded-xl bg-stone-100 border border-stone-300 font-mono text-xs" />
+          </div>
+        </div>
+        <div>
+          <label class="block font-bold text-vltava mb-1">Family Note / Honest Guide Tip</label>
+          <textarea id="cpTip" rows="2" placeholder="Reservation details, what to order, or meetup instructions..." class="w-full px-3 py-2 rounded-xl bg-white border border-stone-300 text-xs focus:outline-none focus:border-garnet"></textarea>
+        </div>
+        <div class="flex items-center justify-between pt-2">
+          <button type="button" onclick="reenterDropPinFromModal()" class="text-linden hover:underline font-bold">
+            Re-pick on Map
+          </button>
+          <div class="flex items-center gap-2">
+            <button type="button" onclick="closeModal('customPinModal')" class="px-3.5 py-2 rounded-xl border border-stone-300 font-semibold">Cancel</button>
+            <button type="submit" class="px-4 py-2 rounded-xl bg-garnet hover:bg-[#9e2032] text-white font-bold shadow">Save Pin</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==================== 8. FLOATING TOAST NOTIFICATION ==================== -->
+  <div id="atlasToast" class="hidden fixed bottom-5 left-1/2 -translate-x-1/2 z-[900] atlas-glass-dark text-parchment px-4 py-2.5 rounded-2xl text-xs font-semibold flex items-center gap-2.5 shadow-2xl">
+    <span class="w-2 h-2 rounded-full bg-amber-400"></span>
+    <span id="atlasToastMsg">Synced!</span>
+  </div>
+
+  <!-- ==================== APPLICATION SCRIPT ==================== -->
+  <script>
+    /**
+     * =========================================================================
+     * 1. BESPOKE CZECH & GERMAN VECTOR SVG ICONOGRAPHY
+     * =========================================================================
+     */
+    const CZECH_GERMAN_SVGS = {
+      // 1. Krtek (The Little Mole) emerging from earth mound with red nose & shovel
+      krtek: () => `
+        <svg viewBox="0 0 64 64" class="w-full h-full" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Krtek the Little Mole">
+          <!-- Earth Mound -->
+          <path d="M6 56C10 43 20 39 32 39C44 39 54 43 58 56H6Z" fill="#7C5332"/>
+          <path d="M12 56C15 47 22 44 32 44C42 44 49 47 52 56H12Z" fill="#9A6B43"/>
+          <!-- Little Red Shovel -->
+          <line x1="49" y1="26" x2="53" y2="45" stroke="#D97706" stroke-width="2.5" stroke-linecap="round"/>
+          <path d="M46 23H52L51 28H47L46 23Z" fill="#B8293D"/>
+          <!-- Mole Body & Head -->
+          <path d="M18 45C18 30 22 19 32 19C42 19 46 30 46 45H18Z" fill="#1E242B"/>
+          <!-- Three Signature Hairs -->
+          <path d="M32 19C32 14 29 11 27 10" stroke="#1E242B" stroke-width="2.2" stroke-linecap="round"/>
+          <path d="M32 19C32 13 32 10 32 8" stroke="#1E242B" stroke-width="2.2" stroke-linecap="round"/>
+          <path d="M32 19C33 14 36 11 38 10" stroke="#1E242B" stroke-width="2.2" stroke-linecap="round"/>
+          <!-- Friendly Eyes -->
+          <ellipse cx="27.5" cy="26.5" rx="3.4" ry="4.2" fill="#FFFFFF"/>
+          <ellipse cx="36.5" cy="26.5" rx="3.4" ry="4.2" fill="#FFFFFF"/>
+          <circle cx="28.3" cy="26.8" r="1.7" fill="#141923"/>
+          <circle cx="35.7" cy="26.8" r="1.7" fill="#141923"/>
+          <!-- Rosy Red Nose & Smile -->
+          <ellipse cx="32" cy="31.5" rx="4.2" ry="3" fill="#B8293D"/>
+          <circle cx="30.6" cy="30.6" r="1" fill="#FCA5A5"/>
+          <path d="M27 35.5C29.5 38 34.5 38 37 35.5" stroke="#F8FAFC" stroke-width="1.8" stroke-linecap="round"/>
+          <!-- Little Pink Paws -->
+          <ellipse cx="20" cy="41" rx="4.2" ry="2.8" fill="#F4A29E"/>
+          <ellipse cx="44" cy="41" rx="4.2" ry="2.8" fill="#F4A29E"/>
+        </svg>`,
+
+      // 2. Pat & Mat ("A je to!") in iconic yellow and red sweaters
+      patAndMat: () => `
+        <svg viewBox="0 0 64 64" class="w-full h-full" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Pat and Mat">
+          <!-- PAT (Left, Yellow Sweater & Cap) -->
+          <rect x="11" y="33" width="16" height="19" rx="5" fill="#FACC15" stroke="#141923" stroke-width="1.5"/>
+          <rect x="13" y="50" width="5" height="9" rx="2" fill="#255485"/>
+          <rect x="20" y="50" width="5" height="9" rx="2" fill="#255485"/>
+          <circle cx="19" cy="23" r="7.5" fill="#FDE68A" stroke="#141923" stroke-width="1.5"/>
+          <path d="M12 20C12 15 26 15 26 20H12Z" fill="#255485"/>
+          <rect x="19" y="18" width="9" height="2.2" rx="1" fill="#1E3A8A"/>
+          <circle cx="17" cy="22.5" r="1.1" fill="#141923"/>
+          <circle cx="21.5" cy="22.5" r="1.1" fill="#141923"/>
+          <path d="M16.5 26C18 27.5 20.5 27.5 22 26" stroke="#141923" stroke-width="1.4" stroke-linecap="round"/>
+          <!-- MAT (Right, Red Sweater & Pom-Pom Beanie) -->
+          <rect x="37" y="34" width="16" height="18" rx="5" fill="#B8293D" stroke="#141923" stroke-width="1.5"/>
+          <rect x="39" y="50" width="5" height="9" rx="2" fill="#475569"/>
+          <rect x="46" y="50" width="5" height="9" rx="2" fill="#475569"/>
+          <ellipse cx="45" cy="23" rx="6.8" ry="8" fill="#FDE68A" stroke="#141923" stroke-width="1.5"/>
+          <path d="M38 19C38 13 52 13 52 19H38Z" fill="#C97A1E"/>
+          <circle cx="45" cy="12.5" r="2.5" fill="#FACC15"/>
+          <circle cx="43" cy="22.5" r="1.1" fill="#141923"/>
+          <circle cx="47" cy="22.5" r="1.1" fill="#141923"/>
+          <path d="M42.5 26.5C44 28 46.5 28 48 26.5" stroke="#141923" stroke-width="1.4" stroke-linecap="round"/>
+        </svg>`,
+
+      // 3. Bob a Bobek (Two White Rabbits Peeking Out of Pokustón's Top Hat)
+      bobAndBobek: () => `
+        <svg viewBox="0 0 64 64" class="w-full h-full" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Bob and Bobek">
+          <!-- Bob (Tall Slender Rabbit Left) -->
+          <ellipse cx="23" cy="14" rx="2.4" ry="8" transform="rotate(-8 23 14)" fill="#FFFFFF" stroke="#141923" stroke-width="1.4"/>
+          <ellipse cx="28" cy="14" rx="2.4" ry="8" transform="rotate(6 28 14)" fill="#FFFFFF" stroke="#141923" stroke-width="1.4"/>
+          <ellipse cx="25.5" cy="26" rx="6.5" ry="8" fill="#FFFFFF" stroke="#141923" stroke-width="1.4"/>
+          <circle cx="23.5" cy="24.5" r="1.2" fill="#141923"/>
+          <circle cx="27.5" cy="24.5" r="1.2" fill="#141923"/>
+          <circle cx="25.5" cy="27" r="1.3" fill="#F472B6"/>
+          <!-- Bobek (Round Cute Rabbit Right) -->
+          <ellipse cx="38" cy="20" rx="2.2" ry="6" transform="rotate(-12 38 20)" fill="#FFFFFF" stroke="#141923" stroke-width="1.4"/>
+          <ellipse cx="43" cy="20" rx="2.2" ry="6" transform="rotate(12 43 20)" fill="#FFFFFF" stroke="#141923" stroke-width="1.4"/>
+          <circle cx="40.5" cy="29.5" r="6.5" fill="#FFFFFF" stroke="#141923" stroke-width="1.4"/>
+          <circle cx="38.7" cy="28.5" r="1.1" fill="#141923"/>
+          <circle cx="42.3" cy="28.5" r="1.1" fill="#141923"/>
+          <circle cx="40.5" cy="30.8" r="1.2" fill="#F472B6"/>
+          <!-- Magician Pokustón's Black Top Hat -->
+          <rect x="16" y="34" width="32" height="22" rx="3" fill="#141923"/>
+          <rect x="16" y="48" width="32" height="4.5" fill="#B8293D"/>
+          <ellipse cx="32" cy="34" rx="22" ry="4.5" fill="#1E293B" stroke="#141923" stroke-width="1.5"/>
+        </svg>`,
+
+      // 4. Prague Astronomical Clock (Orloj) Celestial Dial
+      orloj: () => `
+        <svg viewBox="0 0 64 64" class="w-full h-full" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Prague Astronomical Clock">
+          <rect x="8" y="6" width="48" height="52" rx="10" fill="#1E293B" stroke="#C97A1E" stroke-width="2.5"/>
+          <circle cx="32" cy="32" r="20" fill="#255485" stroke="#FBBF24" stroke-width="2.5"/>
+          <circle cx="32" cy="32" r="14" fill="none" stroke="#FDE68A" stroke-width="1.2" stroke-dasharray="3 2"/>
+          <circle cx="32" cy="32" r="6" fill="#245C46" stroke="#FBBF24" stroke-width="1.5"/>
+          <!-- Golden Sun Hand -->
+          <line x1="32" y1="32" x2="43" y2="20" stroke="#FBBF24" stroke-width="2.2" stroke-linecap="round"/>
+          <circle cx="43" cy="20" r="3" fill="#F59E0B"/>
+          <!-- Moon Hand -->
+          <line x1="32" y1="32" x2="21" y2="39" stroke="#F8FAFC" stroke-width="1.8" stroke-linecap="round"/>
+          <circle cx="21" cy="39" r="2.2" fill="#F8FAFC"/>
+        </svg>`,
+
+      // 5. Tank Pilsner Mug (Hladinka Pour)
+      pilsner: () => `
+        <svg viewBox="0 0 64 64" class="w-full h-full" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Czech Tank Pilsner">
+          <!-- Handle -->
+          <path d="M44 24H50C52.5 24 54 26 54 29V43C54 46 52.5 48 50 48H44" stroke="#94A3B8" stroke-width="4" stroke-linecap="round"/>
+          <!-- Glass Body -->
+          <rect x="15" y="16" width="29" height="40" rx="5" fill="#F59E0B" stroke="#475569" stroke-width="2.2"/>
+          <!-- Golden Lager Gradient -->
+          <rect x="17" y="25" width="25" height="29" rx="3" fill="#D97706"/>
+          <!-- Thick Creamy Hladinka Foam Crown -->
+          <path d="M15 19C15 14 20 11 25 12C27 9 33 9 35 12C40 11 44 14 44 19V26H15V19Z" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.5"/>
+          <!-- Rising Bubbles -->
+          <circle cx="23" cy="46" r="1.4" fill="#FEF3C7"/>
+          <circle cx="30" cy="39" r="1.6" fill="#FEF3C7"/>
+          <circle cx="35" cy="48" r="1.2" fill="#FEF3C7"/>
+          <circle cx="26" cy="32" r="1.3" fill="#FEF3C7"/>
+        </svg>`,
+
+      // 6. Dresden Ampelmännchen & Erzgebirge Nutcracker
+      dresden: () => `
+        <svg viewBox="0 0 64 64" class="w-full h-full" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Dresden Ampelmannchen">
+          <circle cx="32" cy="32" r="26" fill="#141923" stroke="#C97A1E" stroke-width="2.5"/>
+          <!-- Hat -->
+          <path d="M23 16C25 12 37 12 39 16H23Z" fill="#22C55E"/>
+          <rect x="20" y="16" width="22" height="2.6" rx="1.3" fill="#22C55E"/>
+          <!-- Head -->
+          <circle cx="31" cy="22.5" r="4" fill="#22C55E"/>
+          <!-- Striding Torso & Arms -->
+          <path d="M31 27L21 34M31 27L42 32" stroke="#22C55E" stroke-width="4.2" stroke-linecap="round"/>
+          <line x1="31" y1="27" x2="31" y2="39" stroke="#22C55E" stroke-width="6" stroke-linecap="round"/>
+          <!-- Striding Legs -->
+          <path d="M30 39L21 51M32 39L43 50" stroke="#22C55E" stroke-width="4.5" stroke-linecap="round"/>
+        </svg>`,
+
+      // 7. Nuremberg Kaiserburg Tower & Pretzel
+      nuremberg: () => `
+        <svg viewBox="0 0 64 64" class="w-full h-full" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Nuremberg Kaiserburg and Pretzel">
+          <!-- Castle Stone Base & Sinwell Tower -->
+          <rect x="10" y="32" width="26" height="24" rx="2" fill="#D6D3D1" stroke="#141923" stroke-width="1.6"/>
+          <rect x="15" y="16" width="14" height="18" fill="#E7E5E4" stroke="#141923" stroke-width="1.6"/>
+          <path d="M13 16L22 7L31 16H13Z" fill="#B8293D" stroke="#141923" stroke-width="1.5"/>
+          <!-- Warm Franconian Pretzel -->
+          <path d="M44 33C38 33 35 38 37 43C39 48 49 48 51 43C53 38 50 33 44 33Z" stroke="#C97A1E" stroke-width="4.2" stroke-linecap="round"/>
+          <path d="M38 41L50 51M50 41L38 51" stroke="#B45309" stroke-width="3.5" stroke-linecap="round"/>
+          <circle cx="44" cy="33" r="1.2" fill="#FFFFFF"/>
+          <circle cx="39" cy="36" r="1.2" fill="#FFFFFF"/>
+          <circle cx="49" cy="36" r="1.2" fill="#FFFFFF"/>
+        </svg>`
+    };
+
+    /**
+     * =========================================================================
+     * 2. FAMILY MEMBERS, CATEGORIES & COMPLETE 17-DAY ITINERARY DATA
+     * =========================================================================
+     */
+    const FAMILY_MEMBERS = [
+      { id: 'Ethan',  label: 'Ethan',  color: '#B8293D' },
+      { id: 'Debi',   label: 'Debi',   color: '#245C46' },
+      { id: 'Tom',    label: 'Tom',    color: '#255485' },
+      { id: 'Olivia', label: 'Olivia', color: '#C97A1E' },
+      { id: 'Jordan', label: 'Jordan', color: '#6D28D9' }
+    ];
+
+    const CATEGORY_META = {
+      transit: { label: 'Transit / Drive', color: '#255485', badge: 'bg-blue-50 text-cobalt border-blue-200' },
+      food:    { label: 'Food & Tank Beer', color: '#C97A1E', badge: 'bg-amber-50 text-amber-900 border-amber-200' },
+      sight:   { label: 'Castle & Culture', color: '#B8293D', badge: 'bg-rose-50 text-garnet border-rose-200' },
+      walk:    { label: 'Walk & Viewpoint', color: '#245C46', badge: 'bg-emerald-50 text-linden border-emerald-200' },
+      holiday: { label: 'Holiday Special',  color: '#9D174D', badge: 'bg-pink-50 text-pink-900 border-pink-200' }
+    };
+
+    const TRIP_DAYS = [
+      {
+        id: 'day-1',
+        shortDate: 'Thu 17',
+        fullDate: 'Thu 17 Dec 2026',
+        country: 'CZ',
+        region: 'Mníšek pod Brdy',
+        mascot: 'krtek',
+        title: 'Debi & Tom Arrive + Mníšek pod Brdy',
+        summary: 'Debi and Tom land, pick up their rental car, and drive south to Ethan\'s house in Mníšek for a quiet first night.',
+        alert: null,
+        stops: [
+          {
+            id: 'd1-s1', time: '12:00–13:30', title: 'PRG Airport Arrival (Debi & Tom)',
+            category: 'transit', lat: 50.1008, lng: 14.2600,
+            neighborhood: 'Václav Havel Airport Prague',
+            tip: 'Meet Debi and Tom at Arrivals. They pick up the rental car, load the bags, and confirm the Czech electronic vignette (dálniční známka) is active before the D4. Tonight is Ethan\'s house in Mníšek, about 35 minutes south.',
+            booking: null
+          },
+          {
+            id: 'd1-s2', time: '13:30–17:30', title: 'D4 Drive & Mníšek Town Walk',
+            category: 'walk', lat: 49.8665, lng: 14.2618,
+            neighborhood: 'Mníšek pod Brdy',
+            tip: 'Easy ~35-minute drive south via D4. Unpack at Ethan’s and take a gentle loop around Náměstí F. X. Svobody before sunset (~16:00) to reset jet lag.',
+            booking: null
+          },
+          {
+            id: 'd1-s3', time: '18:00–20:00', title: 'Dinner at Marjána - Restaurace a Pension',
+            category: 'food', lat: 49.8631, lng: 14.2687,
+            neighborhood: 'Mníšek pod Brdy',
+            tip: 'Beloved neighborhood kitchen near the station. First Czech dinner for Ethan, Debi, and Tom: svíčková na smetaně with bread dumplings.',
+            booking: 'Reserve for 3 (Ethan, Debi, Tom)'
+          }
+        ]
+      },
+      {
+        id: 'day-2',
+        shortDate: 'Fri 18',
+        fullDate: 'Fri 18 Dec 2026',
+        country: 'CZ',
+        region: 'Mníšek & Brdy Hills',
+        mascot: 'krtek',
+        title: 'Mníšek Chateau & Brdy Hills',
+        summary: 'Tour the local First-Republic chateau in the morning, then hike wooded Brdy trails up to Baroque Skalka.',
+        alert: 'Mníšek Chateau only runs walk-in tours on weekends in Dec; Friday tours (10:30, 12:00, 13:30) must be booked 24h in advance.',
+        stops: [
+          {
+            id: 'd2-s1', time: '10:30–11:45', title: 'Mníšek pod Brdy Chateau Guided Tour',
+            category: 'sight', lat: 49.8669, lng: 14.2611,
+            neighborhood: 'Zámek Mníšek pod Brdy',
+            tip: 'Intimate 20th-century aristocratic living rooms right in town—a peaceful prelude before Prague Castle.',
+            booking: 'Book 24h Ahead (Fri 10:30/12:00/13:30)'
+          },
+          {
+            id: 'd2-s2', time: '13:30–15:45', title: 'Skalka Baroque Pilgrimage Site Hike',
+            category: 'walk', lat: 49.8781, lng: 14.2536,
+            neighborhood: 'Brdy Foothills',
+            tip: 'Walk the forest trail above town to the 17th-century Church of St. Mary Magdalene perched on a quartzite ridge. Head back down before 16:00 dusk.',
+            booking: null
+          }
+        ]
+      },
+      {
+        id: 'day-3',
+        shortDate: 'Sat 19',
+        fullDate: 'Sat 19 Dec 2026',
+        country: 'CZ',
+        region: 'Prague Center',
+        mascot: 'pilsner',
+        title: 'Olivia & Jordan Arrive + Arcades & Tank Beer',
+        summary: 'Olivia and Jordan land. The rental car brings all five into Prague, then trams take the evening: Lucerna\'s wooden paternoster and tank Pilsner.',
+        alert: null,
+        stops: [
+          {
+            id: 'd3-s1', time: '13:00–14:30', title: 'PRG Pickup for Olivia & Jordan',
+            category: 'transit', lat: 50.1008, lng: 14.2600,
+            neighborhood: 'Václav Havel Airport Prague',
+            tip: 'Debi and Tom drive the rental to PRG for Olivia and Jordan. Debi and Tom\'s first Prague nights are a small river-boat room. A shared hotel for Debi, Tom, Olivia, and Jordan is the plan and is not confirmed yet, so check in wherever is actually booked. Park the car there and use Lítačka tonight.',
+            booking: null
+          },
+          {
+            id: 'd3-s2', time: '17:00–18:15', title: 'Lucerna Palace, Inverted Horse & Paternoster',
+            category: 'sight', lat: 50.0813, lng: 14.4256,
+            neighborhood: 'Vodičkova / Štěpánská',
+            tip: 'Classic Honest Guide indoor shortcut! Spot David Černý’s upside-down horse (Kůň) in the Art Nouveau dome and ride the continuously moving wooden paternoster elevator.',
+            booking: null
+          },
+          {
+            id: 'd3-s3', time: '18:30–20:30', title: 'Dinner at Lokál Dlouhááá',
+            category: 'food', lat: 50.0908, lng: 14.4264,
+            neighborhood: 'Dlouhá, Staré Město',
+            tip: 'Gold standard for unpasteurized tank Pilsner Urquell (ask for a hladinka pour) paired with fried Eidam cheese (smažený sýr) and homemade tartar sauce.',
+            booking: 'Reserve Table for 5 Ahead'
+          },
+          {
+            id: 'd3-s4', time: '20:30–21:30', title: 'Evening Walk on Old Town Square',
+            category: 'walk', lat: 50.0875, lng: 14.4213,
+            neighborhood: 'Staroměstské náměstí',
+            tip: 'After 20:30 the daytime tour crowds thin out, leaving the illuminated tree and Týn Church spires at their best.',
+            booking: null
+          }
+        ]
+      },
+      {
+        id: 'day-4',
+        shortDate: 'Sun 20',
+        fullDate: 'Sun 20 Dec 2026',
+        country: 'CZ',
+        region: 'Old Town & Vyšehrad',
+        mascot: 'orloj',
+        title: 'Historic Core & Vyšehrad',
+        summary: 'Sunrise on an empty Charles Bridge, First-Republic breakfast at Café Louvre, Orloj chime, and sunset at Vyšehrad.',
+        alert: 'Peak pre-Christmas Sunday crowds hit Old Town Square after 10:30—sunrise on Charles Bridge (~07:50) is unbeatable.',
+        stops: [
+          {
+            id: 'd4-s1', time: '08:00–09:00', title: 'Sunrise Walk on Charles Bridge (~07:50)',
+            category: 'walk', lat: 50.0865, lng: 14.4114,
+            neighborhood: 'Karlův most',
+            tip: 'Golden dawn light hitting the Vltava and Prague Castle with almost zero foot traffic—the single best photo hour of the trip.',
+            booking: null
+          },
+          {
+            id: 'd4-s2', time: '09:00–10:15', title: 'Breakfast at Café Louvre',
+            category: 'food', lat: 50.0818, lng: 14.4189,
+            neighborhood: 'Národní 22',
+            tip: 'Serving Praguers since 1902 (regulars included Franz Kafka & Albert Einstein). Great breakfast plates, thick hot chocolate, and upstairs billiard tables.',
+            booking: null
+          },
+          {
+            id: 'd4-s3', time: '10:30–12:15', title: 'Old Town Square & Astronomical Clock',
+            category: 'sight', lat: 50.0870, lng: 14.4208,
+            neighborhood: 'Staré Město',
+            tip: 'Catch the 11:00 or 12:00 Orloj chime, then duck into historic Ungelt courtyard behind Týn Church to escape the souvenir corridors.',
+            booking: null
+          },
+          {
+            id: 'd4-s4', time: '14:00–16:15', title: 'Vyšehrad Fortress Sunset (~16:00)',
+            category: 'walk', lat: 50.0644, lng: 14.4179,
+            neighborhood: 'Vyšehrad',
+            tip: 'Honest Guide’s favorite "other castle". Walk the brick bastions above the Vltava for panoramic river views and visit Slavín cemetery (Dvořák & Mucha).',
+            booking: null
+          },
+          {
+            id: 'd4-s5', time: '16:45–18:30', title: 'Náměstí Míru Local Christmas Market',
+            category: 'holiday', lat: 50.0754, lng: 14.4378,
+            neighborhood: 'Vinohrady',
+            tip: 'Where actual Praguers drink svařák (mulled wine) and hot medovina (mead) in front of neo-Gothic St. Ludmila Church without Old Town markups.',
+            booking: null
+          }
+        ]
+      },
+      {
+        id: 'day-5',
+        shortDate: 'Mon 21',
+        fullDate: 'Mon 21 Dec 2026',
+        country: 'CZ',
+        region: 'Castle & Malá Strana',
+        mascot: 'krtek',
+        title: 'Prague Castle & Malá Strana',
+        summary: 'Slip through fairy-tale Nový Svět, tour St. Vitus & Golden Lane before 16:00 closing, and dine in 700-year-old cellars.',
+        alert: 'Prague Castle interiors close at 16:00 in winter (last entry 15:40; gardens closed).',
+        stops: [
+          {
+            id: 'd5-s1', time: '08:30–09:15', title: 'Nový Svět Hidden 18th-Century Lane',
+            category: 'walk', lat: 50.0913, lng: 14.3905,
+            neighborhood: 'Hradčany',
+            tip: 'Ride Tram 22 to Pohořelec and slip behind Loreta into Nový Svět—two quiet cobbled blocks of pastel cottages where tour groups never wander.',
+            booking: null
+          },
+          {
+            id: 'd5-s2', time: '09:15–12:15', title: 'Prague Castle, St. Vitus Cathedral & Golden Lane',
+            category: 'sight', lat: 50.0909, lng: 14.4005,
+            neighborhood: 'Pražský hrad',
+            tip: 'Circuit B covers St. Vitus Cathedral, Old Royal Palace, St. George’s Basilica, and Golden Lane (closes at 16:00 sharp in winter).',
+            booking: 'Winter Hours 09:00–16:00'
+          },
+          {
+            id: 'd5-s3', time: '12:30–14:00', title: 'Lunch at Kuchyň (Castle Terrace)',
+            category: 'food', lat: 50.0896, lng: 14.3976,
+            neighborhood: 'Hradčanské náměstí',
+            tip: 'Walk into the kitchen, lift the lids off simmering pots to choose what looks best, and enjoy sweeping views over Prague.',
+            booking: 'Reserve for 5 Ahead'
+          },
+          {
+            id: 'd5-s4', time: '14:15–15:15', title: 'Vojanovy sady Walled Peacock Garden',
+            category: 'walk', lat: 50.0883, lng: 14.4087,
+            neighborhood: 'Malá Strana',
+            tip: 'Prague’s oldest partially preserved garden hidden behind high stone walls with resident peacocks (closes at 17:00 in winter).',
+            booking: null
+          },
+          {
+            id: 'd5-s5', time: '15:30–17:15', title: 'Kampa Island Twilight Walk',
+            category: 'walk', lat: 50.0846, lng: 14.4085,
+            neighborhood: 'Kampa / Čertovka',
+            tip: 'Cross the Čertovka millstream and stroll Malá Strana backstreets right as the historic gas streetlamps flicker on.',
+            booking: null
+          },
+          {
+            id: 'd5-s6', time: '17:30–19:30', title: 'Dinner at U Glaubiců Vaulted Cellars',
+            category: 'food', lat: 50.0881, lng: 14.4036,
+            neighborhood: 'Malostranské náměstí',
+            tip: 'One of the last pubs on Lesser Town Square with honest local beer prices and hearty roast duck in 700-year-old stone cellars.',
+            booking: 'Reserve for 5'
+          }
+        ]
+      },
+      {
+        id: 'day-6',
+        shortDate: 'Tue 22',
+        fullDate: 'Tue 22 Dec 2026',
+        country: 'DE',
+        region: 'Dresden, Germany',
+        mascot: 'dresden',
+        title: 'Dresden Day Trip & Striezelmarkt',
+        summary: 'Two hours north via D8/A17 to Saxony’s Baroque jewel and Germany’s oldest Christmas market before it closes Dec 24.',
+        alert: 'Debi and Tom drive the rental both ways (about 2 hours). Dresden does NOT require a German green sticker (Umweltplakette). The market takes euros and runs through Dec 24. Sleep back in Prague.',
+        stops: [
+          {
+            id: 'd6-s1', time: '10:00–12:00', title: 'Zwinger Courtyard & Frauenkirche Dome',
+            category: 'sight', lat: 51.0519, lng: 13.7416,
+            neighborhood: 'Innere Altstadt, Dresden',
+            tip: 'Debi and Tom drive the rental north via D8/A17 and park at the Altmarkt underground garage. Zwinger courtyard and Frauenkirche are open 10:00–16:00.',
+            booking: null
+          },
+          {
+            id: 'd6-s2', time: '13:30–15:30', title: 'Brühl’s Terrace & Fürstenzug Porcelain Mural',
+            category: 'walk', lat: 51.0531, lng: 13.7393,
+            neighborhood: 'Elbe Riverfront, Dresden',
+            tip: 'Stroll the "Balcony of Europe" overlooking the Elbe and admire the 102-meter Meissen porcelain Procession of Princes mural.',
+            booking: null
+          },
+          {
+            id: 'd6-s3', time: '15:30–18:30', title: 'Dresden Striezelmarkt at Altmarkt',
+            category: 'holiday', lat: 51.0497, lng: 13.7376,
+            neighborhood: 'Altmarkt, Dresden',
+            tip: 'Open 10:00–21:00. Try authentic Dresdner Christstollen, Pflaumentoffel prune chimney sweeps, and Erzgebirge wooden pyramids before driving 2h back.',
+            booking: null
+          }
+        ]
+      },
+      {
+        id: 'day-7',
+        shortDate: 'Wed 23',
+        fullDate: 'Wed 23 Dec 2026',
+        country: 'CZ',
+        region: 'Josefov & Letná',
+        mascot: 'orloj',
+        title: 'Josefov, Klementinum & Letná',
+        summary: 'Infinite book tower at 09:00 sharp, Baroque library, historic synagogues, butcher-hall lunch, and Letná bridges view.',
+        alert: 'Jewish Quarter sites close early at 14:00 tomorrow (Dec 24) and close Saturdays—Wednesday is the ideal window.',
+        stops: [
+          {
+            id: 'd7-s1', time: '09:00–09:30', title: 'Municipal Library Idiom Book Tower',
+            category: 'sight', lat: 50.0873, lng: 14.4175,
+            neighborhood: 'Mariánské náměstí',
+            tip: 'Arrive right at 09:00 opening (free lobby entry) to peer into the infinite mirrored book tunnel before tour queues form.',
+            booking: null
+          },
+          {
+            id: 'd7-s2', time: '09:45–10:45', title: 'Klementinum Baroque Library Guided Tour',
+            category: 'sight', lat: 50.0866, lng: 14.4162,
+            neighborhood: 'Staré Město',
+            tip: 'Directly across the square; features the 1722 Baroque Library Hall and 360° Astronomical Tower views.',
+            booking: 'Book Timed E-Tickets Ahead'
+          },
+          {
+            id: 'd7-s3', time: '11:00–13:00', title: 'Josefov Jewish Quarter',
+            category: 'sight', lat: 50.0901, lng: 14.4186,
+            neighborhood: 'Josefov',
+            tip: 'Visit the Spanish Synagogue, Pinkas Synagogue, Old Jewish Cemetery, and 13th-century Old-New Synagogue.',
+            booking: null
+          },
+          {
+            id: 'd7-s4', time: '13:15–14:45', title: 'Lunch at Kantýna (Butcher Hall)',
+            category: 'food', lat: 50.0837, lng: 14.4285,
+            neighborhood: 'Politických vězňů 5',
+            tip: 'Former bank hall turned Czech butcher restaurant. Pick dry-aged beef cuts, tartare, or sausages at the counter and sit at communal marble tables.',
+            booking: null
+          },
+          {
+            id: 'd7-s5', time: '15:00–16:30', title: 'Letná Park Hanavský Pavilion Sunset',
+            category: 'walk', lat: 50.0942, lng: 14.4136,
+            neighborhood: 'Letná',
+            tip: 'Cross Čechův most and climb the stairs for the iconic postcard alignment of all Prague bridges across the Vltava at sunset (~16:00).',
+            booking: null
+          },
+          {
+            id: 'd7-s6', time: '16:45–17:45', title: 'Pastries at Myšák Vodičkova',
+            category: 'food', lat: 50.0806, lng: 14.4241,
+            neighborhood: 'Vodičkova 31',
+            tip: 'Restored 1911 cukrárna—order the caramel-vanilla větrník choux pastry and filter coffee (closes at 19:00).',
+            booking: null
+          }
+        ]
+      },
+      {
+        id: 'day-8',
+        shortDate: 'Thu 24',
+        fullDate: 'Thu 24 Dec 2026',
+        country: 'CZ',
+        region: 'Prague (Štědrý den)',
+        mascot: 'pilsner',
+        title: 'Christmas Eve / Štědrý den',
+        summary: 'Morning supply run before noon, quiet river strolls, pre-booked festive dinner, and silent-night Old Town.',
+        alert: 'CZECH LAW: All supermarkets & shops >200 m² close at 12:00 NOON today and stay completely closed Dec 25 & Dec 26!',
+        stops: [
+          {
+            id: 'd8-s1', time: '09:30–11:30', title: 'Morning Supply Run Before 12:00 Noon Cutoff',
+            category: 'holiday', lat: 50.0815, lng: 14.4245,
+            neighborhood: 'Nové Město / Quadrio',
+            tip: 'Stock up on water, fruit, snacks, and wine BEFORE 12:00 sharp! Nearly all retail locks up until Dec 27.',
+            booking: 'Hard 12:00 Noon Cutoff'
+          },
+          {
+            id: 'd8-s2', time: '11:30–13:30', title: 'Vltava River & Bridge Stroll',
+            category: 'walk', lat: 50.0842, lng: 14.4132,
+            neighborhood: 'Smetanovo nábřeží',
+            tip: 'Peaceful daytime walk along the Vltava embankment as museums close early (14:00) for Christmas Eve.',
+            booking: null
+          },
+          {
+            id: 'd8-s3', time: '17:30–20:00', title: 'Christmas Eve Dinner at Červený jelen',
+            category: 'food', lat: 50.0879, lng: 14.4293,
+            neighborhood: 'Hybernská 5',
+            tip: 'Dramatic former bank vault with a four-story glass beer tank tower and live holiday music—one of the best authentic kitchens open on Dec 24.',
+            booking: 'Mandatory Advance Booking'
+          },
+          {
+            id: 'd8-s4', time: '20:00–21:30', title: 'Silent-Night Old Town Walk',
+            category: 'walk', lat: 50.0875, lng: 14.4213,
+            neighborhood: 'Staré Město',
+            tip: 'Walk Old Town Square and Charles Bridge while locals are home with family—magical and serene.',
+            booking: null
+          }
+        ]
+      },
+      {
+        id: 'day-9',
+        shortDate: 'Fri 25',
+        fullDate: 'Fri 25 Dec 2026',
+        country: 'CZ',
+        region: 'Petřín & Malá Strana',
+        mascot: 'krtek',
+        title: 'Christmas Day',
+        summary: 'Ride the modernized Petřín Funicular, dine beneath Neo-Renaissance ceilings, and stroll Střelecký Island.',
+        alert: 'Supermarkets remain closed today. Petřín Funicular runs daily 07:00–22:15 (requires separate 90–100 CZK ticket or 24h PID pass).',
+        stops: [
+          {
+            id: 'd9-s1', time: '11:00–12:30', title: 'Petřín Hill Funicular & Summit',
+            category: 'sight', lat: 50.0835, lng: 14.3951,
+            neighborhood: 'Újezd → Petřín',
+            tip: 'Ride the newly modernized glass-roofed funicular cars up Petřín Hill for panoramic winter views across Prague.',
+            booking: 'Separate Funicular Ticket'
+          },
+          {
+            id: 'd9-s2', time: '12:45–14:30', title: 'Holiday Lunch at Café Savoy',
+            category: 'food', lat: 50.0813, lng: 14.4063,
+            neighborhood: 'Vítězná 5, Malá Strana',
+            tip: 'Beneath an 1893 Neo-Renaissance painted ceiling; order Wiener schnitzel, roast dishes, or thick Savoy hot chocolate.',
+            booking: 'Reserve for 5 Ahead'
+          },
+          {
+            id: 'd9-s3', time: '14:30–16:30', title: 'Střelecký Island & Riverside Walk',
+            category: 'walk', lat: 50.0819, lng: 14.4101,
+            neighborhood: 'Střelecký ostrov',
+            tip: 'Take the stairs down from Most Legií onto wooded Střelecký Island for water-level views of Charles Bridge and the National Theatre.',
+            booking: null
+          }
+        ]
+      },
+      {
+        id: 'day-10',
+        shortDate: 'Sat 26',
+        fullDate: 'Sat 26 Dec 2026',
+        country: 'CZ',
+        region: 'Karlštejn',
+        mascot: 'krtek',
+        title: 'Karlštejn Castle',
+        summary: 'Special Christmas week opening of Charles IV’s Gothic fortress, game lunch, and the flooded Velká Amerika quarry.',
+        alert: 'Karlštejn opens specifically Dec 26–31 (10:00–15:00) for Imperial Residence tours—book timed tickets online ahead!',
+        stops: [
+          {
+            id: 'd10-s1', time: '10:30–11:30', title: 'Karlštejn Castle Imperial Residence Tour',
+            category: 'sight', lat: 49.9394, lng: 14.1881,
+            neighborhood: 'Hrad Karlštejn',
+            tip: 'Debi and Tom drive the rental, about 35 minutes from Prague or 25 from Mníšek. Allow 25 minutes for the 1.5 km uphill walk to the gate. Founded in 1348 by Emperor Charles IV.',
+            booking: 'Buy Online Timed Tickets'
+          },
+          {
+            id: 'd10-s2', time: '11:45–13:30', title: 'Lunch at Pod Dračí skálou',
+            category: 'food', lat: 49.9367, lng: 14.1869,
+            neighborhood: 'Karlštejn',
+            tip: 'Tucked away from the touristy main strip; hearty venison, wild boar, and steaming Czech garlic soup.',
+            booking: 'Recommended for 5'
+          },
+          {
+            id: 'd10-s3', time: '13:30–14:45', title: 'Velká Amerika Limestone Quarry',
+            category: 'walk', lat: 49.9587, lng: 14.1981,
+            neighborhood: 'Mořina / Bohemian Karst',
+            tip: '10-minute drive north to peer over the rim of the dramatic flooded limestone canyon ("Czech Grand Canyon") before heading back.',
+            booking: null
+          }
+        ]
+      },
+      {
+        id: 'day-11',
+        shortDate: 'Sun 27',
+        fullDate: 'Sun 27 Dec 2026',
+        country: 'DE',
+        region: 'Nuremberg, Germany',
+        mascot: 'nuremberg',
+        title: 'Nuremberg & the Karbsteins',
+        summary: 'Cross west via D5/A6 into Franconia for wood-grilled bratwurst, half-timbered lanes, and catching up with the Karbsteins.',
+        alert: 'The Christkindlesmarkt ends Dec 24, so Nuremberg is in relaxed post-Christmas mode—perfect for visiting with the Karbsteins.',
+        stops: [
+          {
+            id: 'd11-s1', time: '13:00–15:00', title: 'Lunch in Nuremberg Old Town with the Karbsteins',
+            category: 'food', lat: 49.4542, lng: 11.0775,
+            neighborhood: 'Rathausplatz / Altstadt, Nuremberg',
+            tip: 'All five ride in Debi and Tom\'s rental, about 3 hours west via D5/A6. No German environmental sticker. Everyone stays together in Nuremberg tonight. Meet the Karbsteins for beechwood-grilled Nürnberger Rostbratwürste and Franconian beer. Pay in euros.',
+            booking: 'Confirm with Karbsteins'
+          },
+          {
+            id: 'd11-s2', time: '15:00–16:30', title: 'Hauptmarkt, Schöner Brunnen & Weißgerbergasse',
+            category: 'walk', lat: 49.4539, lng: 11.0768,
+            neighborhood: 'Altstadt, Nuremberg',
+            tip: 'Spin the brass ring on Schöner Brunnen fountain for luck, cross the Pegnitz bridges, and stroll preserved half-timbered Weißgerbergasse.',
+            booking: null
+          },
+          {
+            id: 'd11-s3', time: '16:30–18:00', title: 'Handwerkerhof Craftsmen Courtyard',
+            category: 'sight', lat: 49.4468, lng: 11.0811,
+            neighborhood: 'Königstor, Nuremberg',
+            tip: 'Half-timbered medieval artisans’ courtyard tucked inside Nuremberg’s city walls before evening dinner with the Karbsteins.',
+            booking: null
+          }
+        ]
+      },
+      {
+        id: 'day-12',
+        shortDate: 'Mon 28',
+        fullDate: 'Mon 28 Dec 2026',
+        country: 'DE',
+        region: 'Nuremberg → Prague',
+        mascot: 'nuremberg',
+        title: 'Nuremberg Imperial Castle & Return',
+        summary: 'Morning breakfast with the Karbsteins, tour the Kaiserburg fortress, grab red beer, and cruise back to Prague.',
+        alert: 'Imperial Castle of Nuremberg is open 10:00–16:00 on Dec 28 (last entry 15:00).',
+        stops: [
+          {
+            id: 'd12-s1', time: '10:30–12:30', title: 'Imperial Castle of Nuremberg (Kaiserburg)',
+            category: 'sight', lat: 49.4579, lng: 11.0758,
+            neighborhood: 'Burg, Nuremberg',
+            tip: 'Tour the Palas, double Imperial Chapel, Deep Well, and bastion ramparts overlooking Nuremberg’s red-tiled roofs.',
+            booking: 'Open 10:00–16:00'
+          },
+          {
+            id: 'd12-s2', time: '12:30–14:00', title: 'Farewell Lunch near Tiergärtnertor',
+            category: 'food', lat: 49.4567, lng: 11.0742,
+            neighborhood: 'Tiergärtnertorplatz, Nuremberg',
+            tip: 'Stop at Hausbrauerei Altstadthof just below the castle gates for organic Nuremberg Rotbier (red beer) and hearty Franconian plates.',
+            booking: null
+          },
+          {
+            id: 'd12-s3', time: '14:30–17:30', title: 'Return Drive to Prague via A6/D5',
+            category: 'transit', lat: 50.0835, lng: 14.4260,
+            neighborhood: 'Prague Return',
+            tip: 'About 3 hours east via A6/D5. Sleep back in Prague, at the river-boat room or the shared hotel, whichever night is booked.',
+            booking: null
+          }
+        ]
+      },
+      {
+        id: 'day-13',
+        shortDate: 'Tue 29',
+        fullDate: 'Tue 29 Dec 2026',
+        country: 'CZ',
+        region: 'Kutná Hora',
+        mascot: 'pilsner',
+        title: 'Kutná Hora Day Trip',
+        summary: 'UNESCO silver-mining town: Sedlec Bone Church, St. Barbara’s Cathedral, Jesuit promenade, and medieval tavern feast.',
+        alert: 'TICKET CATCH: You CANNOT buy Sedlec Ossuary tickets at the chapel door—buy timed e-tickets online ahead!',
+        stops: [
+          {
+            id: 'd13-s1', time: '10:00–10:45', title: 'Sedlec Ossuary (Bone Church)',
+            category: 'sight', lat: 49.9619, lng: 15.2882,
+            neighborhood: 'Sedlec, Kutná Hora',
+            tip: '1h east of Prague (~70 km via D11). Open 09:00–16:00. Buy timed tickets online ahead so you skip walking down Zámecká Street to the info office.',
+            booking: 'Online Timed E-Tickets Required'
+          },
+          {
+            id: 'd13-s2', time: '11:00–12:30', title: "St. Barbara's Cathedral & GASK Promenade",
+            category: 'sight', lat: 49.9450, lng: 15.2636,
+            neighborhood: 'Barborská, Kutná Hora',
+            tip: 'Cathedral open 10:00–17:00. Walk the adjacent Jesuit College (GASK) outdoor terrace lined with Baroque saint statues overlooking the valley.',
+            booking: null
+          },
+          {
+            id: 'd13-s3', time: '12:45–14:15', title: 'Lunch at Restaurace Dačický',
+            category: 'food', lat: 49.9482, lng: 15.2665,
+            neighborhood: 'Rakova 8, Kutná Hora',
+            tip: 'Historic Old Bohemian tavern serving roast duck, slow-cooked game, and local Kutná Hora beer.',
+            booking: 'Reserve for 5 Ahead'
+          },
+          {
+            id: 'd13-s4', time: '14:15–15:45', title: 'Italian Court & Medieval Center',
+            category: 'walk', lat: 49.9487, lng: 15.2688,
+            neighborhood: 'Kutná Hora Old Town',
+            tip: 'Stroll past the former royal mint (Vlašský dvůr), medieval Ruthardka lane, and Gothic Stone Fountain before driving 1h back to Prague.',
+            booking: null
+          }
+        ]
+      },
+      {
+        id: 'day-14',
+        shortDate: 'Wed 30',
+        fullDate: 'Wed 30 Dec 2026',
+        country: 'CZ',
+        region: 'Flexible Day',
+        mascot: 'bobAndBobek',
+        title: 'Flexible Day: Modern Prague vs. Český Krumlov',
+        summary: 'Switch between a relaxed low-driving Modern Prague day (recommended) or the 5h round-trip drive to Český Krumlov.',
+        alert: 'Use the Interactive Toggle below: Český Krumlov is a 5h winter round-trip drive and main castle tours are closed for winter.',
+        hasVariants: true,
+        activeVariant: 'prague',
+        variants: {
+          prague: {
+            label: 'Option A: Modern Prague (Recommended)',
+            stops: [
+              {
+                id: 'd14a-s1', time: '11:15–13:30', title: 'DOX Centre for Contemporary Art & Gulliver Airship',
+                category: 'sight', lat: 50.1069, lng: 14.4472,
+                neighborhood: 'Poupětova 1, Holešovice',
+                tip: 'Climb inside Gulliver—a 42-meter wooden Zeppelin suspended above the museum courtyard—plus design shop & café.',
+                booking: null
+              },
+              {
+                id: 'd14a-s2', time: '14:00–15:30', title: 'Manifesto Market Anděl Winter Igloos',
+                category: 'food', lat: 50.0715, lng: 14.4041,
+                neighborhood: 'Ostrovského, Smíchov',
+                tip: 'Heated winter igloos and firepits where everyone can choose different global dishes & mulled drinks with zero reservation hassle.',
+                booking: null
+              },
+              {
+                id: 'd14a-s3', time: '16:00–19:30', title: 'Smíchov & Malá Strana Evening Stroll',
+                category: 'walk', lat: 50.0758, lng: 14.4038,
+                neighborhood: 'Smíchov / Náplavka',
+                tip: 'Relaxed riverside walk and light dinner ahead of tomorrow’s New Year’s Eve celebration.',
+                booking: null
+              }
+            ]
+          },
+          krumlov: {
+            label: 'Option B: Český Krumlov (5h Drive)',
+            stops: [
+              {
+                id: 'd14b-s1', time: '10:30–12:00', title: 'Český Krumlov Historic Center',
+                category: 'walk', lat: 48.8109, lng: 14.3152,
+                neighborhood: 'Náměstí Svornosti, Český Krumlov',
+                tip: 'Depart Prague by 08:00 (~2.5h drive each way) to catch winter daylight (sunset ~16:10) in the UNESCO riverbend town.',
+                booking: null
+              },
+              {
+                id: 'd14b-s2', time: '12:00–13:30', title: 'Castle Courtyard & Painted Tower',
+                category: 'sight', lat: 48.8127, lng: 14.3150,
+                neighborhood: 'Zámek Český Krumlov',
+                tip: 'Main castle interior routes & Baroque Theatre are closed in winter, but the Castle Museum, painted Tower, and Cloak Bridge remain open.',
+                booking: null
+              },
+              {
+                id: 'd14b-s3', time: '13:45–15:30', title: 'Latrán & Vltava River Bend Lunch',
+                category: 'food', lat: 48.8134, lng: 14.3175,
+                neighborhood: 'Latrán, Český Krumlov',
+                tip: 'Medieval tavern lunch along the Vltava horseshoe bend before the 2.5h drive back to Prague.',
+                booking: 'Reserve Lunch Ahead'
+              }
+            ]
+          }
+        }
+      },
+      {
+        id: 'day-15',
+        shortDate: 'Thu 31',
+        fullDate: 'Thu 31 Dec 2026',
+        country: 'CZ',
+        region: 'Prague (Silvestr)',
+        mascot: 'pilsner',
+        title: "New Year's Eve / Silvestr",
+        summary: 'Dry-aged Czech beef feast at Čestr followed by a safe, scenic midnight toast overlooking Prague from Riegrovy sady.',
+        alert: 'SAFETY WARNING: Avoid Wenceslas Square & Old Town Square around midnight—crowds fire amateur pyrotechnics indiscriminately there.',
+        stops: [
+          {
+            id: 'd15-s1', time: '10:30–12:30', title: 'Karlín & Vinohrady Morning Stroll',
+            category: 'walk', lat: 50.0919, lng: 14.4495,
+            neighborhood: 'Karlín / Vinohrady',
+            tip: 'Easy coffee morning and pick up a bottle of Bohemia Sekt Prestige during the day before evening crowds build.',
+            booking: null
+          },
+          {
+            id: 'd15-s2', time: '18:30–21:30', title: 'NYE Steakhouse Dinner at Čestr',
+            category: 'food', lat: 50.0795, lng: 14.4312,
+            neighborhood: 'Legerova 75 (Top of Wenceslas Sq)',
+            tip: 'Ambiente’s temple to dry-aged Czech Fleckvieh beef cuts and elevated Czech sides—book well in advance for Silvestr.',
+            booking: 'Mandatory Early NYE Booking'
+          },
+          {
+            id: 'd15-s3', time: '23:30–00:30', title: 'Midnight Sparkling Wine at Riegrovy sady',
+            category: 'holiday', lat: 50.0802, lng: 14.4418,
+            neighborhood: 'Riegrovy sady, Vinohrady',
+            tip: 'Join local Praguers on the hillside lawn for a wide skyline panorama toward Prague Castle, clear of the chaotic street fireworks downtown.',
+            booking: null
+          }
+        ]
+      },
+      {
+        id: 'day-16',
+        shortDate: 'Fri 1 Jan',
+        fullDate: 'Fri 1 Jan 2027',
+        country: 'CZ',
+        region: 'Prague Center',
+        mascot: 'orloj',
+        title: "New Year's Day",
+        summary: 'Late First-Republic brunch, National Museum & Wenceslas Square stroll, and a warm farewell family dinner.',
+        alert: 'Large supermarkets and retail stores are closed by law on Jan 1; cafés, restaurants, and major monuments remain open.',
+        stops: [
+          {
+            id: 'd16-s1', time: '10:30–12:00', title: "New Year's Brunch at Café Louvre",
+            category: 'food', lat: 50.0818, lng: 14.4189,
+            neighborhood: 'Národní 22',
+            tip: 'Celebrate the first morning of 2027 with eggs, pastries, and thick hot chocolate.',
+            booking: 'Reserve Brunch for 5'
+          },
+          {
+            id: 'd16-s2', time: '13:00–15:30', title: 'National Museum & Wenceslas Square',
+            category: 'sight', lat: 50.0791, lng: 14.4308,
+            neighborhood: 'Václavské náměstí',
+            tip: 'Admire the restored Neo-Renaissance Pantheon dome and view down Wenceslas Square, then pick up Czech spa wafers at open specialty shops.',
+            booking: null
+          },
+          {
+            id: 'd16-s3', time: '18:30–20:30', title: 'Farewell Family Dinner',
+            category: 'food', lat: 50.0858, lng: 14.4235,
+            neighborhood: 'Staré Město',
+            tip: 'Final group toast in Prague before Saturday morning departures.',
+            booking: 'Reserve for 5'
+          }
+        ]
+      },
+      {
+        id: 'day-17',
+        shortDate: 'Sat 2 Jan',
+        fullDate: 'Sat 2 Jan 2027',
+        country: 'CZ',
+        region: 'PRG Departures',
+        mascot: 'krtek',
+        title: 'Departures from Prague',
+        summary: 'Hotel check-out, final packing check, and smooth airport runs to Václav Havel Airport Prague.',
+        alert: 'Arrive at PRG Airport 2.5–3 hours before international flights.',
+        stops: [
+          {
+            id: 'd17-s1', time: '08:00–09:30', title: 'Hotel Check-out & Final Packing',
+            category: 'transit', lat: 50.0830, lng: 14.4220,
+            neighborhood: 'Prague Center',
+            tip: 'Double-check passports, chargers, and tax-free forms before loading the car.',
+            booking: null
+          },
+          {
+            id: 'd17-s2', time: '09:30–13:00', title: 'Václav Havel Airport Prague Departures',
+            category: 'transit', lat: 50.1008, lng: 14.2600,
+            neighborhood: 'Prague 6 – Ruzyně',
+            tip: 'Return Debi and Tom\'s rental at the airport. About 30 minutes from central Prague, 35–40 from Mníšek. Safe travels, Debi, Tom, Olivia, and Jordan.',
+            booking: 'Arrive 2.5–3h Early'
+          }
+        ]
+      }
+    ];
+
+    /**
+     * =========================================================================
+     * 3. HONEST GUIDE HIDDEN GEMS OVERLAY ('+' PINS)
+     * =========================================================================
+     */
+    const HONEST_GUIDE_GEMS = [
+      {
+        id: 'gem-nasemaso', title: 'Naše maso (Artisan Butcher)',
+        lat: 50.0904, lng: 14.4268, neighborhood: 'Dlouhá 39, Staré Město', time: '12:00–13:30', category: 'food',
+        tip: 'Right next to Lokál Dlouhááá! Famous for aged Czech beef burgers, meatloaf sandwiches, and self-tap Pilsner while you wait.'
+      },
+      {
+        id: 'gem-sisters', title: 'Sisters Bistro (Modern Chlebíčky)',
+        lat: 50.0903, lng: 14.4267, neighborhood: 'Dlouhá 39, Staré Město', time: '11:00–12:00', category: 'food',
+        tip: 'Next door to Naše maso—try elevated Czech open-faced sandwiches (chlebíčky) with beetroot, egg salad, or roast beef.'
+      },
+      {
+        id: 'gem-metronome', title: 'Letná Metronome & Stalin Plaza',
+        lat: 50.0949, lng: 14.4160, neighborhood: 'Letenské sady', time: '15:30–16:15', category: 'walk',
+        tip: 'Giant kinetic metronome standing on the former Stalin monument plinth with a sweeping axis straight down Pařížská Street.'
+      },
+      {
+        id: 'gem-kavarna', title: 'Kavárna co hledá jméno',
+        lat: 50.0713, lng: 14.4052, neighborhood: 'Stroupežnického 10, Smíchov', time: '10:30–12:00', category: 'food',
+        tip: 'Hidden courtyard industrial-chic café in Smíchov beloved by Prague locals for brunch and specialty flat whites.'
+      },
+      {
+        id: 'gem-eska', title: 'Eska Restaurant & Bakery',
+        lat: 50.0921, lng: 14.4508, neighborhood: 'Pernerova 49, Karlín', time: '11:30–13:00', category: 'food',
+        tip: 'Michelin Bib Gourmand Nordic-Czech bakery in Karlín—famous for sourdough bread, fermented veggies, and potatoes in ash.'
+      },
+      {
+        id: 'gem-speculum', title: 'Speculum Alchemiae (Secret Alchemy Lab)',
+        lat: 50.0906, lng: 14.4202, neighborhood: 'Haštalská 1, Staré Město', time: '14:00–14:45', category: 'sight',
+        tip: 'Hidden 16th-century underground alchemist laboratory uncovered during the 2002 floods—far better than tourist gimmick museums.'
+      },
+      {
+        id: 'gem-stromovka', title: 'Stromovka Royal Game Reserve',
+        lat: 50.1062, lng: 14.4195, neighborhood: 'Bubeneč / Holešovice', time: '14:00–15:30', category: 'walk',
+        tip: 'Prague’s sprawling 13th-century royal park with ponds, bridges, and quiet winter walking paths right near DOX.'
+      },
+      {
+        id: 'gem-pfunds', title: 'Pfunds Molkerei ("World’s Most Beautiful Dairy")',
+        lat: 51.0637, lng: 13.7586, neighborhood: 'Bautzner Str. 79, Dresden', time: '14:45–15:15', category: 'sight',
+        tip: '1892 Dresden dairy shop covered floor-to-ceiling in hand-painted Villeroy & Boch neo-Renaissance tiles.'
+      },
+      {
+        id: 'gem-altstadthof', title: 'Hausbrauerei Altstadthof (Red Beer)',
+        lat: 49.4570, lng: 11.0747, neighborhood: 'Bergstraße 19, Nuremberg', time: '12:30–14:00', category: 'food',
+        tip: 'Just below Nuremberg Imperial Castle; brews organic Nuremberg Rotbier (red beer) with hearty Franconian food.'
+      },
+      {
+        id: 'gem-strahov', title: 'Klášterní pivovar Strahov',
+        lat: 50.0865, lng: 14.3886, neighborhood: 'Strahovské nádvoří 301', time: '13:30–15:00', category: 'food',
+        tip: 'Monastic brewery just above Prague Castle & Nový Svět pouring St. Norbert amber & IPA beers with hearty goulash.'
+      },
+      {
+        id: 'gem-kutnabrew', title: 'Měšťanský pivovar Kutná Hora',
+        lat: 49.9545, lng: 15.2742, neighborhood: 'U Lorce 13, Kutná Hora', time: '15:00–15:45', category: 'food',
+        tip: 'Historic restored Kutná Hora brewery between Sedlec Ossuary and St. Barbara’s—grab fresh local bottles to take back.'
+      }
+    ];
+
+    /**
+     * CARTOGRAPHIC DISTRICT CALLOUTS
+     */
+    const DISTRICT_CALLOUTS = [
+      { name: 'Staré Město', lat: 50.0878, lng: 14.4216 },
+      { name: 'Malá Strana', lat: 50.0856, lng: 14.4042 },
+      { name: 'Hradčany', lat: 50.0908, lng: 14.3928 },
+      { name: 'Josefov', lat: 50.0905, lng: 14.4178 },
+      { name: 'Vinohrady', lat: 50.0758, lng: 14.4425 },
+      { name: 'Vyšehrad', lat: 50.0642, lng: 14.4188 },
+      { name: 'Letná', lat: 50.0955, lng: 14.4180 },
+      { name: 'Mníšek & Brdy Hills', lat: 49.8715, lng: 14.2545 },
+      { name: 'Altstadt Dresden', lat: 51.0512, lng: 13.7395 },
+      { name: 'Nürnberger Burg', lat: 49.4572, lng: 11.0762 }
+    ];
+
+    /**
+     * CENTRAL EUROPE 6 REGIONAL HUBS
+     */
+    const REGIONAL_HUBS = [
+      { name: 'Mníšek pod Brdy', lat: 49.8665, lng: 14.2618, dayIdx: 0, note: 'Ethan\'s home. Debi and Tom stay here Dec 17–18.' },
+      { name: 'Prague', lat: 50.0865, lng: 14.4150, dayIdx: 2, note: 'From Dec 19. River-boat room first, then a hotel still to confirm. Ethan\'s home stays in Mníšek.' },
+      { name: 'Karlštejn', lat: 49.9394, lng: 14.1881, dayIdx: 9, note: 'Advent Castle Tour (Dec 26)' },
+      { name: 'Kutná Hora', lat: 49.9482, lng: 15.2665, dayIdx: 12, note: 'Bone Church & St. Barbara (Dec 29)' },
+      { name: 'Dresden 🇩🇪', lat: 51.0519, lng: 13.7416, dayIdx: 5, note: 'Striezelmarkt Day Trip (Dec 22)' },
+      { name: 'Nuremberg 🇩🇪', lat: 49.4542, lng: 11.0775, dayIdx: 10, note: 'All five stay together the night of Dec 27. Back to Prague Dec 28.' },
+    ];
+
+    const REGIONAL_ARCS = [
+      { from: [50.0865, 14.4150], to: [49.8665, 14.2618], label: '~35m D4' },
+      { from: [50.0865, 14.4150], to: [49.9394, 14.1881], label: '~35m' },
+      { from: [50.0865, 14.4150], to: [49.9482, 15.2665], label: '~1h D11' },
+      { from: [50.0865, 14.4150], to: [51.0519, 13.7416], label: '~2h D8/A17' },
+      { from: [50.0865, 14.4150], to: [49.4542, 11.0775], label: '~3h D5/A6' }
+    ];
+
+    /**
+     * 16-ITEM BOOKINGS & WINTER HOLIDAY RULES CHECKLIST
+     */
+    const BOOKING_CHECKLIST = [
+      { id: 'chk-rental', day: 'Thu 17 Dec', title: 'Debi & Tom rental car, pickup at PRG', desc: 'One car for the airport, Mníšek, Dresden, Karlštejn, Nuremberg, and Kutná Hora. In Prague, park it at the boat or hotel and use trams and metro. Return it at PRG on Jan 2. Confirm it fits five plus bags for the Nuremberg night.' },
+      { id: 'chk-vignette', day: 'Pre-Trip', title: 'Czech Electronic Motorway Vignette (dálniční známka)', desc: 'Buy it for Debi and Tom\'s rental on edalnice.cz before the D4, D5, D8, or D11.' },
+      { id: 'chk-botel', day: 'Sat 19 Dec', title: 'Confirm the river-boat room for Debi & Tom', desc: 'Write down the boat name, address, and which nights. Keep this reservation until the shared Prague hotel is actually booked.' },
+      { id: 'chk-hotel', day: 'Sat 19 Dec', title: 'Confirm one Prague hotel for Debi, Tom, Olivia & Jordan', desc: 'This is the plan once Olivia and Jordan arrive, and it is not booked yet. Ethan\'s home stays in Mníšek.' },
+      { id: 'chk-nbergstay', day: 'Sun 27 Dec', title: 'Book one Nuremberg place for all five', desc: 'Everyone stays together the night of Dec 27, then drives back on Dec 28.' },
+      { id: 'chk-litacka',  day: 'Pre-Trip', title: 'Install PID Lítačka App on Everyone’s Phones', desc: 'Activate tram/metro tickets in-app BEFORE boarding (inspectors patrol Castle trams).' },
+      { id: 'chk-euronet',  day: 'Pre-Trip', title: 'Avoid Euronet ATMs & 100g Old Town Ham Stalls', desc: 'Use Czech bank ATMs (Česká spořitelna, ČSOB, KB), always choose CZK, and skip tourist chimney cakes.' },
+      { id: 'chk-mnisek',   day: 'Fri 18 Dec', title: 'Book Mníšek pod Brdy Chateau Friday Tour (24h Ahead)', desc: 'Friday winter tours (10:30, 12:00, 13:30) require advance phone/online reservation.' },
+      { id: 'chk-lokal',    day: 'Sat 19 Dec', title: 'Reserve Lokál Dlouhááá Table for 5', desc: 'Evening tank Pilsner & smažený sýr dinner—books out fast on pre-Christmas Saturday.' },
+      { id: 'chk-kuchyn',   day: 'Mon 21 Dec', title: 'Reserve Kuchyň Lunch Table for 5 (Castle Gates)', desc: 'Hradčanské náměstí terrace lunch overlooking Prague.' },
+      { id: 'chk-glaubicu', day: 'Mon 21 Dec', title: 'Reserve U Glaubiců Cellar Dinner for 5', desc: 'Malostranské náměstí 700-year-old vaulted cellar dinner.' },
+      { id: 'chk-klem',     day: 'Wed 23 Dec', title: 'Buy Timed E-Tickets for Klementinum Guided Tour', desc: 'Winter Baroque Library slots sell out online ahead of time.' },
+      { id: 'chk-dec24shop',day: 'Thu 24 Dec', title: 'Grocery & Water Run BEFORE 12:00 Noon Dec 24', desc: 'Czech law closes all shops >200 m² at noon Dec 24 through Dec 26!' },
+      { id: 'chk-cerveny',  day: 'Thu 24 Dec', title: 'Book Christmas Eve Dinner at Červený jelen', desc: 'Mandatory advance reservation for Dec 24 festive menu.' },
+      { id: 'chk-savoy',    day: 'Fri 25 Dec', title: 'Book Christmas Day Lunch at Café Savoy', desc: 'Also grab separate Petřín funicular tickets in PID Lítačka app.' },
+      { id: 'chk-karlstejn',day: 'Sat 26 Dec', title: 'Buy Online Timed Tickets for Karlštejn Castle Tour', desc: 'Special Advent/Christmas opening Dec 26–31 (10:00–15:00).' },
+      { id: 'chk-nuremberg',day: 'Sun 27 Dec', title: 'Confirm Nuremberg Lunch & Dinner with Karbsteins', desc: 'Old Town bratwurst lunch & evening dinner with the Karbsteins.' },
+      { id: 'chk-sedlec',   day: 'Tue 29 Dec', title: 'Buy Online Timed E-Tickets for Sedlec Ossuary', desc: 'No tickets sold at the Bone Church door—book timed entry online!' },
+      { id: 'chk-dacicky',  day: 'Tue 29 Dec', title: 'Reserve Restaurace Dačický Lunch for 5 (Kutná Hora)', desc: 'Historic Old Bohemian tavern lunch.' },
+      { id: 'chk-cestr',    day: 'Thu 31 Dec', title: 'Book New Year’s Eve Steakhouse Dinner at Čestr', desc: 'Book early for Silvestr; watch midnight skyline safely from Riegrovy sady.' }
+    ];
+
+    /**
+     * =========================================================================
+     * 4. APPLICATION STATE & GITHUB PAGES URL SYNC ENGINE (#sync=...)
+     * =========================================================================
+     */
+    const LOCAL_STORAGE_KEY = 'prague_winter_atlas_2026_v4';
+
+    let state = {
+      selectedDayIndex: 0,
+      selectedStopId: 'd1-s1',
+      activeUser: 'Ethan',
+      tileStyle: 'voyager',
+      overviewMode: false,
+      showGems: true,
+      completedStops: {},
+      stopVotes: {},
+      customStops: {},
+      dayNotes: {},
+      checkedBookings: {},
+      dayVariants: { 'day-14': 'prague' },
+      clocks: { v: {}, c: {}, x: {}, n: {}, b: {}, m: {} },
+      drawerCollapsedDesktop: false,
+      mobileSheetState: 'half', // 'peek' | 'half' | 'full'
+      activeToolsTab: 'checklist',
+      nearMeOrigin: null,
+      firebaseUrl: '',
+      firebasePin: ''
+    };
+
+    // URL-safe base64 helpers
+    function bytesToBase64Url(uint8) {
+      let binary = '';
+      for (let i = 0; i < uint8.length; i++) binary += String.fromCharCode(uint8[i]);
+      return btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+    }
+
+    function base64UrlToBytes(b64url) {
+      let b64 = b64url.replace(/-/g, '+').replace(/_/g, '/');
+      while (b64.length % 4) b64 += '=';
+      const binary = atob(b64);
+      const bytes = new Uint8Array(binary.length);
+      for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+      return bytes;
+    }
+
+    // Build compact payload for #sync=...
+    function buildCompactSyncObject() {
+      return {
+        d: state.selectedDayIndex,
+        v: state.stopVotes,
+        c: state.completedStops,
+        x: state.customStops,
+        n: state.dayNotes,
+        b: state.checkedBookings,
+        m: state.dayVariants,
+        k: state.clocks
+      };
+    }
+
+    function legacyMember(id) {
+      if (id === 'Mom') return 'Debi';
+      if (id === 'Dad') return 'Tom';
+      return id;
+    }
+
+    function knownMember(id) {
+      return FAMILY_MEMBERS.some(m => m.id === legacyMember(id));
+    }
+
+    function sanitizeVoteMap(raw) {
+      const out = {};
+      if (!raw || typeof raw !== 'object') return out;
+      Object.keys(raw).forEach(stopId => {
+        const cleanStop = safeDomId(stopId);
+        if (!cleanStop || !Array.isArray(raw[stopId])) return;
+        const names = raw[stopId].map(legacyMember).filter(name => FAMILY_MEMBERS.some(m => m.id === name));
+        if (names.length) out[cleanStop] = [...new Set(names)];
+      });
+      return out;
+    }
+
+    function sanitizeFlagMap(raw) {
+      const out = {};
+      if (!raw || typeof raw !== 'object') return out;
+      Object.keys(raw).forEach(key => {
+        const clean = safeDomId(key);
+        if (clean && raw[key] === true) out[clean] = true;
+      });
+      return out;
+    }
+
+    function applyCompactSyncObject(obj, opts) {
+      if (!obj || typeof obj !== 'object') return false;
+      if (!(opts && opts.keepDay) && typeof obj.d === 'number' && obj.d >= 0 && obj.d < TRIP_DAYS.length) state.selectedDayIndex = obj.d;
+      if (obj.v && typeof obj.v === 'object') state.stopVotes = sanitizeVoteMap(obj.v);
+      if (obj.c && typeof obj.c === 'object') state.completedStops = sanitizeFlagMap(obj.c);
+      if (obj.x && typeof obj.x === 'object') state.customStops = obj.x;
+      if (obj.n && typeof obj.n === 'object') state.dayNotes = obj.n;
+      if (obj.b && typeof obj.b === 'object') state.checkedBookings = sanitizeFlagMap(obj.b);
+      if (obj.m && typeof obj.m === 'object') state.dayVariants = { ...state.dayVariants, ...obj.m };
+      if (obj.k && typeof obj.k === 'object') state.clocks = obj.k;
+      return true;
+    }
+
+    // Encode state with deflate-raw CompressionStream + base64url (with UTF-8 fallback)
+    async function encodeSyncHash() {
+      const jsonStr = JSON.stringify(buildCompactSyncObject());
+      const rawBytes = new TextEncoder().encode(jsonStr);
+      if (typeof CompressionStream !== 'undefined') {
+        try {
+          const cs = new CompressionStream('deflate-raw');
+          const writer = cs.writable.getWriter();
+          writer.write(rawBytes);
+          writer.close();
+          const compressedBuf = await new Response(cs.readable).arrayBuffer();
+          return 'z:' + bytesToBase64Url(new Uint8Array(compressedBuf));
+        } catch (e) {
+          // Fallback to uncompressed base64url
+        }
+      }
+      return 'u:' + bytesToBase64Url(rawBytes);
+    }
+
+    async function decodeSyncHash(encoded) {
+      if (!encoded) return null;
+      try {
+        let mode = 'z';
+        let payload = encoded;
+        if (encoded.startsWith('z:') || encoded.startsWith('u:')) {
+          mode = encoded.slice(0, 1);
+          payload = encoded.slice(2);
+        }
+        const bytes = base64UrlToBytes(payload);
+        if (mode === 'z' && typeof DecompressionStream !== 'undefined') {
+          const ds = new DecompressionStream('deflate-raw');
+          const writer = ds.writable.getWriter();
+          writer.write(bytes);
+          writer.close();
+          const decompressedBuf = await new Response(ds.readable).arrayBuffer();
+          const jsonStr = new TextDecoder().decode(decompressedBuf);
+          return JSON.parse(jsonStr);
+        } else {
+          const jsonStr = new TextDecoder().decode(bytes);
+          return JSON.parse(jsonStr);
+        }
+      } catch (e) {
+        console.warn('Could not decode sync hash:', e);
+        return null;
+      }
+    }
+
+    function loadLocalState() {
+      try {
+        let saved = localStorage.getItem(LOCAL_STORAGE_KEY);
+        if (!saved) saved = localStorage.getItem('prague_winter_atlas_2026_v3');
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          state = { ...state, ...parsed };
+          if (!state.clocks) state.clocks = { v: {}, c: {}, x: {}, n: {}, b: {}, m: {} };
+          state.activeUser = legacyMember(state.activeUser);
+          if (!knownMember(state.activeUser)) state.activeUser = 'Ethan';
+          state.stopVotes = sanitizeVoteMap(state.stopVotes);
+        }
+      } catch (e) {}
+    }
+
+    function persistState() {
+      try {
+        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(state));
+      } catch (e) {}
+      if (!applyingRemote) scheduleLivePush();
+    }
+
+
+    const FAMILY_PIN_KEY = 'prague_family_pin_v1';
+    let syncRevision = 0;
+    let applyingRemote = false;
+    let pushTimer = null;
+    let pushInFlight = false;
+    let pushQueued = false;
+    let pollTimer = null;
+    let seeded = false;
+    let holdRemote = false;
+    let editGen = 0;
+
+    function familyPin() {
+      try { return localStorage.getItem(FAMILY_PIN_KEY) || ''; } catch (e) { return ''; }
+    }
+
+    function syncHeaders(json) {
+      const headers = { 'x-atlas-client': '1' };
+      const pin = familyPin();
+      if (pin) headers['x-family-pin'] = pin;
+      if (json) headers['content-type'] = 'application/json';
+      return headers;
+    }
+
+    function setSyncStatus(mode, text) {
+      const label = document.getElementById('syncStatusLabel');
+      const badge = document.getElementById('syncBadge');
+      if (label) {
+        label.textContent = text;
+        label.className = mode === 'live'
+          ? 'font-medium text-linden'
+          : mode === 'warn' ? 'font-medium text-pilsner' : 'font-medium text-slate-500';
+      }
+      if (badge) {
+        badge.textContent = mode === 'live' ? 'Live' : mode === 'warn' ? 'This phone' : 'Connecting';
+        badge.className = mode === 'live'
+          ? 'px-2 py-0.5 rounded-full text-[10px] font-bold bg-linden text-white'
+          : 'px-2 py-0.5 rounded-full text-[10px] font-bold bg-stone-200 text-slate-700';
+      }
+      const pinBox = document.getElementById('syncNeedsPin');
+      const liveBox = document.getElementById('syncLiveState');
+      if (pinBox) pinBox.classList.toggle('hidden', mode === 'live');
+      if (liveBox) liveBox.classList.toggle('hidden', mode !== 'live');
+    }
+
+    function hasSharedEdits() {
+      const s = buildCompactSyncObject();
+      if (s.v && Object.keys(s.v).length) return true;
+      if (s.c && Object.keys(s.c).length) return true;
+      if (s.x && Object.keys(s.x).length) return true;
+      if (s.n && Object.keys(s.n).some(k => String(s.n[k] || '').trim())) return true;
+      if (s.b && Object.keys(s.b).length) return true;
+      if (s.m && Object.keys(s.m).some(k => !(k === 'day-14' && s.m[k] === 'prague'))) return true;
+      return false;
+    }
+
+    function applyRemote(obj) {
+      const focused = document.activeElement;
+      const noteFocused = focused && focused.id === 'dayNoteField';
+      const savedNote = noteFocused ? focused.value : null;
+      const dayId = noteFocused ? getCurrentDay().id : null;
+      applyingRemote = true;
+      applyCompactSyncObject(obj, { keepDay: true });
+      if (noteFocused && dayId) state.dayNotes[dayId] = savedNote;
+      applyingRemote = false;
+      try { localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(state)); } catch (e) {}
+      renderAllUI();
+      if (typeof renderMapLayers === 'function') renderMapLayers(false);
+      if (noteFocused) {
+        const field = document.getElementById('dayNoteField');
+        if (field) {
+          field.value = savedNote;
+          field.focus();
+        }
+      }
+    }
+
+    function scheduleLivePush() {
+      editGen += 1;
+      clearTimeout(pushTimer);
+      pushTimer = setTimeout(() => { pushLiveSync(); }, 700);
+    }
+
+    async function pushLiveSync() {
+      if (pushInFlight) {
+        pushQueued = true;
+        return;
+      }
+      pushInFlight = true;
+      const sentGen = editGen;
+      try {
+        const res = await fetch('/api/sync', {
+          method: 'POST',
+          headers: syncHeaders(true),
+          body: JSON.stringify({ baseRevision: syncRevision, state: buildCompactSyncObject() })
+        });
+        if (res.status === 401) {
+          setSyncStatus('warn', 'Enter the family PIN to sync phones');
+          return;
+        }
+        if (!res.ok) {
+          setSyncStatus('warn', 'Saved on this phone');
+          return;
+        }
+        const data = await res.json();
+        syncRevision = Number(data.revision) || syncRevision;
+        holdRemote = false;
+        if (sentGen === editGen && data.state) applyRemote(data.state);
+        setSyncStatus('live', 'Live across every phone');
+      } catch (e) {
+        setSyncStatus('warn', 'Saved on this phone');
+      } finally {
+        pushInFlight = false;
+        if (pushQueued) {
+          pushQueued = false;
+          scheduleLivePush();
+        }
+      }
+    }
+
+    async function pullLiveSync() {
+      if (pushInFlight || holdRemote) return;
+      try {
+        const res = await fetch('/api/sync', { headers: syncHeaders(false), cache: 'no-store' });
+        if (res.status === 401) {
+          setSyncStatus('warn', 'Enter the family PIN to sync phones');
+          return;
+        }
+        if (!res.ok) {
+          setSyncStatus('warn', 'Saved on this phone');
+          return;
+        }
+        const data = await res.json();
+        const rev = Number(data.revision) || 0;
+        if (!seeded) {
+          seeded = true;
+          syncRevision = rev;
+          if (hasSharedEdits()) {
+            if (rev > 0) {
+              holdRemote = true;
+              syncRevision = -1;
+            }
+            scheduleLivePush();
+          } else if (rev > 0 && data.state) {
+            applyRemote(data.state);
+            setSyncStatus('live', 'Live across every phone');
+          } else {
+            setSyncStatus('live', 'Live across every phone');
+          }
+          return;
+        }
+        if (rev !== syncRevision && data.state) {
+          syncRevision = rev;
+          applyRemote(data.state);
+        }
+        setSyncStatus('live', 'Live across every phone');
+      } catch (e) {
+        setSyncStatus('warn', 'Saved on this phone');
+      }
+    }
+
+    function startLiveSync() {
+      pullLiveSync();
+      clearInterval(pollTimer);
+      pollTimer = setInterval(() => {
+        if (document.visibilityState === 'visible') pullLiveSync();
+      }, 4000);
+      document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible') pullLiveSync();
+      });
+    }
+
+    function saveFamilyPin() {
+      const input = document.getElementById('familyPinInput');
+      const pin = (input && input.value || '').trim();
+      if (pin.length < 4) {
+        showToast('Use at least 4 characters.');
+        return;
+      }
+      try { localStorage.setItem(FAMILY_PIN_KEY, pin); } catch (e) {}
+      seeded = false;
+      holdRemote = false;
+      pullLiveSync();
+      showToast('Checking the family PIN…');
+    }
+
+    function esc(value) {
+      return String(value ?? '').replace(/[&<>"']/g, ch => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+      })[ch]);
+    }
+
+    function safeDomId(id) {
+      return String(id ?? '').replace(/[^a-zA-Z0-9_-]/g, '').slice(0, 48);
+    }
+
+    function safeCoord(n) {
+      const x = Number(n);
+      return Number.isFinite(x) ? String(Math.round(x * 1e6) / 1e6) : '0';
+    }
+
+    function stamp(group, key, sub) {
+      if (!state.clocks) state.clocks = { v: {}, c: {}, x: {}, n: {}, b: {}, m: {} };
+      const now = Date.now();
+      if (sub) {
+        if (!state.clocks[group][key] || typeof state.clocks[group][key] !== 'object') state.clocks[group][key] = {};
+        state.clocks[group][key][sub] = now;
+      } else {
+        state.clocks[group][key] = now;
+      }
+    }
+
+    function lodgingNote(dayId) {
+      if (dayId === 'day-1' || dayId === 'day-2') {
+        return "Ethan's home in Mníšek. Debi and Tom stay with Ethan. Their rental car is with them from the airport.";
+      }
+      if (dayId === 'day-11') {
+        return 'All five together in Nuremberg tonight. Book one place, then drive back tomorrow.';
+      }
+      if (dayId === 'day-12') {
+        return 'Leave Nuremberg after the castle and sleep back in Prague: the river-boat room, or the shared hotel if it is booked.';
+      }
+      if (dayId === 'day-17') {
+        return "Checkout morning. Return Debi and Tom's rental at the airport. Ethan stays in Mníšek.";
+      }
+      if (dayId === 'day-6') {
+        return 'Day trip only. Debi and Tom drive the rental both ways. Sleep back in Prague.';
+      }
+      return "Prague. Debi and Tom's first nights are a small river-boat room. The plan, still unconfirmed, is that Debi, Tom, Olivia, and Jordan then share one hotel. Ethan's home stays in Mníšek. Park the rental and use trams and metro in the center.";
+    }
+
+    function lodgingHtml(day) {
+      return `<div class="mt-2 px-2.5 py-2 rounded-xl bg-amber-50/90 border border-amber-200 text-[11px] text-amber-950 leading-relaxed"><strong>Where we sleep. </strong>${esc(lodgingNote(day.id))}</div>`;
+    }
+
+    /**
+     * =========================================================================
+     * 5. DATA & GEOGRAPHY HELPERS
+     * =========================================================================
+     */
+    function getCurrentDay() {
+      return TRIP_DAYS[state.selectedDayIndex] || TRIP_DAYS[0];
+    }
+
+    function getDayStops(day) {
+      let base = [];
+      if (day.hasVariants) {
+        const mode = state.dayVariants[day.id] || day.activeVariant || 'prague';
+        base = day.variants[mode].stops;
+      } else {
+        base = day.stops;
+      }
+      const extras = state.customStops[day.id] || [];
+      return [...base, ...extras];
+    }
+
+    function haversineKm(lat1, lon1, lat2, lon2) {
+      const R = 6371;
+      const dLat = (lat2 - lat1) * Math.PI / 180;
+      const dLon = (lon2 - lon1) * Math.PI / 180;
+      const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                Math.sin(dLon / 2) * Math.sin(dLon / 2);
+      return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    }
+
+    function formatLegDuration(km) {
+      if (km < 0.12) return { dist: `${Math.round(km * 1000)}m`, time: '2m walk' };
+      if (km <= 3.5) {
+        const mins = Math.max(3, Math.round((km / 4.4) * 60));
+        return { dist: `${km.toFixed(1)}km`, time: `${mins}m walk` };
+      }
+      if (km <= 14) {
+        const mins = Math.max(8, Math.round((km / 24) * 60));
+        return { dist: `${km.toFixed(1)}km`, time: `${mins}m tram/drive` };
+      }
+      const mins = Math.round((km / 88) * 60);
+      if (mins >= 60) {
+        const h = Math.floor(mins / 60);
+        const m = mins % 60;
+        return { dist: `${Math.round(km)}km`, time: `${h}h ${m}m drive` };
+      }
+      return { dist: `${Math.round(km)}km`, time: `${mins}m drive` };
+    }
+
+    function showToast(msg) {
+      const el = document.getElementById('atlasToast');
+      document.getElementById('atlasToastMsg').textContent = msg;
+      el.classList.remove('hidden');
+      clearTimeout(window._atlasToastTimer);
+      window._atlasToastTimer = setTimeout(() => el.classList.add('hidden'), 3000);
+    }
+
+    function copyTextSafely(text) {
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      let ok = false;
+      try { ok = document.execCommand('copy'); } catch (e) {}
+      document.body.removeChild(ta);
+      return ok;
+    }
+
+    /**
+     * =========================================================================
+     * 6. HIGH-DETAIL LEAFLET 1.9.4 MAP ENGINE (+ GRACEFUL FALLBACK)
+     * =========================================================================
+     */
+    let map = null;
+    let activeTileLayer = null;
+    let routeLayerGroup = null;
+    let markersLayerGroup = null;
+    let gemsLayerGroup = null;
+    let calloutsLayerGroup = null;
+    let markerRefsById = {};
+    let isDropPinActive = false;
+
+    const TILE_PROVIDERS = {
+      voyager: {
+        url: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+        options: { attribution: '&copy; OpenStreetMap', maxZoom: 19 }
+      },
+      editorial: {
+        url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}',
+        options: { attribution: 'Tiles &copy; Esri', maxZoom: 19 }
+      },
+      topo: {
+        url: 'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',
+        options: { attribution: '&copy; OpenStreetMap &copy; OpenTopoMap', maxZoom: 17 }
+      },
+      night: {
+        url: 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}',
+        options: { attribution: 'Tiles &copy; Esri', maxZoom: 16 }
+      }
+    };
+
+    function getCategoryMicroSvg(cat) {
+      if (cat === 'food') return `<svg class="w-2.5 h-2.5" viewBox="0 0 24 24" fill="currentColor"><path d="M18 8h1a4 4 0 0 1 0 8h-1v1a3 3 0 0 1-3 3H8a3 3 0 0 1-3-3V8h13zm1 2h-1v4h1a2 2 0 0 0 0-4z"/></svg>`;
+      if (cat === 'walk') return `<svg class="w-2.5 h-2.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 17l6-6 4 4 8-8"/></svg>`;
+      if (cat === 'transit') return `<svg class="w-2.5 h-2.5" viewBox="0 0 24 24" fill="currentColor"><path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99z"/></svg>`;
+      if (cat === 'holiday') return `<svg class="w-2.5 h-2.5" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`;
+      return `<svg class="w-2.5 h-2.5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L2 7l10 5 10-5-10-5zm0 7.5L6.5 7 12 4.5 17.5 7 12 9.5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>`;
+    }
+
+    function initMapEngine() {
+      const mapEl = document.getElementById('map');
+
+      // Graceful Fallback if Leaflet CDN failed to load
+      if (typeof window.L === 'undefined') {
+        mapEl.innerHTML = `
+          <div class="w-full h-full flex flex-col items-center justify-center bg-vltava text-parchment p-6 text-center">
+            <div class="max-w-md space-y-3 atlas-glass-dark p-6 rounded-3xl">
+              <div class="w-12 h-12 mx-auto">${CZECH_GERMAN_SVGS.krtek()}</div>
+              <h2 class="font-display font-bold text-lg text-amber-200">Offline Itinerary Mode</h2>
+              <p class="text-xs text-slate-300 leading-relaxed">
+                External map tiles are temporarily unreachable, but your full 17-day itinerary, votes, checklist, and one-tap Google Maps / Mapy.cz deep links remain 100% active.
+              </p>
+            </div>
+          </div>`;
+        return;
+      }
+
+      map = L.map('map', {
+        center: [50.0865, 14.4150],
+        zoom: 14,
+        zoomControl: false,
+        preferCanvas: true
+      });
+
+      L.control.zoom({ position: 'bottomright' }).addTo(map);
+      L.control.scale({ position: 'bottomright', imperial: false }).addTo(map);
+
+      routeLayerGroup = L.layerGroup().addTo(map);
+      calloutsLayerGroup = L.layerGroup().addTo(map);
+      gemsLayerGroup = L.layerGroup().addTo(map);
+      markersLayerGroup = L.layerGroup().addTo(map);
+
+      switchTileLayer(state.tileStyle || 'voyager');
+
+      // Show/Hide District Cartographic Labels based on Zoom
+      map.on('zoomend', updateDistrictCalloutsVisibility);
+
+      // Handle Click for "Drop Pin on Map" Mode
+      map.on('click', (e) => {
+        if (!isDropPinActive) return;
+        const { lat, lng } = e.latlng;
+        cancelDropPinMode();
+        openCustomPinModal(lat, lng);
+      });
+
+      renderDistrictCallouts();
+      renderGemsOverlay();
+      renderMapLayers(true);
+    }
+
+    function switchTileLayer(styleKey) {
+      state.tileStyle = styleKey;
+      document.getElementById('tileStyleSelect').value = styleKey;
+      persistState();
+
+      if (!map || typeof window.L === 'undefined') return;
+      if (activeTileLayer) map.removeLayer(activeTileLayer);
+
+      const cfg = TILE_PROVIDERS[styleKey] || TILE_PROVIDERS.voyager;
+      activeTileLayer = L.tileLayer(cfg.url, cfg.options).addTo(map);
+
+      const mapEl = document.getElementById('map');
+      if (styleKey === 'night') mapEl.classList.add('night-mode');
+      else mapEl.classList.remove('night-mode');
+    }
+
+    function renderDistrictCallouts() {
+      if (!calloutsLayerGroup || typeof window.L === 'undefined') return;
+      calloutsLayerGroup.clearLayers();
+      DISTRICT_CALLOUTS.forEach(d => {
+        const icon = L.divIcon({
+          className: '',
+          html: `<div class="district-callout">${d.name}</div>`,
+          iconSize: [140, 20],
+          iconAnchor: [70, 10]
+        });
+        L.marker([d.lat, d.lng], { icon, interactive: false, keyboard: false }).addTo(calloutsLayerGroup);
+      });
+      updateDistrictCalloutsVisibility();
+    }
+
+    function updateDistrictCalloutsVisibility() {
+      if (!map || !calloutsLayerGroup) return;
+      const z = map.getZoom();
+      if (z >= 11 && !state.overviewMode) {
+        if (!map.hasLayer(calloutsLayerGroup)) map.addLayer(calloutsLayerGroup);
+      } else {
+        if (map.hasLayer(calloutsLayerGroup)) map.removeLayer(calloutsLayerGroup);
+      }
+    }
+
+    function renderGemsOverlay() {
+      if (!gemsLayerGroup || typeof window.L === 'undefined') return;
+      gemsLayerGroup.clearLayers();
+      if (!state.showGems) return;
+
+      HONEST_GUIDE_GEMS.forEach(gem => {
+        const icon = L.divIcon({
+          className: '',
+          html: `
+            <div class="w-7 h-7 rounded-full bg-linden text-white border-2 border-amber-200 shadow-lg flex items-center justify-center font-extrabold text-sm hover:scale-110 transition-transform cursor-pointer" title="${esc(gem.title)}">
+              +
+            </div>`,
+          iconSize: [28, 28],
+          iconAnchor: [14, 14],
+          popupAnchor: [0, -14]
+        });
+
+        const popupHtml = `
+          <div class="min-w-[225px] max-w-[265px] space-y-2 p-0.5">
+            <div class="flex items-center gap-1.5">
+              <span class="px-2 py-0.5 rounded-md bg-linden/15 text-linden font-bold text-[10px] uppercase tracking-wider">Honest Guide Gem</span>
+            </div>
+            <h4 class="font-display font-bold text-sm text-vltava leading-snug">${esc(gem.title)}</h4>
+            <div class="text-[11px] font-medium text-slate-500">${esc(gem.neighborhood)}</div>
+            <p class="text-xs text-slate-700 leading-relaxed">${esc(gem.tip)}</p>
+            <div class="pt-1.5 flex items-center gap-1.5">
+              <button onclick="slotGemIntoActiveDay('${gem.id}')"
+                class="flex-1 py-1.5 px-2.5 rounded-xl bg-linden hover:bg-[#1c4837] text-white text-[11px] font-bold transition shadow-2xs cursor-pointer">
+                + Slot into Today's Route
+              </button>
+              <a href="https://www.google.com/maps/search/?api=1&query=${safeCoord(gem.lat)},${safeCoord(gem.lng)}" target="_blank" rel="noopener noreferrer"
+                class="py-1.5 px-2.5 rounded-xl bg-stone-100 hover:bg-stone-200 text-vltava text-[11px] font-bold">
+                Maps &nearr;
+              </a>
+            </div>
+          </div>
+        `;
+
+        L.marker([gem.lat, gem.lng], { icon }).bindPopup(popupHtml).addTo(gemsLayerGroup);
+      });
+    }
+
+    function renderMapLayers(shouldFitBounds = true) {
+      if (!map || typeof window.L === 'undefined') return;
+      routeLayerGroup.clearLayers();
+      markersLayerGroup.clearLayers();
+      markerRefsById = {};
+      updateDistrictCalloutsVisibility();
+
+      // MODE A: CENTRAL EUROPE 6-HUB REGIONAL OVERVIEW
+      if (state.overviewMode) {
+        const boundsPts = [];
+
+        REGIONAL_ARCS.forEach(arc => {
+          // Outer soft casing
+          L.polyline([arc.from, arc.to], {
+            color: '#B8293D', weight: 6, opacity: 0.18, lineCap: 'round'
+          }).addTo(routeLayerGroup);
+          // Dashed highway line
+          L.polyline([arc.from, arc.to], {
+            color: '#B8293D', weight: 2.5, opacity: 0.85, dashArray: '7, 7', lineCap: 'round'
+          }).addTo(routeLayerGroup);
+
+          const midLat = (arc.from[0] + arc.to[0]) / 2;
+          const midLng = (arc.from[1] + arc.to[1]) / 2;
+          const pillIcon = L.divIcon({
+            className: '',
+            html: `<div class="leg-midpoint-pill">${arc.label}</div>`,
+            iconSize: [74, 20],
+            iconAnchor: [37, 10]
+          });
+          L.marker([midLat, midLng], { icon: pillIcon, interactive: false }).addTo(routeLayerGroup);
+        });
+
+        REGIONAL_HUBS.forEach(hub => {
+          boundsPts.push([hub.lat, hub.lng]);
+          const isPrague = hub.name === 'Prague';
+          const icon = L.divIcon({
+            className: '',
+            html: `
+              <div class="relative flex flex-col items-center cursor-pointer">
+                <div class="px-2.5 py-1 rounded-full ${isPrague ? 'bg-garnet text-white ring-4 ring-garnet/25' : 'bg-vltava text-parchment'} border-2 border-white shadow-lg text-[11px] font-bold whitespace-nowrap">
+                  ${hub.name}
+                </div>
+              </div>`,
+            iconSize: [110, 28],
+            iconAnchor: [55, 14]
+          });
+
+          const m = L.marker([hub.lat, hub.lng], { icon }).addTo(markersLayerGroup);
+          m.bindPopup(`
+            <div class="space-y-1.5 p-0.5">
+              <div class="font-display font-bold text-sm text-vltava">${hub.name}</div>
+              <div class="text-xs text-slate-600">${hub.note}</div>
+              <button onclick="jumpFromOverviewToDay(${hub.dayIdx})" class="w-full mt-1 py-1.5 px-3 rounded-xl bg-garnet text-white text-xs font-bold">
+                Open ${TRIP_DAYS[hub.dayIdx].shortDate} Itinerary &rarr;
+              </button>
+            </div>
+          `);
+        });
+
+        if (shouldFitBounds && boundsPts.length) {
+          map.flyToBounds(boundsPts, { padding: [75, 75], duration: 0.75 });
+        }
+        return;
+      }
+
+      // MODE B: ACTIVE DAY CHRONOLOGICAL ROUTE
+      const day = getCurrentDay();
+      const stops = getDayStops(day);
+      if (!stops.length) return;
+
+      const latLngs = stops.map(s => [s.lat, s.lng]);
+
+      // Multi-layer route polyline (outer glow casing + crisp dashed foreground)
+      if (latLngs.length >= 2) {
+        const strokeColor = day.country === 'DE' ? '#255485' : '#B8293D';
+        L.polyline(latLngs, {
+          color: strokeColor, weight: 8, opacity: 0.18, lineCap: 'round', lineJoin: 'round'
+        }).addTo(routeLayerGroup);
+
+        L.polyline(latLngs, {
+          color: strokeColor, weight: 3.2, opacity: 0.88, dashArray: '8, 7', lineCap: 'round', lineJoin: 'round'
+        }).addTo(routeLayerGroup);
+
+        // Midpoint Haversine Distance & Duration Badges
+        for (let i = 1; i < stops.length; i++) {
+          const p1 = stops[i - 1];
+          const p2 = stops[i];
+          const km = haversineKm(p1.lat, p1.lng, p2.lat, p2.lng);
+          if (km < 0.04) continue;
+          const leg = formatLegDuration(km);
+          const midLat = (p1.lat + p2.lat) / 2;
+          const midLng = (p1.lng + p2.lng) / 2;
+
+          const legIcon = L.divIcon({
+            className: '',
+            html: `<div class="leg-midpoint-pill">${leg.dist} &bull; ${leg.time}</div>`,
+            iconSize: [96, 20],
+            iconAnchor: [48, 10]
+          });
+          L.marker([midLat, midLng], { icon: legIcon, interactive: false }).addTo(routeLayerGroup);
+        }
+      }
+
+      // Numbered Stop Markers
+      stops.forEach((stop, idx) => {
+        const stopNum = idx + 1;
+        const isSelected = stop.id === state.selectedStopId;
+        const isDone = !!state.completedStops[stop.id];
+        const cat = CATEGORY_META[stop.category] || CATEGORY_META.sight;
+        const bg = isDone ? '#245C46' : (day.country === 'DE' && stop.category === 'sight' ? '#255485' : cat.color);
+
+        const icon = L.divIcon({
+          className: '',
+          html: `
+            <div class="relative flex items-center justify-center w-9 h-9 cursor-pointer transition-transform ${isSelected ? 'scale-115 z-50' : 'hover:scale-105'}">
+              ${isSelected ? '<span class="pin-pulse-ring"></span>' : ''}
+              <div class="w-8 h-8 rounded-full flex flex-col items-center justify-center text-white border-2 ${isSelected ? 'border-amber-200 ring-2 ring-vltava/30' : 'border-white'} shadow-lg"
+                style="background-color: ${bg};">
+                <span class="font-mono font-bold text-xs leading-none">${isDone ? '&#10003;' : stopNum}</span>
+                <span class="opacity-85 mt-0.5">${getCategoryMicroSvg(stop.category)}</span>
+              </div>
+            </div>`,
+          iconSize: [36, 36],
+          iconAnchor: [18, 18],
+          popupAnchor: [0, -18]
+        });
+
+        const popupHtml = `
+          <div class="min-w-[230px] max-w-[270px] space-y-2 p-0.5">
+            <div class="flex items-center justify-between gap-2">
+              <span class="font-mono text-[11px] font-bold text-garnet">#${stopNum} &bull; ${esc(stop.time)}</span>
+              <span class="text-[10px] font-semibold text-slate-500">${esc(stop.neighborhood)}</span>
+            </div>
+            <h4 class="font-display font-bold text-sm text-vltava leading-snug">${esc(stop.title)}</h4>
+            <p class="text-xs text-slate-700 leading-relaxed">${esc(stop.tip)}</p>
+            <div class="pt-1.5 flex items-center gap-1.5">
+              <a href="https://www.google.com/maps/search/?api=1&query=${safeCoord(stop.lat)},${safeCoord(stop.lng)}" target="_blank" rel="noopener noreferrer"
+                class="flex-1 text-center py-1.5 rounded-xl bg-vltava text-parchment text-[11px] font-bold">
+                Google Maps &nearr;
+              </a>
+              <a href="https://mapy.cz/fnc/v1/showmap?center=${safeCoord(stop.lng)},${safeCoord(stop.lat)}&zoom=16&marker=true" target="_blank" rel="noopener noreferrer"
+                class="flex-1 text-center py-1.5 rounded-xl bg-linden text-white text-[11px] font-bold">
+                Mapy.cz &nearr;
+              </a>
+            </div>
+          </div>
+        `;
+
+        const marker = L.marker([stop.lat, stop.lng], { icon }).bindPopup(popupHtml).addTo(markersLayerGroup);
+        marker.on('click', () => {
+          state.selectedStopId = stop.id;
+          persistState();
+          renderDrawerContent();
+          renderMapLayers(false);
+          const card = document.getElementById(`stop-card-${safeDomId(stop.id)}`);
+          if (card) card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        });
+        markerRefsById[stop.id] = marker;
+      });
+
+      if (shouldFitBounds) {
+        const isDesktopDrawerOpen = window.innerWidth >= 1024 && !state.drawerCollapsedDesktop;
+        const padTopLeft = isDesktopDrawerOpen ? [490, 145] : [45, 145];
+        const padBottomRight = window.innerWidth < 1024 ? [45, 320] : [55, 55];
+
+        if (latLngs.length === 1) {
+          map.flyTo(latLngs[0], 15, { duration: 0.65 });
+        } else {
+          map.flyToBounds(latLngs, {
+            paddingTopLeft: padTopLeft,
+            paddingBottomRight: padBottomRight,
+            maxZoom: 15,
+            duration: 0.75
+          });
+        }
+      }
+    }
+
+    function focusStop(stopId, openPopup = true) {
+      state.selectedStopId = stopId;
+      persistState();
+      renderDrawerContent();
+      renderMapLayers(false);
+
+      const stops = getDayStops(getCurrentDay());
+      const target = stops.find(s => s.id === stopId);
+      if (target && map && typeof window.L !== 'undefined') {
+        const isDesktopDrawerOpen = window.innerWidth >= 1024 && !state.drawerCollapsedDesktop;
+        const targetZoom = Math.max(map.getZoom(), 15);
+        // Offset center slightly right on desktop so pin isn't hidden under left drawer
+        const pt = map.project([target.lat, target.lng], targetZoom);
+        if (isDesktopDrawerOpen) pt.x -= 190;
+        const shiftedLatLng = map.unproject(pt, targetZoom);
+        map.flyTo(shiftedLatLng, targetZoom, { duration: 0.55 });
+
+        if (openPopup && markerRefsById[stopId]) {
+          setTimeout(() => markerRefsById[stopId].openPopup(), 350);
+        }
+      }
+    }
+
+    function jumpFromOverviewToDay(dayIdx) {
+      state.overviewMode = false;
+      updateScopeButtonsUI();
+      selectDay(dayIdx);
+    }
+
+    /**
+     * =========================================================================
+     * 7. DROP PIN ON MAP & HONEST GUIDE GEM SLOTTING
+     * =========================================================================
+     */
+    function startDropPinMode() {
+      if (!map || typeof window.L === 'undefined') {
+        openCustomPinModal(50.0875, 14.4213);
+        return;
+      }
+      isDropPinActive = true;
+      document.getElementById('map').classList.add('drop-pin-mode');
+      document.getElementById('dropPinBanner').classList.remove('hidden');
+      if (window.innerWidth < 1024) setMobileSheetHeight('peek');
+    }
+
+    function cancelDropPinMode() {
+      isDropPinActive = false;
+      document.getElementById('map').classList.remove('drop-pin-mode');
+      document.getElementById('dropPinBanner').classList.add('hidden');
+    }
+
+    function openCustomPinModal(lat, lng) {
+      const day = getCurrentDay();
+      document.getElementById('customPinModalSub').textContent = `Adding pin to ${day.fullDate} (${day.region})`;
+      document.getElementById('cpLat').value = Number(lat).toFixed(4);
+      document.getElementById('cpLng').value = Number(lng).toFixed(4);
+      openModal('customPinModal');
+    }
+
+    function reenterDropPinFromModal() {
+      closeModal('customPinModal');
+      startDropPinMode();
+    }
+
+    function handleCustomPinSubmit(e) {
+      e.preventDefault();
+      const day = getCurrentDay();
+      const title = document.getElementById('cpTitle').value.trim();
+      const time = document.getElementById('cpTime').value.trim() || 'Flexible';
+      const category = document.getElementById('cpCategory').value;
+      const lat = parseFloat(document.getElementById('cpLat').value);
+      const lng = parseFloat(document.getElementById('cpLng').value);
+      const tip = document.getElementById('cpTip').value.trim() || `Added by ${state.activeUser}.`;
+
+      if (!title || isNaN(lat) || isNaN(lng)) return;
+
+      const newStop = {
+        id: `custom-${Date.now()}`,
+        time,
+        title,
+        category,
+        lat,
+        lng,
+        neighborhood: `Pinned by ${state.activeUser}`,
+        tip,
+        booking: null,
+        isCustom: true
+      };
+
+      const arr = state.customStops[day.id] || [];
+      arr.push(newStop);
+      state.customStops[day.id] = arr;
+      state.selectedStopId = newStop.id;
+      stamp('x', day.id);
+      persistState();
+
+      document.getElementById('cpTitle').value = '';
+      document.getElementById('cpTip').value = '';
+      closeModal('customPinModal');
+      renderDayRibbon();
+      renderDrawerContent();
+      renderMapLayers(true);
+      showToast(`Pinned "${title}" onto ${day.shortDate}!`);
+    }
+
+    function removeCustomStop(dayId, stopId) {
+      const arr = state.customStops[dayId] || [];
+      state.customStops[dayId] = arr.filter(s => s.id !== stopId);
+      stamp('x', dayId);
+      persistState();
+      renderDayRibbon();
+      renderDrawerContent();
+      renderMapLayers(true);
+      showToast('Custom pin removed.');
+    }
+
+    function slotGemIntoActiveDay(gemId) {
+      const gem = HONEST_GUIDE_GEMS.find(g => g.id === gemId);
+      if (!gem) return;
+      const day = getCurrentDay();
+      const arr = state.customStops[day.id] || [];
+      const newStop = {
+        id: `custom-${Date.now()}`,
+        time: gem.time,
+        title: `${gem.title} (Honest Guide Gem)`,
+        category: gem.category,
+        lat: gem.lat,
+        lng: gem.lng,
+        neighborhood: gem.neighborhood,
+        tip: gem.tip,
+        booking: null,
+        isCustom: true
+      };
+      arr.push(newStop);
+      state.customStops[day.id] = arr;
+      state.selectedStopId = newStop.id;
+      stamp('x', day.id);
+      persistState();
+
+      if (map) map.closePopup();
+      renderDayRibbon();
+      renderDrawerContent();
+      renderMapLayers(true);
+      showToast(`Slotted "${gem.title}" into ${day.shortDate}!`);
+    }
+
+    /**
+     * =========================================================================
+     * 8. UI RENDERING: COMMAND DOCK, 17-DAY RIBBON & ITINERARY DRAWER
+     * =========================================================================
+     */
+    function injectBespokeBrandIcons() {
+      document.getElementById('headerKrtekSlot').innerHTML = CZECH_GERMAN_SVGS.krtek();
+      document.getElementById('btnBobekIcon').innerHTML = CZECH_GERMAN_SVGS.bobAndBobek();
+      document.getElementById('btnPatMatIcon').innerHTML = CZECH_GERMAN_SVGS.patAndMat();
+      document.getElementById('modalPatMatArt').innerHTML = CZECH_GERMAN_SVGS.patAndMat();
+    }
+
+    function renderVoterControls() {
+      const desk = document.getElementById('desktopVoterPills');
+      desk.innerHTML = FAMILY_MEMBERS.map(m => {
+        const active = state.activeUser === m.id;
+        return `
+          <button onclick="setActiveUser('${m.id}')"
+            class="px-2 py-1 rounded-lg text-[11px] font-bold transition ${
+              active ? 'bg-vltava text-parchment shadow-2xs' : 'text-slate-600 hover:bg-vltava/5'
+            }">
+            ${m.label}
+          </button>`;
+      }).join('');
+      document.getElementById('mobileVoterSelect').value = state.activeUser;
+    }
+
+    function setActiveUser(userId) {
+      if (!knownMember(userId)) return;
+      state.activeUser = legacyMember(userId);
+      persistState();
+      renderVoterControls();
+      renderDrawerContent();
+      showToast(`Voting as ${userId}`);
+    }
+
+    function updateScopeButtonsUI() {
+      const bDay = document.getElementById('btnScopeDay');
+      const bOv = document.getElementById('btnScopeOverview');
+      const compactLbl = document.getElementById('compactScopeLabel');
+      if (state.overviewMode) {
+        bDay.className = 'px-2.5 py-1 rounded-lg text-xs font-semibold transition text-slate-700 hover:text-vltava';
+        bOv.className = 'px-2.5 py-1 rounded-lg text-xs font-bold transition bg-garnet text-white shadow-2xs';
+        compactLbl.textContent = 'Day Route';
+      } else {
+        bDay.className = 'px-2.5 py-1 rounded-lg text-xs font-bold transition bg-vltava text-parchment shadow-2xs';
+        bOv.className = 'px-2.5 py-1 rounded-lg text-xs font-semibold transition text-slate-700 hover:text-vltava';
+        compactLbl.textContent = 'Overview';
+      }
+    }
+
+    function setOverviewMode(flag) {
+      state.overviewMode = flag;
+      updateScopeButtonsUI();
+      renderDayRibbon();
+      renderMapLayers(true);
+    }
+
+    function toggleOverviewMode() {
+      setOverviewMode(!state.overviewMode);
+    }
+
+    function toggleHonestGems() {
+      state.showGems = !state.showGems;
+      const btn = document.getElementById('btnGemsToggle');
+      const badge = document.getElementById('gemsStatusBadge');
+      if (state.showGems) {
+        btn.className = 'flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-linden text-white border border-linden text-xs font-bold transition shadow-2xs';
+        badge.textContent = 'ON';
+      } else {
+        btn.className = 'flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-white/80 text-slate-700 border border-vltava/15 text-xs font-bold transition';
+        badge.textContent = 'OFF';
+      }
+      persistState();
+      renderGemsOverlay();
+    }
+
+    function updateHeaderChecklistBadge() {
+      const done = BOOKING_CHECKLIST.filter(i => state.checkedBookings[i.id]).length;
+      document.getElementById('headerChecklistCount').textContent = `${done}/${BOOKING_CHECKLIST.length}`;
+    }
+
+    // SVG Circular Progress Ring for Day Ribbon Pills
+    function renderProgressRing(done, total, isActive) {
+      const r = 7;
+      const c = 2 * Math.PI * r;
+      const pct = total > 0 ? done / total : 0;
+      const offset = c * (1 - pct);
+      const trackColor = isActive ? 'rgba(255,255,255,0.22)' : 'rgba(20,25,35,0.12)';
+      const strokeColor = pct === 1 ? '#245C46' : (isActive ? '#FBBF24' : '#B8293D');
+      return `
+        <svg class="w-4 h-4 -rotate-90 shrink-0" viewBox="0 0 18 18">
+          <circle cx="9" cy="9" r="${r}" fill="none" stroke="${trackColor}" stroke-width="2.2"/>
+          <circle cx="9" cy="9" r="${r}" fill="none" stroke="${strokeColor}" stroke-width="2.2"
+            stroke-dasharray="${c.toFixed(1)}" stroke-dashoffset="${offset.toFixed(1)}" stroke-linecap="round"/>
+        </svg>`;
+    }
+
+    function renderDayRibbon() {
+      const strip = document.getElementById('dayRibbonScroll');
+      strip.innerHTML = TRIP_DAYS.map((day, idx) => {
+        const stops = getDayStops(day);
+        const doneCount = stops.filter(s => state.completedStops[s.id]).length;
+        const isActive = idx === state.selectedDayIndex && !state.overviewMode;
+        const flag = day.country === 'DE' ? '🇩🇪' : '🇨🇿';
+
+        return `
+          <button id="ribbon-day-${idx}" onclick="selectDay(${idx})"
+            class="shrink-0 px-2.5 py-1.5 rounded-xl border text-left transition flex items-center gap-2 ${
+              isActive
+                ? 'bg-vltava text-parchment border-vltava shadow-md'
+                : 'bg-white/80 hover:bg-white text-vltava border-vltava/12'
+            }">
+            ${renderProgressRing(doneCount, stops.length, isActive)}
+            <div class="min-w-0">
+              <div class="flex items-center gap-1">
+                <span class="font-mono text-[11px] font-bold tracking-tight">${day.shortDate}</span>
+                <span class="text-[11px]">${flag}</span>
+              </div>
+              <div class="text-[10px] truncate max-w-[92px] ${isActive ? 'text-amber-200 font-medium' : 'text-slate-500'}">
+                ${day.region}
+              </div>
+            </div>
+          </button>`;
+      }).join('');
+    }
+
+    function scrollDayRibbon(delta) {
+      document.getElementById('dayRibbonScroll').scrollBy({ left: delta, behavior: 'smooth' });
+    }
+
+    function selectDay(idx) {
+      state.selectedDayIndex = idx;
+      state.overviewMode = false;
+      updateScopeButtonsUI();
+      const stops = getDayStops(TRIP_DAYS[idx]);
+      if (stops.length > 0) {
+        const nextPending = stops.find(s => !state.completedStops[s.id]) || stops[0];
+        state.selectedStopId = nextPending.id;
+      }
+      persistState();
+      renderDayRibbon();
+      renderDrawerContent();
+      renderMapLayers(true);
+
+      const pill = document.getElementById(`ribbon-day-${idx}`);
+      if (pill) pill.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+    }
+
+    function renderDrawerContent() {
+      const day = getCurrentDay();
+      const stops = getDayStops(day);
+      const doneCount = stops.filter(s => state.completedStops[s.id]).length;
+      const mascotFn = CZECH_GERMAN_SVGS[day.mascot] || CZECH_GERMAN_SVGS.krtek;
+      const flag = day.country === 'DE' ? '🇩🇪' : '🇨🇿';
+
+      // 1. Editorial Day Header
+      document.getElementById('drawerDayHeader').innerHTML = `
+        <div class="flex items-start justify-between gap-3">
+          <div class="flex items-start gap-2.5 min-w-0">
+            <div class="w-11 h-11 rounded-2xl bg-amber-50/90 border border-amber-200/80 p-1 shrink-0 shadow-2xs">
+              ${mascotFn()}
+            </div>
+            <div class="min-w-0">
+              <div class="flex items-center gap-1.5 flex-wrap">
+                <span class="font-mono text-[10px] font-bold px-2 py-0.5 rounded-md bg-vltava text-amber-200">
+                  ${day.fullDate} ${flag}
+                </span>
+                <span class="text-[11px] font-bold ${day.country === 'DE' ? 'text-cobalt' : 'text-linden'}">
+                  ${day.region}
+                </span>
+              </div>
+              <h2 class="font-display font-bold text-base sm:text-lg text-vltava mt-1 leading-snug">
+                ${esc(day.title)}
+              </h2>
+            </div>
+          </div>
+
+          <button onclick="startDropPinMode()"
+            class="shrink-0 flex items-center gap-1 px-2.5 py-2 rounded-xl bg-white hover:bg-amber-50 text-vltava border border-vltava/15 text-[11px] font-bold transition shadow-2xs"
+            title="Click anywhere on the map to drop a custom pin">
+            <span class="text-garnet font-extrabold text-sm leading-none">+</span>
+            <span>Drop Pin</span>
+          </button>
+        </div>
+        <p class="text-xs text-slate-600 mt-1.5 leading-relaxed">${esc(day.summary)}</p>
+        ${lodgingHtml(day)}
+      `;
+
+      // 2. Scrollable Feed
+      const feed = document.getElementById('drawerStopsFeed');
+      let html = '';
+
+      // Holiday / Booking Warning Banner
+      if (day.alert) {
+        html += `
+          <div class="p-3 rounded-2xl bg-rose-50/95 border border-rose-200 flex items-start gap-2.5 text-xs text-rose-950">
+            <svg class="w-4 h-4 text-garnet shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3">
+              <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+            </svg>
+            <div class="leading-relaxed"><strong>Winter Alert:</strong> ${esc(day.alert)}</div>
+          </div>`;
+      }
+
+      // Wed 30 Dec Flexible Day Two-Mode Switcher
+      if (day.hasVariants) {
+        const mode = state.dayVariants[day.id] || 'prague';
+        html += `
+          <div class="p-3 rounded-2xl bg-amber-50/90 border border-amber-300/80 space-y-2">
+            <div class="text-[10px] font-extrabold uppercase tracking-wider text-amber-950">Flexible Day Route Option</div>
+            <div class="grid grid-cols-2 gap-1.5">
+              <button onclick="setDayVariant('${day.id}', 'prague')"
+                class="px-2.5 py-2 rounded-xl text-xs font-bold border transition text-left ${mode === 'prague' ? 'bg-vltava text-amber-200 border-vltava shadow-2xs' : 'bg-white text-vltava border-stone-300'}">
+                A: Modern Prague
+              </button>
+              <button onclick="setDayVariant('${day.id}', 'krumlov')"
+                class="px-2.5 py-2 rounded-xl text-xs font-bold border transition text-left ${mode === 'krumlov' ? 'bg-vltava text-amber-200 border-vltava shadow-2xs' : 'bg-white text-vltava border-stone-300'}">
+                B: Český Krumlov
+              </button>
+            </div>
+          </div>`;
+      }
+
+      // "Up Next" Live Highlight Card
+      const upNext = stops.find(s => !state.completedStops[s.id]);
+      if (upNext) {
+        const num = stops.indexOf(upNext) + 1;
+        html += `
+          <div class="p-3.5 rounded-2xl bg-vltava text-parchment border border-white/10 shadow-md">
+            <div class="flex items-center justify-between gap-2">
+              <span class="inline-flex items-center gap-1.5 font-mono text-[10px] font-bold uppercase tracking-wider text-amber-300">
+                <span class="w-2 h-2 rounded-full bg-amber-400 animate-ping"></span>
+                Up Next &bull; #${num} (${esc(upNext.time)})
+              </span>
+              <button onclick="toggleStopComplete('${safeDomId(upNext.id)}')"
+                class="px-2.5 py-1 rounded-lg bg-linden hover:bg-[#1c4837] text-white text-[11px] font-bold transition">
+                &#10003; Mark Done
+              </button>
+            </div>
+            <div class="font-display font-bold text-sm text-white mt-1">${esc(upNext.title)}</div>
+            <div class="flex flex-wrap items-center gap-1.5 mt-2.5">
+              <button onclick="focusStop('${safeDomId(upNext.id)}', true)" class="px-2.5 py-1.5 rounded-lg bg-garnet hover:bg-[#9e2032] text-white text-[11px] font-bold transition">
+                Center Pin
+              </button>
+              <a href="https://www.google.com/maps/search/?api=1&query=${safeCoord(upNext.lat)},${safeCoord(upNext.lng)}" target="_blank" rel="noopener noreferrer"
+                class="px-2.5 py-1.5 rounded-lg bg-white/15 hover:bg-white/25 text-white text-[11px] font-semibold transition">
+                Google Maps &nearr;
+              </a>
+              <a href="https://mapy.cz/fnc/v1/showmap?center=${safeCoord(upNext.lng)},${safeCoord(upNext.lat)}&zoom=16&marker=true" target="_blank" rel="noopener noreferrer"
+                class="px-2.5 py-1.5 rounded-lg bg-linden/90 hover:bg-linden text-white text-[11px] font-semibold transition">
+                Mapy.cz &nearr;
+              </a>
+            </div>
+          </div>`;
+      } else if (stops.length > 0) {
+        html += `
+          <div class="p-3 rounded-2xl bg-emerald-50 border border-emerald-200 text-linden text-xs font-bold flex items-center justify-between">
+            <span>All ${stops.length} stops completed for ${day.shortDate}!</span>
+            <button onclick="resetDayStops()" class="text-[11px] underline">Reset</button>
+          </div>`;
+      }
+
+      // Chronological Stop Cards + Leg Distance Connectors
+      stops.forEach((stop, idx) => {
+        const stopNum = idx + 1;
+        const isDone = !!state.completedStops[stop.id];
+        const isSelected = state.selectedStopId === stop.id;
+        const cat = CATEGORY_META[stop.category] || CATEGORY_META.sight;
+        const votes = (state.stopVotes[stop.id] || []).map(legacyMember).filter(name => FAMILY_MEMBERS.some(m => m.id === name));
+        const hasVoted = votes.includes(state.activeUser);
+        const pinColor = isDone ? '#245C46' : (day.country === 'DE' && stop.category === 'sight' ? '#255485' : cat.color);
+
+        if (idx > 0) {
+          const prev = stops[idx - 1];
+          const km = haversineKm(prev.lat, prev.lng, stop.lat, stop.lng);
+          const leg = formatLegDuration(km);
+          html += `
+            <div class="flex items-center gap-2 pl-5 py-0.5">
+              <div class="w-0.5 h-4 bg-vltava/15"></div>
+              <span class="font-mono text-[10px] font-medium px-2 py-0.5 rounded-full bg-vltava/5 text-slate-600">
+                &darr; ${leg.dist} &bull; ${leg.time}
+              </span>
+            </div>`;
+        }
+
+        html += `
+          <article id="stop-card-${safeDomId(stop.id)}" onclick="focusStop('${safeDomId(stop.id)}', true)"
+            class="rounded-2xl p-3.5 border transition cursor-pointer ${
+              isSelected
+                ? 'bg-white border-garnet ring-2 ring-garnet/20 shadow-md'
+                : isDone
+                  ? 'bg-white/60 border-vltava/10 opacity-80'
+                  : 'bg-white/90 hover:bg-white border-vltava/12 shadow-2xs'
+            }">
+            <div class="flex items-start gap-3">
+              <!-- Numbered Pin Badge -->
+              <div class="w-7 h-7 rounded-full flex items-center justify-center text-white font-mono font-bold text-xs shrink-0 mt-0.5 shadow-2xs"
+                style="background-color: ${pinColor}">
+                ${isDone ? '&#10003;' : stopNum}
+              </div>
+
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center justify-between gap-2 flex-wrap">
+                  <span class="font-mono text-[11px] font-semibold text-slate-500">${esc(stop.time)}</span>
+                  <div class="flex items-center gap-1.5">
+                    <span class="px-2 py-0.5 rounded-md border text-[10px] font-bold ${cat.badge}">
+                      ${cat.label}
+                    </span>
+                    <button onclick="event.stopPropagation(); toggleStopComplete('${safeDomId(stop.id)}')"
+                      class="px-2 py-0.5 rounded-md text-[10px] font-bold border transition ${
+                        isDone ? 'bg-linden text-white border-linden' : 'bg-stone-100 hover:bg-emerald-50 text-slate-700 border-stone-300'
+                      }">
+                      ${isDone ? 'Done' : 'Check'}
+                    </button>
+                  </div>
+                </div>
+
+                <h3 class="font-display font-bold text-sm sm:text-[15px] text-vltava mt-1 leading-snug ${isDone ? 'line-through text-slate-500' : ''}">
+                  ${esc(stop.title)}
+                </h3>
+                <div class="text-[11px] text-slate-500 font-medium mt-0.5">${esc(stop.neighborhood)}</div>
+
+                ${stop.booking ? `
+                  <div class="mt-1.5 inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-amber-100/90 text-amber-950 border border-amber-300 text-[10px] font-bold">
+                    <span>&#9733; ${esc(stop.booking)}</span>
+                  </div>` : ''}
+
+                <p class="text-xs text-slate-600 mt-2 leading-relaxed">${esc(stop.tip)}</p>
+
+                <!-- Card Footer: Family Upvotes & Direct Maps Deep Links -->
+                <div class="mt-2.5 pt-2 border-t border-vltava/8 flex items-center justify-between gap-2 flex-wrap">
+                  <button onclick="event.stopPropagation(); toggleStopVote('${safeDomId(stop.id)}')"
+                    class="inline-flex items-center gap-1 px-2 py-1 rounded-lg text-[11px] font-bold border transition ${
+                      hasVoted
+                        ? 'bg-rose-50 text-garnet border-rose-300'
+                        : 'bg-stone-50 hover:bg-rose-50/70 text-slate-600 border-stone-200'
+                    }" title="Upvote as ${state.activeUser}">
+                    <span>${hasVoted ? '&hearts;' : '&#9825;'}</span>
+                    <span>${votes.length ? esc(votes.join(', ')) : 'Vote'}</span>
+                  </button>
+
+                  <div class="flex items-center gap-2 text-[11px] font-bold">
+                    <a href="https://www.google.com/maps/search/?api=1&query=${safeCoord(stop.lat)},${safeCoord(stop.lng)}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()"
+                      class="text-cobalt hover:underline">Google Maps</a>
+                    <span class="text-stone-300">&bull;</span>
+                    <a href="https://mapy.cz/fnc/v1/showmap?center=${safeCoord(stop.lng)},${safeCoord(stop.lat)}&zoom=16&marker=true" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()"
+                      class="text-linden hover:underline">Mapy.cz</a>
+                    ${stop.isCustom ? `
+                      <span class="text-stone-300">&bull;</span>
+                      <button onclick="event.stopPropagation(); removeCustomStop('${day.id}', '${safeDomId(stop.id)}')" class="text-garnet hover:underline">Remove</button>
+                    ` : ''}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </article>`;
+      });
+
+      // Day Notes Scratchpad
+      const curNote = state.dayNotes[day.id] || '';
+      html += `
+        <div class="rounded-2xl p-3 bg-white/85 border border-vltava/12 space-y-1.5">
+          <div class="flex items-center justify-between">
+            <label for="dayNoteField" class="text-[10px] font-extrabold uppercase tracking-wider text-slate-500">
+              Family Notes &bull; ${day.shortDate}
+            </label>
+            <button onclick="startDropPinMode()" class="text-[11px] font-bold text-garnet hover:underline">
+              + Add Custom Pin on Map
+            </button>
+          </div>
+          <textarea id="dayNoteField" rows="2" oninput="updateDayNote('${day.id}', this.value)"
+            placeholder="Booking confirmation numbers, parking garage, or meetup notes..."
+            class="w-full px-3 py-2 rounded-xl bg-parchment border border-stone-200 text-xs text-vltava focus:outline-none focus:border-garnet">${esc(curNote)}</textarea>
+        </div>`;
+
+      feed.innerHTML = html;
+    }
+
+    function updateDayNote(dayId, val) {
+      state.dayNotes[dayId] = String(val || '').slice(0, 2000);
+      stamp('n', dayId);
+      persistState();
+    }
+
+    function toggleStopComplete(stopId) {
+      stopId = safeDomId(stopId);
+      state.completedStops[stopId] = !state.completedStops[stopId];
+      if (!state.completedStops[stopId]) delete state.completedStops[stopId];
+      stamp('c', stopId);
+      persistState();
+      renderDayRibbon();
+      renderDrawerContent();
+      renderMapLayers(false);
+    }
+
+    function resetDayStops() {
+      getDayStops(getCurrentDay()).forEach(s => {
+        delete state.completedStops[s.id];
+        stamp('c', safeDomId(s.id));
+      });
+      persistState();
+      renderDayRibbon();
+      renderDrawerContent();
+      renderMapLayers(false);
+    }
+
+    function toggleStopVote(stopId) {
+      stopId = safeDomId(stopId);
+      const list = (state.stopVotes[stopId] || []).filter(name => name !== state.activeUser);
+      const had = (state.stopVotes[stopId] || []).includes(state.activeUser);
+      if (!had) list.push(state.activeUser);
+      state.stopVotes[stopId] = list;
+      stamp('v', stopId, state.activeUser);
+      persistState();
+      renderDrawerContent();
+    }
+
+    function setDayVariant(dayId, mode) {
+      if (mode !== 'prague' && mode !== 'krumlov') return;
+      state.dayVariants[dayId] = mode;
+      stamp('m', dayId);
+      const stops = getDayStops(getCurrentDay());
+      if (stops.length) state.selectedStopId = stops[0].id;
+      persistState();
+      renderDayRibbon();
+      renderDrawerContent();
+      renderMapLayers(true);
+    }
+
+    /**
+     * =========================================================================
+     * 9. DRAWER COLLAPSE (DESKTOP) & BOTTOM SHEET SNAP STATES (MOBILE)
+     * =========================================================================
+     */
+    function toggleDesktopDrawer() {
+      state.drawerCollapsedDesktop = !state.drawerCollapsedDesktop;
+      const drawer = document.getElementById('itineraryDrawer');
+      const chev = document.getElementById('desktopDrawerChevron');
+      const lbl = document.getElementById('desktopDrawerToggleLabel');
+
+      if (state.drawerCollapsedDesktop) {
+        drawer.classList.add('lg:-translate-x-[500px]', 'lg:opacity-0', 'lg:pointer-events-none');
+        chev.classList.add('rotate-180');
+        lbl.textContent = 'Show Itinerary';
+      } else {
+        drawer.classList.remove('lg:-translate-x-[500px]', 'lg:opacity-0', 'lg:pointer-events-none');
+        chev.classList.remove('rotate-180');
+        lbl.textContent = 'Hide Itinerary';
+      }
+      renderMapLayers(true);
+    }
+
+    function setMobileSheetHeight(snap) {
+      state.mobileSheetState = snap;
+      const drawer = document.getElementById('itineraryDrawer');
+      const lbl = document.getElementById('mobileSheetStateLabel');
+      drawer.classList.remove('h-[84px]', 'h-[52vh]', 'h-[78vh]');
+
+      if (snap === 'peek') {
+        drawer.classList.add('h-[84px]');
+        lbl.textContent = 'Map Focus (Tap to Expand)';
+      } else if (snap === 'full') {
+        drawer.classList.add('h-[78vh]');
+        lbl.textContent = 'Expanded View';
+      } else {
+        drawer.classList.add('h-[52vh]');
+        lbl.textContent = 'Half Sheet';
+      }
+    }
+
+    function cycleMobileSheetHeight() {
+      const order = ['peek', 'half', 'full'];
+      const next = order[(order.indexOf(state.mobileSheetState) + 1) % order.length];
+      setMobileSheetHeight(next);
+    }
+
+    /**
+     * =========================================================================
+     * 10. MODALS: TOOLS DRAWER (CHECKLIST / CONVERTER / NEAR ME) & SHARE SYNC
+     * =========================================================================
+     */
+    function openModal(id) {
+      document.getElementById(id).classList.remove('hidden');
+    }
+
+    function closeModal(id) {
+      document.getElementById(id).classList.add('hidden');
+    }
+
+    function openToolsModal(tab = 'checklist') {
+      openModal('toolsModal');
+      switchToolsTab(tab);
+    }
+
+    function switchToolsTab(tab) {
+      state.activeToolsTab = tab;
+      ['checklist', 'currency', 'nearme'].forEach(t => {
+        const btn = document.getElementById(`tabBtn-${t}`);
+        btn.className = t === tab
+          ? 'px-3 py-1.5 rounded-xl text-xs font-bold transition bg-vltava text-white shadow-2xs'
+          : 'px-3 py-1.5 rounded-xl text-xs font-bold transition text-slate-700 hover:bg-white';
+      });
+
+      const body = document.getElementById('toolsModalBody');
+
+      if (tab === 'checklist') {
+        body.innerHTML = BOOKING_CHECKLIST.map(item => {
+          const checked = !!state.checkedBookings[item.id];
+          return `
+            <label onclick="toggleBookingItem('${item.id}')"
+              class="flex items-start gap-3 p-3 rounded-2xl border cursor-pointer transition ${
+                checked ? 'bg-emerald-50/75 border-emerald-200' : 'bg-white hover:border-garnet/40 border-stone-200'
+              }">
+              <input type="checkbox" ${checked ? 'checked' : ''} class="mt-1 w-4 h-4 accent-[#245C46] rounded" />
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-2 flex-wrap">
+                  <span class="font-mono text-[10px] font-bold px-2 py-0.5 rounded bg-vltava text-amber-200">${item.day}</span>
+                  <span class="font-bold text-xs sm:text-sm ${checked ? 'line-through text-slate-500' : 'text-vltava'}">${item.title}</span>
+                </div>
+                <p class="text-xs text-slate-600 mt-1 leading-relaxed">${item.desc}</p>
+              </div>
+            </label>`;
+        }).join('');
+      } else if (tab === 'currency') {
+        body.innerHTML = `
+          <div class="bg-white rounded-2xl p-4 border border-stone-200 space-y-3">
+            <div class="flex items-center justify-between flex-wrap gap-1">
+              <h3 class="font-display font-bold text-base text-vltava">Koruna in USD and AUD</h3>
+              <span id="rateLabel" class="font-mono text-[11px] text-slate-500">Approximate until today's rates load</span>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 items-center">
+              <div>
+                <label class="block font-mono text-[10px] font-bold uppercase text-slate-500 mb-1">Czech Koruna (Kč)</label>
+                <input id="czkAmountInput" type="number" value="250" min="0" oninput="recalcCzk()"
+                  class="w-full px-3.5 py-2 rounded-xl border border-stone-300 font-mono text-lg font-bold text-vltava focus:outline-none focus:border-garnet" />
+              </div>
+              <div class="grid grid-cols-2 gap-2 text-center">
+                <div class="p-2.5 rounded-xl bg-amber-50 border border-amber-200">
+                  <div class="font-mono text-[10px] font-bold text-pilsner">USD ($)</div>
+                  <div id="convUsd" class="font-mono font-bold text-sm text-vltava mt-0.5">$10.78</div>
+                </div>
+                <div class="p-2.5 rounded-xl bg-emerald-50 border border-emerald-200">
+                  <div class="font-mono text-[10px] font-bold text-linden">AUD ($)</div>
+                  <div id="convAud" class="font-mono font-bold text-sm text-vltava mt-0.5">$16.56</div>
+                </div>
+              </div>
+            </div>
+            <p class="text-[11px] text-slate-600">Dresden and Nuremberg charge euros. This amount is about <strong id="convEur" class="font-mono text-vltava">&euro;9.92</strong>.</p>
+            <div class="flex flex-wrap gap-1.5 pt-1">
+              <button onclick="setCzkQuick(65)" class="px-2.5 py-1 rounded-lg bg-stone-100 hover:bg-amber-100 font-mono text-[11px] font-semibold">65 Kč (Tank Pilsner)</button>
+              <button onclick="setCzkQuick(90)" class="px-2.5 py-1 rounded-lg bg-stone-100 hover:bg-amber-100 font-mono text-[11px] font-semibold">90 Kč (Petřín Funicular)</button>
+              <button onclick="setCzkQuick(140)" class="px-2.5 py-1 rounded-lg bg-stone-100 hover:bg-amber-100 font-mono text-[11px] font-semibold">140 Kč (24h PID Pass)</button>
+              <button onclick="setCzkQuick(245)" class="px-2.5 py-1 rounded-lg bg-stone-100 hover:bg-amber-100 font-mono text-[11px] font-semibold">245 Kč (Svíčková)</button>
+              <button onclick="setCzkQuick(1600)" class="px-2.5 py-1 rounded-lg bg-stone-100 hover:bg-amber-100 font-mono text-[11px] font-semibold">1,600 Kč (Group Meal)</button>
+            </div>
+          </div>
+
+          <div class="bg-white rounded-2xl p-4 border border-stone-200 space-y-2.5">
+            <h3 class="font-display font-bold text-base text-vltava">Czech Menu &amp; Tank Beer Decoder</h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+              <div class="p-2.5 rounded-xl bg-parchment border border-stone-200">
+                <div class="font-bold text-vltava">Hladinka (Classic Beer Pour)</div>
+                <p class="text-slate-600 mt-0.5">Smooth pour with 3 fingers of dense wet foam that keeps tank Pilsner fresh.</p>
+              </div>
+              <div class="p-2.5 rounded-xl bg-parchment border border-stone-200">
+                <div class="font-bold text-vltava">Šnyt &amp; Mlíko</div>
+                <p class="text-slate-600 mt-0.5"><em>Šnyt</em> is a half-beer taster; <em>Mlíko</em> is a mug of sweet, creamy wet foam.</p>
+              </div>
+              <div class="p-2.5 rounded-xl bg-parchment border border-stone-200">
+                <div class="font-bold text-vltava">Svíčková na smetaně</div>
+                <p class="text-slate-600 mt-0.5">Braised beef sirloin in root-vegetable cream sauce with bread dumplings &amp; cranberries.</p>
+              </div>
+              <div class="p-2.5 rounded-xl bg-parchment border border-stone-200">
+                <div class="font-bold text-vltava">Smažený sýr ("Smažák")</div>
+                <p class="text-slate-600 mt-0.5">Crispy breaded fried Eidam cheese served with potatoes and homemade tartar sauce.</p>
+              </div>
+              <div class="p-2.5 rounded-xl bg-parchment border border-stone-200">
+                <div class="font-bold text-vltava">Větrník (Myšák Pastry)</div>
+                <p class="text-slate-600 mt-0.5">First-Republic choux pastry filled with caramel &amp; vanilla creams—better than trdelník.</p>
+              </div>
+              <div class="p-2.5 rounded-xl bg-parchment border border-stone-200">
+                <div class="font-bold text-vltava">Svařák &amp; Medovina</div>
+                <p class="text-slate-600 mt-0.5">Spiced Czech mulled wine (<em>svařák</em>) and warm honey wine (<em>medovina</em>).</p>
+              </div>
+            </div>
+          </div>`;
+        recalcCzk();
+        loadCzkRates();
+      } else if (tab === 'nearme') {
+        const stops = getDayStops(getCurrentDay());
+        const activeStop = stops.find(s => s.id === state.selectedStopId) || stops[0];
+        const origin = state.nearMeOrigin || { lat: activeStop.lat, lng: activeStop.lng, label: activeStop.title };
+
+        const sortedGems = HONEST_GUIDE_GEMS.map(g => {
+          const km = haversineKm(origin.lat, origin.lng, g.lat, g.lng);
+          return { ...g, km, leg: formatLegDuration(km) };
+        }).sort((a, b) => a.km - b.km);
+
+        body.innerHTML = `
+          <div class="p-3 rounded-2xl bg-white border border-stone-200 flex flex-wrap items-center justify-between gap-2 text-xs">
+            <div>
+              <span class="text-slate-500 font-semibold">Distance from:</span>
+              <strong class="text-vltava ml-1">${origin.label}</strong>
+            </div>
+            <div class="flex items-center gap-1.5">
+              <button onclick="state.nearMeOrigin = null; switchToolsTab('nearme');" class="px-2.5 py-1.5 rounded-xl bg-stone-100 hover:bg-stone-200 font-bold text-vltava">Active Stop</button>
+              <button onclick="useDeviceGpsForNearMe()" class="px-2.5 py-1.5 rounded-xl bg-linden text-white font-bold">Use Live GPS</button>
+            </div>
+          </div>
+          <div class="space-y-2.5">
+            ${sortedGems.map(g => `
+              <div class="p-3.5 rounded-2xl bg-white border border-stone-200 flex items-start justify-between gap-3">
+                <div class="min-w-0">
+                  <div class="flex items-center gap-2 flex-wrap">
+                    <span class="font-mono text-[11px] font-bold px-2 py-0.5 rounded bg-linden/15 text-linden">
+                      ${g.leg.dist} (${g.leg.time})
+                    </span>
+                    <span class="text-[11px] text-slate-500">${g.neighborhood}</span>
+                  </div>
+                  <h4 class="font-display font-bold text-sm text-vltava mt-1">${g.title}</h4>
+                  <p class="text-xs text-slate-600 mt-1 leading-relaxed">${g.tip}</p>
+                </div>
+                <button onclick="slotGemIntoActiveDay('${g.id}'); closeModal('toolsModal');"
+                  class="shrink-0 px-3 py-2 rounded-xl bg-linden hover:bg-[#1c4837] text-white text-xs font-bold transition">
+                  + Slot
+                </button>
+              </div>`).join('')}
+          </div>`;
+      }
+    }
+
+    function toggleBookingItem(id) {
+      state.checkedBookings[id] = !state.checkedBookings[id];
+      if (!state.checkedBookings[id]) delete state.checkedBookings[id];
+      stamp('b', id);
+      persistState();
+      updateHeaderChecklistBadge();
+      switchToolsTab('checklist');
+    }
+
+    let czkRates = { USD: 1 / 23.2, AUD: 1 / 15.1, EUR: 1 / 25.2 };
+
+    function recalcCzk() {
+      const val = parseFloat(document.getElementById('czkAmountInput')?.value) || 0;
+      if (document.getElementById('convUsd')) document.getElementById('convUsd').textContent = `$${(val * czkRates.USD).toFixed(2)}`;
+      if (document.getElementById('convAud')) document.getElementById('convAud').textContent = `$${(val * czkRates.AUD).toFixed(2)}`;
+      if (document.getElementById('convEur')) document.getElementById('convEur').textContent = `€${(val * czkRates.EUR).toFixed(2)}`;
+    }
+
+    async function loadCzkRates() {
+      try {
+        const res = await fetch('https://api.frankfurter.app/latest?from=CZK&to=USD,AUD,EUR');
+        if (!res.ok) return;
+        const data = await res.json();
+        if (!data.rates) return;
+        czkRates = {
+          USD: Number(data.rates.USD) || czkRates.USD,
+          AUD: Number(data.rates.AUD) || czkRates.AUD,
+          EUR: Number(data.rates.EUR) || czkRates.EUR
+        };
+        const label = document.getElementById('rateLabel');
+        if (label) label.textContent = `ECB rate ${data.date}`;
+        recalcCzk();
+      } catch (e) {}
+    }
+
+    function setCzkQuick(amt) {
+      const inp = document.getElementById('czkAmountInput');
+      if (inp) { inp.value = amt; recalcCzk(); }
+    }
+
+    function useDeviceGpsForNearMe() {
+      if (!navigator.geolocation) {
+        showToast('Geolocation unavailable; measuring from selected stop.');
+        return;
+      }
+      showToast('Locating your phone via GPS...');
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          state.nearMeOrigin = { lat: pos.coords.latitude, lng: pos.coords.longitude, label: 'Your Live GPS Location' };
+          switchToolsTab('nearme');
+          showToast('Sorted Honest Guide gems from your live GPS!');
+        },
+        () => showToast('GPS permission denied; using selected itinerary stop.'),
+        { timeout: 6000 }
+      );
+    }
+
+    /**
+     * SHARE SYNC LINK & LIGHTWEIGHT QR MATRIX GENERATOR
+     */
+    function familyPageUrl() {
+      if (window.location.origin && window.location.origin !== 'null') {
+        return `${window.location.origin}${window.location.pathname}`;
+      }
+      return window.location.href.split('#')[0];
+    }
+
+    async function triggerQuickShareSync() {
+      const baseUrl = familyPageUrl();
+      openModal('shareSyncModal');
+      const input = document.getElementById('shareUrlInput');
+      if (input) input.value = baseUrl;
+      const bytes = document.getElementById('syncByteCount');
+      if (bytes) bytes.textContent = 'Live link';
+      const pinInput = document.getElementById('familyPinInput');
+      if (pinInput && !pinInput.value) pinInput.value = familyPin();
+      drawVisualQrMatrix('syncQrCanvas', baseUrl);
+      if (copyTextSafely(baseUrl)) showToast('Family link copied.');
+    }
+
+    async function copySnapshotLink() {
+      const encoded = await encodeSyncHash();
+      const full = `${familyPageUrl()}#sync=${encoded}`;
+      if (copyTextSafely(full)) showToast('Backup snapshot copied.');
+    }
+
+    function copyShareUrlFromInput() {
+      const inp = document.getElementById('shareUrlInput');
+      if (copyTextSafely(inp.value)) {
+        showToast('Family link copied.');
+      }
+    }
+
+    function copyPlainTextDaySummary() {
+      const day = getCurrentDay();
+      const stops = getDayStops(day);
+      const lines = [
+        `PRAGUE & BEYOND — ${day.fullDate.toUpperCase()}`,
+        `${day.title} (${day.region})`,
+        day.alert ? `NOTE: ${day.alert}` : '',
+        '----------------------------------------',
+        ...stops.map((s, i) => `${i + 1}. [${s.time}] ${s.title} (${s.neighborhood})\n   ${s.tip}\n   https://maps.google.com/?q=${s.lat},${s.lng}`)
+      ].filter(Boolean);
+
+      if (copyTextSafely(lines.join('\n'))) {
+        showToast(`Copied ${day.shortDate} schedule for group chat!`);
+      }
+    }
+
+    // Crisp deterministic finder-pattern + data-hash QR-style matrix visual
+    function drawVisualQrMatrix(canvasId, text) {
+      const c = document.getElementById(canvasId);
+      if (!c) return;
+      if (typeof qrcode === 'function') {
+        try {
+          const qr = qrcode(0, 'M');
+          qr.addData(text);
+          qr.make();
+          const img = new Image();
+          img.onload = () => {
+            const g = c.getContext('2d');
+            g.fillStyle = '#FCFAF6';
+            g.fillRect(0, 0, c.width, c.height);
+            g.drawImage(img, 0, 0, c.width, c.height);
+          };
+          img.src = qr.createDataURL(4, 0);
+          return;
+        } catch (e) {}
+      }
+      const g = c.getContext('2d');
+      const size = 25;
+      const cell = c.width / size;
+      g.fillStyle = '#FCFAF6';
+      g.fillRect(0, 0, c.width, c.height);
+
+      let hash = 2166136261;
+      for (let i = 0; i < text.length; i++) {
+        hash ^= text.charCodeAt(i);
+        hash = Math.imul(hash, 16777619);
+      }
+
+      const drawFinder = (ox, oy) => {
+        g.fillStyle = '#141923';
+        g.fillRect(ox * cell, oy * cell, 7 * cell, 7 * cell);
+        g.fillStyle = '#FCFAF6';
+        g.fillRect((ox + 1) * cell, (oy + 1) * cell, 5 * cell, 5 * cell);
+        g.fillStyle = '#B8293D';
+        g.fillRect((ox + 2) * cell, (oy + 2) * cell, 3 * cell, 3 * cell);
+      };
+
+      drawFinder(0, 0);
+      drawFinder(size - 7, 0);
+      drawFinder(0, size - 7);
+
+      for (let y = 0; y < size; y++) {
+        for (let x = 0; x < size; x++) {
+          const inFinder = (x < 8 && y < 8) || (x >= size - 8 && y < 8) || (x < 8 && y >= size - 8);
+          if (inFinder) continue;
+          const seed = (hash ^ (x * 73856093) ^ (y * 19349663)) >>> 0;
+          if ((seed % 11) < 5) {
+            g.fillStyle = '#141923';
+            g.fillRect(x * cell, y * cell, cell * 0.92, cell * 0.92);
+          }
+        }
+      }
+    }
+
+    function exportTripJson() {
+      const blob = new Blob([JSON.stringify(buildCompactSyncObject(), null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'prague-winter-atlas-2026.json';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      showToast('Exported prague-winter-atlas-2026.json!');
+    }
+
+    function importTripJson(ev) {
+      const file = ev.target.files && ev.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        try {
+          const parsed = JSON.parse(reader.result);
+          if (applyCompactSyncObject(parsed)) {
+            persistState();
+            renderAllUI();
+            renderMapLayers(true);
+            closeModal('shareSyncModal');
+            showToast('Restored itinerary from JSON backup!');
+          }
+        } catch (e) {
+          showToast('Invalid JSON backup file.');
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    /**
+     * =========================================================================
+     * 11. APPLICATION BOOTSTRAP ON WINDOW LOAD
+     * =========================================================================
+     */
+    function renderAllUI() {
+      renderVoterControls();
+      updateScopeButtonsUI();
+      updateHeaderChecklistBadge();
+      renderDayRibbon();
+      renderDrawerContent();
+    }
+
+    window.onload = async function () {
+      loadLocalState();
+
+      // Check if opened via a GitHub Pages #sync=... shared URL
+      if (window.location.hash && window.location.hash.startsWith('#sync=')) {
+        const rawHash = window.location.hash.slice(6);
+        const decoded = await decodeSyncHash(rawHash);
+        if (decoded && applyCompactSyncObject(decoded)) {
+          try { localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(state)); } catch (e) {}
+          setTimeout(() => showToast('Synced family itinerary updates from shared link!'), 450);
+        }
+      }
+
+      // Ensure selectedStopId exists on active day
+      const initialStops = getDayStops(getCurrentDay());
+      if (initialStops.length && !initialStops.some(s => s.id === state.selectedStopId)) {
+        state.selectedStopId = initialStops[0].id;
+      }
+
+      injectBespokeBrandIcons();
+      renderAllUI();
+      initMapEngine();
+      startLiveSync();
+    };
+  </script>
+</body>
+</html>

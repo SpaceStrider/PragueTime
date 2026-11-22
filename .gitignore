@@ -1,0 +1,6 @@
+node_modules
+.next
+.pglite
+*.log
+next-env.d.ts
+tsconfig.tsbuildinfo
