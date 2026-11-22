@@ -1185,16 +1185,16 @@
           },
           {
             id: 'd1-s2', time: '13:30–17:30', title: 'D4 Drive & Mníšek Town Walk',
-            category: 'walk', lat: 49.8665, lng: 14.2618,
-            neighborhood: 'Mníšek pod Brdy',
-            tip: 'About 35 minutes south via D4. Walk Náměstí F. X. Svobody with Ethan before sunset (~16:00). Bags stay in the car. Debi and Tom do not unpack here.',
+            category: 'walk', lat: 49.86653, lng: 14.26042,
+            neighborhood: 'náměstí F. X. Svobody',
+            tip: 'About 35 minutes south via D4 to Ethan at Lhotecká 517 in Stříbrná Lhota, then a short walk to Náměstí F. X. Svobody before sunset (~16:00). Bags stay in the car.',
             booking: null
           },
           {
             id: 'd1-s3', time: '18:00–20:00', title: 'Dinner at Marjána - Restaurace a Pension',
             category: 'food', lat: 49.8631, lng: 14.2687,
             neighborhood: 'Mníšek pod Brdy',
-            tip: 'Beloved neighborhood kitchen near the station. First Czech dinner for Ethan, Debi, and Tom: svíčková na smetaně with bread dumplings. Afterward Debi and Tom drive back to the boat. Ethan stays home.',
+            tip: 'Beloved neighborhood kitchen near the station. First Czech dinner for Ethan, Debi, and Tom: svíčková na smetaně with bread dumplings. Afterward Debi and Tom drive back to the boat. Ethan walks home to Lhotecká 517.',
             booking: 'Reserve for 3 (Ethan, Debi, Tom)'
           }
         ]
@@ -1924,7 +1924,7 @@
      * CENTRAL EUROPE 6 REGIONAL HUBS
      */
     const REGIONAL_HUBS = [
-      { name: 'Mníšek pod Brdy', lat: 49.8665, lng: 14.2618, dayIdx: 0, note: 'Ethan\'s home on Dec 17–18. Debi and Tom visit, then sleep on the boat in Prague.' },
+      { name: 'Mníšek pod Brdy', lat: 49.870874, lng: 14.259746, dayIdx: 0, note: 'Ethan\'s home is Lhotecká 517, Stříbrná Lhota. Debi and Tom visit on Dec 17–18, then sleep on the boat.' },
       { name: 'Prague', lat: 50.0865, lng: 14.4150, dayIdx: 2, note: 'Debi and Tom sleep on the river boat Dec 17–18. From Dec 19 all five stay at Vinohradská 403/17.' },
       { name: 'Karlštejn', lat: 49.9394, lng: 14.1881, dayIdx: 9, note: 'Advent Castle Tour (Dec 26)' },
       { name: 'Kutná Hora', lat: 49.9482, lng: 15.2665, dayIdx: 12, note: 'Bone Church & St. Barbara (Dec 29)' },
@@ -1933,7 +1933,7 @@
     ];
 
     const REGIONAL_ARCS = [
-      { from: [50.0865, 14.4150], to: [49.8665, 14.2618], label: '~35m D4' },
+      { from: [50.0865, 14.4150], to: [49.870874, 14.259746], label: '~35m D4' },
       { from: [50.0865, 14.4150], to: [49.9394, 14.1881], label: '~35m' },
       { from: [50.0865, 14.4150], to: [49.9482, 15.2665], label: '~1h D11' },
       { from: [50.0865, 14.4150], to: [51.0519, 13.7416], label: '~2h D8/A17' },
@@ -2357,7 +2357,7 @@
       if (!userIsHere(user, idx)) return '';
       if (day.id === 'day-1' || day.id === 'day-2') {
         return user === 'Ethan'
-          ? 'You sleep at home in Mníšek.'
+          ? 'You sleep at home, Lhotecká 517 in Stříbrná Lhota.'
           : 'You sleep on the river-boat hotel in Prague.';
       }
       if (day.id === 'day-11') return 'All five sleep in Nuremberg tonight.';
@@ -2647,7 +2647,7 @@
      */
     const WHO_STORAGE_KEY = 'prague_winter_atlas_who_v1';
     const ARRIVES = { Ethan: 0, Debi: 0, Tom: 0, Olivia: 2, Jordan: 2 };
-    const HOUSE = { lat: 49.8665, lng: 14.2618, name: "Ethan's house, Mníšek", mapLabel: 'Mníšek' };
+    const HOUSE = { lat: 49.870874, lng: 14.259746, name: 'Lhotecká 517, Mníšek', mapLabel: 'Lhotecká 517' };
     const BOAT = { lat: 50.0708, lng: 14.4112, name: 'River-boat hotel, Vltava', mapLabel: 'Boat' };
     const AIRBNB = { lat: 50.07877, lng: 14.43489, name: 'Airbnb, Vinohradská 403/17', mapLabel: 'Airbnb' };
     const AIRPORT = { lat: 50.1008, lng: 14.26, name: 'Prague Airport', mapLabel: 'Airport' };
