@@ -578,15 +578,15 @@
       <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-2">
         <button type="button" onclick="chooseWho('Ethan')" class="text-left px-3 py-2.5 rounded-2xl bg-white border border-vltava/10 hover:border-garnet">
           <span class="block font-bold text-vltava">Ethan</span>
-          <span class="block text-[11px] text-slate-500 mt-0.5">Home in Mníšek, here every day. Prague days start with the bus.</span>
+          <span class="block text-[11px] text-slate-500 mt-0.5">Home in Mníšek on the 17th and 18th. With everyone at the Airbnb from the 19th.</span>
         </button>
         <button type="button" onclick="chooseWho('Debi')" class="text-left px-3 py-2.5 rounded-2xl bg-white border border-vltava/10 hover:border-garnet">
           <span class="block font-bold text-vltava">Debi</span>
-          <span class="block text-[11px] text-slate-500 mt-0.5">Rental car from Thursday 17 Dec, with the cheap overnight spots.</span>
+          <span class="block text-[11px] text-slate-500 mt-0.5">Rental car from Thursday 17 Dec. The 17th and 18th are the river boat in Prague.</span>
         </button>
         <button type="button" onclick="chooseWho('Tom')" class="text-left px-3 py-2.5 rounded-2xl bg-white border border-vltava/10 hover:border-garnet">
           <span class="block font-bold text-vltava">Tom</span>
-          <span class="block text-[11px] text-slate-500 mt-0.5">Same rental as Debi, from Thursday 17 Dec.</span>
+          <span class="block text-[11px] text-slate-500 mt-0.5">Same car as Debi. The 17th and 18th are the river boat in Prague.</span>
         </button>
         <button type="button" onclick="chooseWho('Olivia')" class="text-left px-3 py-2.5 rounded-2xl bg-white border border-vltava/10 hover:border-garnet">
           <span class="block font-bold text-vltava">Olivia</span>
@@ -1103,28 +1103,28 @@
         region: 'Mníšek pod Brdy',
         mascot: 'krtek',
         title: 'Debi & Tom Arrive + Mníšek pod Brdy',
-        summary: 'Debi and Tom land, pick up their rental car, and drive south to Ethan\'s house in Mníšek for a quiet first night.',
+        summary: 'Debi and Tom land, pick up the rental, spend the afternoon with Ethan in Mníšek, and sleep on their river-boat hotel in Prague.',
         alert: null,
         stops: [
           {
             id: 'd1-s1', time: '12:00–13:30', title: 'PRG Airport Arrival (Debi & Tom)',
             category: 'transit', lat: 50.1008, lng: 14.2600,
             neighborhood: 'Václav Havel Airport Prague',
-            tip: 'Meet Debi and Tom at Arrivals. They pick up the rental car, load the bags, and confirm the Czech electronic vignette (dálniční známka) is active before the D4. Tonight is Ethan\'s house in Mníšek, about 35 minutes south.',
+            tip: 'Meet Debi and Tom at Arrivals. They pick up the rental car, load the bags, and confirm the Czech electronic vignette (dálniční známka) is active before the D4. Tonight they sleep on the river-boat hotel in Prague. The afternoon is a visit to Ethan, then the drive back.',
             booking: null
           },
           {
             id: 'd1-s2', time: '13:30–17:30', title: 'D4 Drive & Mníšek Town Walk',
             category: 'walk', lat: 49.8665, lng: 14.2618,
             neighborhood: 'Mníšek pod Brdy',
-            tip: 'Easy ~35-minute drive south via D4. Unpack at Ethan’s and take a gentle loop around Náměstí F. X. Svobody before sunset (~16:00) to reset jet lag.',
+            tip: 'About 35 minutes south via D4. Walk Náměstí F. X. Svobody with Ethan before sunset (~16:00). Bags stay in the car. Debi and Tom do not unpack here.',
             booking: null
           },
           {
             id: 'd1-s3', time: '18:00–20:00', title: 'Dinner at Marjána - Restaurace a Pension',
             category: 'food', lat: 49.8631, lng: 14.2687,
             neighborhood: 'Mníšek pod Brdy',
-            tip: 'Beloved neighborhood kitchen near the station. First Czech dinner for Ethan, Debi, and Tom: svíčková na smetaně with bread dumplings.',
+            tip: 'Beloved neighborhood kitchen near the station. First Czech dinner for Ethan, Debi, and Tom: svíčková na smetaně with bread dumplings. Afterward Debi and Tom drive back to the boat. Ethan stays home.',
             booking: 'Reserve for 3 (Ethan, Debi, Tom)'
           }
         ]
@@ -1137,14 +1137,14 @@
         region: 'Mníšek & Brdy Hills',
         mascot: 'rumcajs',
         title: 'Mníšek Chateau & Brdy Hills',
-        summary: 'Tour the local First-Republic chateau in the morning, then hike wooded Brdy trails up to Baroque Skalka.',
+        summary: 'Debi and Tom drive out from the river boat. Tour the chateau, hike to Skalka, then they sleep back on the boat. Ethan is already in Mníšek.',
         alert: 'Mníšek Chateau only runs walk-in tours on weekends in Dec; Friday tours (10:30, 12:00, 13:30) must be booked 24h in advance.',
         stops: [
           {
             id: 'd2-s1', time: '10:30–11:45', title: 'Mníšek pod Brdy Chateau Guided Tour',
             category: 'sight', lat: 49.8669, lng: 14.2611,
             neighborhood: 'Zámek Mníšek pod Brdy',
-            tip: 'Intimate 20th-century aristocratic living rooms right in town—a peaceful prelude before Prague Castle.',
+            tip: 'Intimate 20th-century aristocratic living rooms right in town. Debi and Tom drive out from the boat in the morning. Ethan walks over from home.',
             booking: 'Book 24h Ahead (Fri 10:30/12:00/13:30)'
           },
           {
@@ -1171,7 +1171,7 @@
             id: 'd3-s1', time: '13:00–14:30', title: 'PRG Pickup for Olivia & Jordan',
             category: 'transit', lat: 50.1008, lng: 14.2600,
             neighborhood: 'Václav Havel Airport Prague',
-            tip: 'Debi and Tom drive the rental to PRG for Olivia and Jordan. Tonight all five stay at the Airbnb at Vinohradská 403/17 in Vinohrady. Park the car at a park-and-ride, or in a spot the listing includes, and use Lítačka tonight.',
+            tip: 'Debi and Tom leave the river boat in the morning and drive the rental to PRG for Olivia and Jordan. Tonight all five stay at the Airbnb at Vinohradská 403/17 in Vinohrady. Park the car at a park-and-ride, or in a spot the listing includes, and use Lítačka tonight.',
             booking: null
           },
           {
@@ -1854,8 +1854,8 @@
      * CENTRAL EUROPE 6 REGIONAL HUBS
      */
     const REGIONAL_HUBS = [
-      { name: 'Mníšek pod Brdy', lat: 49.8665, lng: 14.2618, dayIdx: 0, note: 'Ethan\'s home. Debi and Tom stay here Dec 17–18.' },
-      { name: 'Prague', lat: 50.0865, lng: 14.4150, dayIdx: 2, note: 'From Dec 19 all five stay at Vinohradská 403/17. The 17th and 18th are at Ethan\'s house.' },
+      { name: 'Mníšek pod Brdy', lat: 49.8665, lng: 14.2618, dayIdx: 0, note: 'Ethan\'s home on Dec 17–18. Debi and Tom visit, then sleep on the boat in Prague.' },
+      { name: 'Prague', lat: 50.0865, lng: 14.4150, dayIdx: 2, note: 'Debi and Tom sleep on the river boat Dec 17–18. From Dec 19 all five stay at Vinohradská 403/17.' },
       { name: 'Karlštejn', lat: 49.9394, lng: 14.1881, dayIdx: 9, note: 'Advent Castle Tour (Dec 26)' },
       { name: 'Kutná Hora', lat: 49.9482, lng: 15.2665, dayIdx: 12, note: 'Bone Church & St. Barbara (Dec 29)' },
       { name: 'Dresden 🇩🇪', lat: 51.0519, lng: 13.7416, dayIdx: 5, note: 'Striezelmarkt Day Trip (Dec 22)' },
@@ -1876,8 +1876,8 @@
     const BOOKING_CHECKLIST = [
       { id: 'chk-rental', day: 'Thu 17 Dec', title: 'Debi & Tom rental car, pickup at PRG', desc: 'One car for the airport, Mníšek, Dresden, Karlštejn, Nuremberg, and Kutná Hora. In Prague, use a spot if the Airbnb includes one, or a P+R at about 50 CZK for 24 hours, and ride trams and metro. Return it at PRG on Jan 2. Confirm it fits five plus bags for the Nuremberg night.' },
       { id: 'chk-vignette', day: 'Pre-Trip', title: 'Czech Electronic Motorway Vignette (dálniční známka)', desc: 'Buy it for Debi and Tom\'s rental on edalnice.cz before the D4, D5, D8, or D11.' },
-      { id: 'chk-botel', day: 'Thu 17 Dec', title: 'River-boat room on the Vltava', desc: 'Debi and Tom\'s boat hotel is on the river in Prague. Nights of 17 and 18 Dec are at Ethan\'s house, and from 19 Dec the four stay at the Airbnb. Write down the boat name and which nights it still covers.' },
-      { id: 'chk-hotel', day: 'Sat 19 Dec', title: 'Airbnb at Vinohradská 403/17', desc: 'Booked for all five from the night of 19 Dec, in Vinohrady. The 17th and 18th are still at Ethan\'s house in Mníšek. Check whether the listing includes a parking spot.' },
+      { id: 'chk-botel', day: 'Thu 17 Dec', title: 'River-boat room on the Vltava', desc: 'Debi and Tom sleep here the nights of 17 and 18 Dec. Ethan sleeps at home in Mníšek. From the night of 19 Dec everyone is at the Airbnb. Write down the boat name and the gangway.' },
+      { id: 'chk-hotel', day: 'Sat 19 Dec', title: 'Airbnb at Vinohradská 403/17', desc: 'Booked for all five from the night of 19 Dec, in Vinohrady. The 17th and 18th are the river boat for Debi and Tom, and Ethan\'s house for Ethan. Check whether the listing includes a parking spot.' },
       { id: 'chk-nbergstay', day: 'Sun 27 Dec', title: 'Book one Nuremberg place for all five', desc: 'Everyone stays together the night of Dec 27, then drives back on Dec 28.' },
       { id: 'chk-litacka',  day: 'Pre-Trip', title: 'Install PID Lítačka App on Everyone’s Phones', desc: 'Activate tram/metro tickets in-app BEFORE boarding (inspectors patrol Castle trams).' },
       { id: 'chk-euronet',  day: 'Pre-Trip', title: 'Avoid Euronet ATMs & 100g Old Town Ham Stalls', desc: 'Use Czech bank ATMs (Česká spořitelna, ČSOB, KB), always choose CZK, and skip tourist chimney cakes.' },
@@ -2283,7 +2283,7 @@
 
     function lodgingNote(dayId) {
       if (dayId === 'day-1' || dayId === 'day-2') {
-        return "Ethan's home in Mníšek. Debi and Tom stay with Ethan. Their rental car is with them from the airport.";
+        return "Ethan sleeps at home in Mníšek. Debi and Tom sleep on their river-boat hotel on the Vltava in Prague, and drive back after the day.";
       }
       if (dayId === 'day-11') {
         return 'All five together in Nuremberg tonight. Book one place, then drive back tomorrow.';
@@ -2297,7 +2297,7 @@
       if (dayId === 'day-6') {
         return 'Day trip only. Debi and Tom drive the rental both ways. Sleep back at the Airbnb, Vinohradská 403/17.';
       }
-      return "Prague. From the night of 19 Dec, all five stay at the Airbnb, Vinohradská 403/17, Vinohrady. Debi and Tom's boat hotel is on the Vltava. The nights of 17 and 18 Dec are at Ethan's house in Mníšek. Use a parking spot if the listing includes one, otherwise a park-and-ride, then trams and metro.";
+      return "Prague. Debi and Tom's nights of 17 and 18 Dec are the river-boat hotel. From the night of 19 Dec, all five stay at the Airbnb, Vinohradská 403/17, Vinohrady. Use a parking spot if the listing includes one, otherwise a park-and-ride, then trams and metro.";
     }
 
     function lodgingHtml(day) {
@@ -2557,6 +2557,7 @@
     const WHO_STORAGE_KEY = 'prague_winter_atlas_who_v1';
     const ARRIVES = { Ethan: 0, Debi: 0, Tom: 0, Olivia: 2, Jordan: 2 };
     const HOUSE = { lat: 49.8665, lng: 14.2618, name: "Ethan's house, Mníšek", mapLabel: 'Mníšek' };
+    const BOAT = { lat: 50.0708, lng: 14.4112, name: 'River-boat hotel, Vltava', mapLabel: 'Boat' };
     const AIRBNB = { lat: 50.07877, lng: 14.43489, name: 'Airbnb, Vinohradská 403/17', mapLabel: 'Airbnb' };
     const AIRPORT = { lat: 50.1008, lng: 14.26, name: 'Prague Airport', mapLabel: 'Airport' };
     const NUREMBERG_STAY = { lat: 49.4505, lng: 11.0775, name: 'Nuremberg stay', mapLabel: 'Stay' };
@@ -2602,13 +2603,23 @@
       return ['day-1', 'day-6', 'day-10', 'day-11', 'day-12', 'day-13', 'day-17'].indexOf(day.id) !== -1;
     }
 
+    function onTheBoat(user) {
+      return user === 'Debi' || user === 'Tom';
+    }
+
     function routeStart(user, day) {
       const idx = TRIP_DAYS.findIndex(d => d.id === day.id);
       if (!userIsHere(user, idx)) return null;
       if (day.id === 'day-12') return NUREMBERG_STAY;
       if (day.id === 'day-1') return user === 'Ethan' ? HOUSE : AIRPORT;
-      if (day.id === 'day-2') return HOUSE;
+      if (day.id === 'day-2') return onTheBoat(user) ? BOAT : HOUSE;
+      if (day.id === 'day-3' && onTheBoat(user)) return BOAT;
       return AIRBNB;
+    }
+
+    function routeEnd(user, day) {
+      if ((day.id === 'day-1' || day.id === 'day-2') && onTheBoat(user)) return BOAT;
+      return null;
     }
 
     function routeVoice(day) {
@@ -2690,7 +2701,10 @@
       const here = userIsHere(user, idx);
       const who = here ? user : 'Debi';
       if (here && user === 'Ethan' && day.id === 'day-1') {
-        return 'You are already home in Mníšek. Debi and Tom drive the D4 to you, then you walk to dinner.';
+        return 'You are already home in Mníšek. Debi and Tom drive down for the afternoon and dinner, then back to their boat in Prague.';
+      }
+      if (here && user === 'Ethan' && day.id === 'day-2') {
+        return 'You start at home in Mníšek. Debi and Tom drive out from the river boat in the morning and sleep back on the boat.';
       }
       const stops = getDayStops(day).filter(s => includeInRoute(who, s, day));
       const origin = routeStart(who, day);
@@ -2702,9 +2716,16 @@
         const plan = legPlan(who, points[i - 1], points[i], day);
         if (plan && labels.indexOf(plan.label) === -1) labels.push(plan.label);
       }
+      const end = routeEnd(who, day);
+      if (end) {
+        const plan = legPlan(who, points[points.length - 1], end, day);
+        if (plan && labels.indexOf(plan.label) === -1) labels.push(plan.label);
+      }
       const start = origin ? origin.name : 'the first stop';
       const modes = labels.length ? labels.join(' → ') : 'a short hop';
-      const boatNote = origin === AIRBNB ? ' The flat is Vinohradská 403/17 in Vinohrady.' : '';
+      const boatNote = origin === AIRBNB
+        ? ' The flat is Vinohradská 403/17 in Vinohrady.'
+        : (end === BOAT ? ' Tonight is the river-boat hotel on the Vltava.' : (origin === BOAT ? ' You leave from the river-boat hotel.' : ''));
       if (!here) return 'While you are away, the family starts at ' + start + '. ' + modes + '.' + boatNote;
       return 'Start at ' + start + '. ' + modes + '.' + boatNote;
     }
@@ -2715,13 +2736,13 @@
         return 'All five stay at Vinohradská 403/17. Debi and Tom handle the rental. You ride with them on the long days and take the tram in Prague.';
       }
       if (user === 'Ethan' && dayIndex <= 1) {
-        return "Debi and Tom can leave the rental at your house tonight. That night is free.";
+        return 'You sleep at home. Debi and Tom drive the rental back to the river-boat hotel tonight, so it does not stay in the driveway.';
       }
       if (user === 'Ethan') {
-        return 'On Prague nights you are at the Airbnb with everyone else. The rental belongs in a spot the listing includes, or at a park-and-ride for about 50 CZK for the first 24 hours. Your house was the free spot on the 17th and 18th.';
+        return 'On Prague nights you are at the Airbnb with everyone else. The rental belongs in a spot the listing includes, or at a park-and-ride for about 50 CZK for the first 24 hours. On the 17th and 18th it goes back to the boat with Debi and Tom.';
       }
       if (dayIndex <= 1) {
-        return "Park at Ethan's house in Mníšek tonight. That is free. Do not leave the rental in a Prague zone.";
+        return 'Tonight you sleep on the river-boat hotel in Prague. Use the parking that comes with the boat. The embankment is not a free overnight zone, so do not leave the rental on the street. If the booking has no spot, a park-and-ride is about 50 CZK for the first 24 hours. Ethan stays at his house in Mníšek.';
       }
       if (day.id === 'day-11') {
         return 'Tonight, use the parking that comes with the place you booked, or a station park-and-ride. Old-town garages charge by the hour and get expensive if the car sits overnight.';
@@ -2984,10 +3005,13 @@
       const who = routeVoice(day);
       const here = who === state.activeUser;
       const origin = routeStart(who, day);
+      const end = routeEnd(who, day);
       if (here && origin) markOrigin(origin);
+      if (here && end && (!origin || end.lat !== origin.lat || end.lng !== origin.lng)) markOrigin(end);
       const points = [];
       if (origin) points.push(origin);
       stops.forEach(s => { if (includeInRoute(who, s, day)) points.push(s); });
+      if (end) points.push(end);
       const pairs = [];
       for (let i = 1; i < points.length; i++) {
         const plan = legPlan(who, points[i - 1], points[i], day);
@@ -3140,6 +3164,8 @@
 
       const originForBounds = routeStart(routeVoice(day), day);
       if (originForBounds) latLngs.push([originForBounds.lat, originForBounds.lng]);
+      const endForBounds = routeEnd(routeVoice(day), day);
+      if (endForBounds) latLngs.push([endForBounds.lat, endForBounds.lng]);
       drawDayRoads(day, stops);
 
       // Numbered Stop Markers
@@ -3725,6 +3751,9 @@
             </div>
           </article>`;
       });
+
+      const endPoint = routeEnd(routeVoice(day), day);
+      if (endPoint && prevPoint) html += connectorHtml(prevPoint, endPoint, day);
 
       // Day Notes Scratchpad
       const curNote = state.dayNotes[day.id] || '';
