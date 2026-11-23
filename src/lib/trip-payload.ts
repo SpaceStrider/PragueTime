@@ -32,11 +32,25 @@ function assertPayload(value: unknown): asserts value is TripShape {
   }
 }
 
+function unwrapJson(raw: string): string {
+  let text = raw.replace(/^\uFEFF/, "").trim();
+  text = text.replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/, "").trim();
+  if (!text.startsWith("{")) {
+    const start = text.indexOf("{");
+    const end = text.lastIndexOf("}");
+    if (start >= 0 && end > start) text = text.slice(start, end + 1);
+  }
+  return text.replaceAll("\u201C", "\"").replaceAll("\u201D", "\"");
+}
+
 function parsePayload(raw: string): TripShape {
   let parsed: unknown;
   try {
-    parsed = JSON.parse(raw);
+    parsed = JSON.parse(unwrapJson(raw));
   } catch {
+    const trimmed = raw.trim();
+    const shape = trimmed.startsWith("```") ? "fence" : trimmed.startsWith("{") ? "brace" : "other";
+    console.log(`TRIP_PRIVATE_JSON did not parse. length=${raw.length} shape=${shape}`);
     throw new Error("TRIP_PRIVATE_JSON is not valid JSON");
   }
   assertPayload(parsed);
