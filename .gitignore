@@ -1,6 +1,9 @@
 node_modules
 .next
 .pglite
+_site
+.env
+.env.*
 *.log
 next-env.d.ts
 tsconfig.tsbuildinfo

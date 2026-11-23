@@ -1,5 +1,5 @@
-export const FAMILY_MEMBERS = ["Ethan", "Debi", "Tom", "Olivia", "Jordan"] as const;
-const MEMBER_SET = new Set<string>(FAMILY_MEMBERS);
+import { tripRoster } from "./trip-payload.ts";
+
 const CATEGORIES = new Set(["food", "sight", "walk", "transit", "holiday"]);
 const DAY_ID = /^day-([1-9]|1[0-7])$/;
 const STOP_ID = /^custom-[a-zA-Z0-9_-]{1,40}$/;
@@ -44,8 +44,9 @@ export function emptyShared(): SharedState {
 
 function memberName(value: unknown): string | null {
   const raw = typeof value === "string" ? value : "";
-  const mapped = raw === "Mom" ? "Debi" : raw === "Dad" ? "Tom" : raw;
-  return MEMBER_SET.has(mapped) ? mapped : null;
+  const { members, legacy } = tripRoster();
+  const mapped = Object.prototype.hasOwnProperty.call(legacy, raw) ? legacy[raw] : raw;
+  return members.includes(mapped) ? mapped : null;
 }
 
 function clockValue(value: unknown): number {

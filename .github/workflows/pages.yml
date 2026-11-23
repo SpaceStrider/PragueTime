@@ -33,13 +33,39 @@ jobs:
           npm ci
           npm test
 
-      - name: Assemble the static site
+      # Private trip JSON is available only for a private repository's private Pages site.
+      # Anything else stays a locked gate. The trip is sealed only when the gate code is set.
+      - name: Decide if private trip data can be published
+        id: gate
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
-          test -f content/atlas.html
-          mkdir -p _site
-          cp content/atlas.html _site/index.html
-          cp content/favicon.ico content/favicon.png content/apple-touch-icon.png _site/
-          touch _site/.nojekyll
+          inject=false
+          if [ "${{ github.event_name }}" != "pull_request" ] && [ "${{ github.ref }}" = "refs/heads/main" ] && [ "${{ github.event.repository.private }}" = "true" ]; then
+            code=$(curl -sS --max-time 20 -o /tmp/pages.json -w "%{http_code}" \
+              -H "Authorization: Bearer ${GH_TOKEN}" \
+              -H "Accept: application/vnd.github+json" \
+              -H "X-GitHub-Api-Version: 2026-03-10" \
+              "https://api.github.com/repos/${{ github.repository }}/pages" || true)
+            if [ "$code" = "200" ]; then
+              visibility=$(node -e "const fs=require('fs'); const p=JSON.parse(fs.readFileSync('/tmp/pages.json','utf8')); process.stdout.write(p.public === false ? 'private' : 'public')")
+              if [ "$visibility" = "private" ]; then
+                inject=true
+              fi
+            fi
+          fi
+          echo "inject=$inject" >> "$GITHUB_OUTPUT"
+          if [ "$inject" = "true" ]; then
+            echo "Private Pages detected. The trip secret is available to the assembler and is sealed only when the gate code is set."
+          else
+            echo "Trip JSON will not be added. The published page stays a locked gate."
+          fi
+
+      - name: Assemble the locked site
+        env:
+          TRIP_GATE_CODE: ${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/main' && secrets.TRIP_GATE_CODE || '' }}
+          TRIP_PRIVATE_JSON: ${{ steps.gate.outputs.inject == 'true' && secrets.TRIP_PRIVATE_JSON || '' }}
+        run: node --experimental-strip-types scripts/assemble-site.ts
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
