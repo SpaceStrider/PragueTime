@@ -12,6 +12,8 @@ const lockedHtml = await locked.text();
 assert.equal(locked.status, 200);
 assert.equal(lockedHtml.includes("Sample arrival"), false);
 assert.match(lockedHtml, /4-digit code/);
+assert.equal(lockedHtml.includes("user-scalable"), false);
+assert.match(lockedHtml, /aria-describedby="gate-error"/);
 
 const missing = await POST(new Request("http://127.0.0.1/", {
   method: "POST",

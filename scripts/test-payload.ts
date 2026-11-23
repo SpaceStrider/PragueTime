@@ -4,6 +4,10 @@ import { embedPayload, renderAtlasHtml } from "../src/lib/trip-payload.ts";
 
 const template = await readFile("content/atlas.html", "utf8");
 assert.match(template, /\/\*__TRIP_PRIVATE_START__\*\/null\/\*__TRIP_PRIVATE_END__\*\//);
+assert.equal(template.includes("user-scalable"), false);
+assert.equal(template.includes("maximum-scale"), false);
+assert.match(template, /Skip to the day list/);
+assert.equal((template.match(/aria-label="Close"/g) || []).length, 3);
 
 const rendered = await renderAtlasHtml();
 assert.match(rendered, /Alex/);

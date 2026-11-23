@@ -10,19 +10,21 @@ export function gatePage(options: { failed: boolean; sealed?: string }): string 
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
   <title>Prague atlas</title>
   <style>
     :root { color-scheme: light; }
-    body { margin: 0; min-height: 100vh; display: grid; place-items: center; background: #141923; color: #141923; font-family: "Segoe UI", sans-serif; }
+    body { margin: 0; min-height: 100vh; min-height: 100dvh; display: grid; place-items: center; background: #141923; color: #141923; font-family: "Segoe UI", sans-serif; padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left); }
     main { width: min(22rem, calc(100% - 2rem)); background: #fcfaf6; border-radius: 1.4rem; padding: 1.5rem; }
-    h1 { font-size: 1.6rem; margin: 0 0 0.4rem; }
-    p { margin: 0; color: #3d4654; line-height: 1.45; }
+    h1 { font-size: 1.6rem; line-height: 1.2; margin: 0 0 0.4rem; }
+    p { margin: 0; color: #3d4654; line-height: 1.5; }
     form { display: grid; gap: 0.7rem; margin-top: 1.1rem; }
     label { font-size: 0.85rem; font-weight: 700; }
-    input { font: inherit; font-size: 1.3rem; letter-spacing: 0.3rem; padding: 0.7rem 0.8rem; border-radius: 0.8rem; border: 1px solid rgba(20, 25, 35, 0.2); }
-    button { font: inherit; font-weight: 700; border: 0; border-radius: 0.8rem; padding: 0.75rem 1rem; background: #b8293d; color: white; }
-    #gate-error { min-height: 1.2rem; color: #b8293d; font-weight: 700; }
+    input { font: inherit; font-size: 1.125rem; letter-spacing: 0.3rem; padding: 0.7rem 0.8rem; border-radius: 0.8rem; border: 1px solid rgba(20, 25, 35, 0.35); }
+    button { font: inherit; font-weight: 700; border: 0; border-radius: 0.8rem; min-height: 2.75rem; padding: 0.75rem 1rem; background: #b8293d; color: white; touch-action: manipulation; }
+    button:focus-visible, input:focus-visible { outline: 2px solid #141923; outline-offset: 2px; }
+    #gate-error { min-height: 1.2rem; color: #9e2032; font-weight: 700; }
+    @media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto; } }
   </style>
 </head>
 <body>
@@ -31,7 +33,7 @@ export function gatePage(options: { failed: boolean; sealed?: string }): string 
     <p>Enter the 4-digit code to open this trip.</p>
     <form id="gate-form" method="post" action="">
       <label for="gate-code">4-digit code</label>
-      <input id="gate-code" name="code" inputmode="numeric" autocomplete="off" pattern="[0-9]{4}" minlength="4" maxlength="4" required autofocus>
+      <input id="gate-code" name="code" inputmode="numeric" autocomplete="off" pattern="[0-9]{4}" minlength="4" maxlength="4" required autofocus aria-describedby="gate-error"${options.failed ? ' aria-invalid="true"' : ""}>
       <button type="submit">Unlock</button>
       <p id="gate-error" role="alert">${error}</p>
     </form>
@@ -117,6 +119,7 @@ export function gatePage(options: { failed: boolean; sealed?: string }): string 
       const code = input.value.trim();
       if (!/^\\d{4}$/.test(code)) {
         error.textContent = "That code didn't work.";
+        input.setAttribute("aria-invalid", "true");
         return;
       }
       try {
@@ -124,6 +127,7 @@ export function gatePage(options: { failed: boolean; sealed?: string }): string 
         await unlockWithKey(rawKey, true);
       } catch (cause) {
         error.textContent = "That code didn't work.";
+        input.setAttribute("aria-invalid", "true");
       }
     });
 
