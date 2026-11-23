@@ -24,19 +24,13 @@ git show d356ad2c5fcc1af7cf38efbfb63fdfe1a649b369:content/atlas.html > /tmp/atla
 node scripts/export-trip-secret.mjs /tmp/atlas-before.html > /tmp/trip-private.json
 ```
 
-The script writes compact JSON to stdout and a warning to stderr. Paste `/tmp/trip-private.json` into the secret. GitHub secrets must stay under 48 KB; that compact file fits. If GitHub rejects it for size, do not split it into this repository. Put the same JSON as `trip.json` on the default branch of a new private repository you create yourself, for example `CzechTrip-private`, with no other copy of the file. Then keep this public site on the sample until that private file can be read at build time without publishing it.
+The script writes compact JSON to stdout and a warning to stderr. Paste `/tmp/trip-private.json` into the secret. GitHub secrets must stay under 48 KB; that compact file fits. If GitHub rejects it for size, do not split it into this repository. Put the same JSON as `trip.json` on the default branch of a new private repository you create yourself, for example `CzechTrip-private`, with no other copy of the file.
 
-The Pages workflow reads `TRIP_PRIVATE_JSON` only when all of these are true:
+A push to `main`, or a manual run of the Pages workflow from `main`, reads both secrets. Pull requests never receive them. The published file is a lock screen. When `TRIP_GATE_CODE` is set, the trip HTML is sealed with that code and is not readable in the file. When `TRIP_PRIVATE_JSON` is set as well, that sealed trip is the real itinerary. If the code secret is missing, the lock stays up and the trip pages are left out.
 
-- the run is a push to `main` (pull requests never receive it)
-- the repository is private
-- GitHub Pages reports `public: false` (Settings → Pages → site visibility Private)
+The page is on the public internet. The code stops someone who only opens the page. Someone who downloads the file can try every 4-digit code. Git history on `main` still contains the itinerary in plain text, so this seal is not the only copy.
 
-It still does not write that JSON into the page unless `TRIP_GATE_CODE` is set. The published file is a lock screen. The trip HTML is sealed with the code and is not readable in the file. If the code secret is missing, the lock stays up and the trip pages are left out.
-
-A private repository can still have a public Page. On a free plan, Pages is public, so the live page can be sealed only around the sample trip. Private Pages needs a plan that includes it. After you turn on private Pages and save both secrets, run the Pages workflow again from the Actions tab.
-
-For the Next.js server (`npm run dev` or a hosted app), both variable names are read from the environment. Set them only on a host that is not public. A local `.env` file is gitignored. Do not commit it.
+For the Next.js server (`npm run dev` or a hosted app), both variable names are read from the environment. A local `.env` file is gitignored. Do not commit it.
 
 ## Access code
 
@@ -52,8 +46,8 @@ Git history on `main` still contains the private itinerary, including in `conten
 
 ## GitHub Pages
 
-The static atlas is published from `main` by `.github/workflows/pages.yml`. After that workflow succeeds, the page is:
+The static atlas is published from `main` by `.github/workflows/pages.yml`. After that workflow succeeds, open:
 
-https://spacestrider.github.io/CzechTrip/
+https://spacestrider.github.io/PragueTime/
 
-This repository is private, and GitHub Pages is not turned on yet. A private repository can publish a Page only on a plan that includes private Pages. On a free plan the repository has to be public before the deploy step can succeed. That public Page is still the lock screen. With the code secret set, it opens the sample trip, not the private one. On that Page, each phone keeps its own votes and notes. Live sync across phones stays on the hosted app, which has the database.
+Enter the code. That page keeps votes and notes on each phone. Live sync across phones stays on the hosted app, which has the database.
