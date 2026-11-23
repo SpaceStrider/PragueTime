@@ -9,6 +9,15 @@ export function gatePage(options: { failed: boolean; sealed?: string }): string 
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
+  <script>
+    (function () {
+      try {
+        var saved = localStorage.getItem("atlas-theme");
+        var dark = saved === "dark" || (saved !== "light" && window.matchMedia("(prefers-color-scheme: dark)").matches);
+        if (dark) document.documentElement.classList.add("theme-dark");
+      } catch (e) {}
+    })();
+  </script>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
   <title>Prague atlas</title>
@@ -24,10 +33,20 @@ export function gatePage(options: { failed: boolean; sealed?: string }): string 
     button { font: inherit; font-weight: 700; border: 0; border-radius: 0.8rem; min-height: 2.75rem; padding: 0.75rem 1rem; background: #b8293d; color: white; touch-action: manipulation; }
     button:focus-visible, input:focus-visible { outline: 2px solid #141923; outline-offset: 2px; }
     #gate-error { min-height: 1.2rem; color: #9e2032; font-weight: 700; }
+    #themeToggle { position: fixed; top: max(0.75rem, env(safe-area-inset-top)); right: max(0.75rem, env(safe-area-inset-right)); min-width: 2.75rem; min-height: 2.75rem; padding: 0 0.8rem; background: #fcfaf6; color: #141923; border: 1px solid rgba(20, 25, 35, 0.2); }
+    html.theme-dark { color-scheme: dark; }
+    html.theme-dark body { background: #0e1218; }
+    html.theme-dark main { background: #1b2230; color: #f4efe6; }
+    html.theme-dark p { color: #c5ceda; }
+    html.theme-dark input { background: #151b26; color: #f4efe6; border-color: rgba(255, 255, 255, 0.2); }
+    html.theme-dark #gate-error { color: #f3a8b4; }
+    html.theme-dark #themeToggle { background: #1b2230; color: #f4efe6; border-color: rgba(255, 255, 255, 0.2); }
+    html.theme-dark button:focus-visible, html.theme-dark input:focus-visible { outline-color: #f4efe6; }
     @media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto; } }
   </style>
 </head>
 <body>
+  <button type="button" id="themeToggle" aria-pressed="false" aria-label="Use dark mode">Dark</button>
   <main>
     <h1>Prague atlas</h1>
     <p>Enter the 4-digit code to open this trip.</p>
@@ -42,6 +61,21 @@ export function gatePage(options: { failed: boolean; sealed?: string }): string 
   <script>
     const ITERATIONS = ${GATE_KDF_ITERATIONS};
     const MAX_AGE = ${GATE_MAX_AGE_SECONDS};
+    const themeButton = document.getElementById("themeToggle");
+    function paintThemeButton() {
+      const dark = document.documentElement.classList.contains("theme-dark");
+      themeButton.setAttribute("aria-pressed", dark ? "true" : "false");
+      themeButton.setAttribute("aria-label", dark ? "Use light mode" : "Use dark mode");
+      themeButton.textContent = dark ? "Light" : "Dark";
+    }
+    paintThemeButton();
+    themeButton.addEventListener("click", () => {
+      const dark = document.documentElement.classList.contains("theme-dark");
+      document.documentElement.classList.toggle("theme-dark", !dark);
+      try { localStorage.setItem("atlas-theme", dark ? "light" : "dark"); } catch (e) {}
+      paintThemeButton();
+    });
+
     const form = document.getElementById("gate-form");
     const input = document.getElementById("gate-code");
     const error = document.getElementById("gate-error");

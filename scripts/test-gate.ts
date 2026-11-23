@@ -14,6 +14,8 @@ assert.equal(lockedHtml.includes("Sample arrival"), false);
 assert.match(lockedHtml, /4-digit code/);
 assert.equal(lockedHtml.includes("user-scalable"), false);
 assert.match(lockedHtml, /aria-describedby="gate-error"/);
+assert.match(lockedHtml, /id="themeToggle"/);
+assert.match(lockedHtml, /atlas-theme/);
 
 const missing = await POST(new Request("http://127.0.0.1/", {
   method: "POST",

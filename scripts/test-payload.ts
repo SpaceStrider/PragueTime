@@ -8,6 +8,10 @@ assert.equal(template.includes("user-scalable"), false);
 assert.equal(template.includes("maximum-scale"), false);
 assert.match(template, /Skip to the day list/);
 assert.equal((template.match(/aria-label="Close"/g) || []).length, 3);
+assert.match(template, /id="themeToggle"/);
+assert.match(template, /atlas-theme/);
+assert.match(template, /html\.theme-dark/);
+assert.equal((template.match(/@media \(prefers-color-scheme: dark\)/g) || []).length, 0);
 
 const rendered = await renderAtlasHtml();
 assert.match(rendered, /Alex/);
