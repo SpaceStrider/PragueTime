@@ -11,6 +11,9 @@ assert.equal((template.match(/aria-label="Close"/g) || []).length, 3);
 assert.match(template, /id="themeToggle"/);
 assert.match(template, /atlas-theme/);
 assert.match(template, /html\.theme-dark/);
+assert.match(template, /\.text-coffee \{ color: #7A4B2A; \}/);
+assert.match(template, /hover:bg-garnet-dark/);
+assert.match(template, /Café', color: '#7A4B2A'/);
 assert.equal((template.match(/@media \(prefers-color-scheme: dark\)/g) || []).length, 0);
 
 const rendered = await renderAtlasHtml();
