@@ -40,11 +40,21 @@
           },
           colors: {
             vltava: '#141923',
-            garnet: '#B8293D',
-            pilsner: '#C97A1E',
-            linden: '#245C46',
+            garnet: { DEFAULT: '#B8293D', dark: '#9E2032' },
+            pilsner: { DEFAULT: '#C97A1E', light: '#F3D28F' },
+            linden: { DEFAULT: '#245C46', dark: '#1C4837' },
             cobalt: '#255485',
+            coffee: '#7A4B2A',
             parchment: '#FCFAF6'
+          },
+          boxShadow: {
+            '2xs': '0 1px 0 0 rgb(0 0 0 / 0.05)'
+          },
+          backdropBlur: {
+            xs: '2px'
+          },
+          scale: {
+            '115': '1.15'
           }
         }
       }
@@ -173,6 +183,7 @@
     .who-card { width: 100%; min-height: 4.25rem; }
 
     :root { color-scheme: light; }
+    .text-coffee { color: #7A4B2A; }
 
     html.theme-dark { color-scheme: dark; background: #0e1218; }
     html.theme-dark body { background: #0e1218; color: #f4efe6; }
@@ -197,7 +208,9 @@
         background-color: #243044 !important;
       }
       .text-vltava { color: #f4efe6 !important; }
-      .text-slate-400, .text-slate-500, .text-slate-600, .text-slate-700 { color: #c5ceda !important; }
+      .bg-vltava { background-color: #2b3a55 !important; }
+      .text-coffee { color: #e0c2a2 !important; }
+      .text-stone-400, .text-stone-500, .text-stone-600, .text-stone-700 { color: #c5ceda !important; }
       .text-garnet { color: #f3a8b4 !important; }
         .text-amber-900, .text-amber-950, .text-orange-950, .text-rose-900 { color: #f6e2b8 !important; }
       .text-rose-950 { color: #fecdd3 !important; }
@@ -409,9 +422,9 @@
 
   <!-- Drop-Pin Active Crosshair Banner -->
   <div id="dropPinBanner" class="hidden fixed top-32 left-1/2 -translate-x-1/2 z-[600] bg-garnet text-white px-4 py-2.5 rounded-2xl shadow-2xl border border-white/25 flex items-center gap-3 text-xs font-bold">
-    <span class="w-2.5 h-2.5 rounded-full bg-amber-300 animate-ping"></span>
+    <span class="w-2.5 h-2.5 rounded-full bg-pilsner-light animate-ping"></span>
     <span>Click anywhere on the map to drop a custom pin</span>
-    <button onclick="cancelDropPinMode()" class="px-2.5 py-1 rounded-lg bg-vltava/90 hover:bg-vltava text-amber-200 text-[11px] font-semibold transition">
+    <button onclick="cancelDropPinMode()" class="px-2.5 py-1 rounded-lg bg-vltava/90 hover:bg-vltava text-pilsner-light text-[11px] font-semibold transition">
       Cancel
     </button>
   </div>
@@ -431,7 +444,7 @@
               Trip dates
             </span>
           </div>
-          <p class="text-[11px] text-slate-600 truncate">
+          <p class="text-[11px] text-stone-600 truncate">
             <button type="button" id="whoChip" onclick="openWhoModal(false)" class="font-bold text-garnet underline decoration-garnet/30">This phone: <span id="whoChipName">choose</span></button>
             &bull; <span id="syncStatusLabel" class="font-medium text-linden">Connecting live sync…</span>
           </p>
@@ -445,7 +458,7 @@
           <button id="btnScopeDay" onclick="setOverviewMode(false)" class="px-2.5 py-1 rounded-lg text-xs font-bold transition bg-vltava text-parchment shadow-2xs">
             Day Route
           </button>
-          <button id="btnScopeOverview" onclick="setOverviewMode(true)" class="px-2.5 py-1 rounded-lg text-xs font-semibold transition text-slate-700 hover:text-vltava">
+          <button id="btnScopeOverview" onclick="setOverviewMode(true)" class="px-2.5 py-1 rounded-lg text-xs font-semibold transition text-stone-700 hover:text-vltava">
             Central Europe Overview
           </button>
         </div>
@@ -457,7 +470,7 @@
         </button>
 
         <button type="button" id="themeToggle" onclick="toggleTheme()" aria-pressed="false" aria-label="Use dark mode" title="Switch to dark mode"
-          class="flex items-center justify-center min-w-11 min-h-11 w-11 h-11 rounded-xl bg-white/80 hover:bg-white text-vltava border border-vltava/15 shrink-0">
+          class="flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-white/80 hover:bg-white text-vltava border border-vltava/15 shrink-0">
           <svg class="theme-icon-moon w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M21 14.5A8.5 8.5 0 1 1 9.5 3 7 7 0 0 0 21 14.5z"/></svg>
           <svg class="theme-icon-sun w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
         </button>
@@ -471,7 +484,7 @@
             <option value="topo">Topo Trails</option>
             <option value="night">Night Walk</option>
           </select>
-          <svg class="w-3.5 h-3.5 text-slate-500 absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="6 9 12 15 18 9"/></svg>
+          <svg class="w-3.5 h-3.5 text-stone-500 absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="6 9 12 15 18 9"/></svg>
         </div>
 
         <!-- Active Family Member Voter Selector -->
@@ -488,7 +501,7 @@
           title="Toggle Bob & Bobek's Honest Guide Hidden Gems (+ pins)">
           <span id="btnBobekIcon" class="w-5 h-5 flex items-center justify-center shrink-0"></span>
           <span class="hidden md:inline">Gems</span>
-          <span id="gemsStatusBadge" class="hidden sm:inline text-[10px] font-mono bg-white/20 px-1.5 py-0.2 rounded">ON</span>
+          <span id="gemsStatusBadge" class="hidden sm:inline text-[10px] font-mono bg-white/20 px-1.5 py-0.5 rounded-md">ON</span>
         </button>
 
         <!-- Tools & Checklist Drawer Button (Pat & Mat Icon) -->
@@ -502,7 +515,7 @@
 
         <!-- Prominent Share Sync Link Button -->
         <button onclick="triggerQuickShareSync()"
-          class="flex items-center gap-1.5 px-2 py-1.5 sm:px-3 sm:py-2 rounded-xl bg-garnet hover:bg-[#9e2032] text-white text-xs font-bold transition shadow-md border border-white/15 shrink-0"
+          class="flex items-center gap-1.5 px-2 py-1.5 sm:px-3 sm:py-2 rounded-xl bg-garnet hover:bg-garnet-dark text-white text-xs font-bold transition shadow-md border border-white/15 shrink-0"
           title="Copy the family link. Votes, checkmarks, and notes already sync across phones.">
           <svg class="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
             <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
@@ -516,7 +529,7 @@
     <!-- ==================== 3. FLOATING HORIZONTAL 17-DAY RIBBON ==================== -->
     <div class="atlas-glass rounded-2xl px-2 py-1.5 flex items-center gap-1.5 pointer-events-auto">
       <button onclick="scrollDayRibbon(-280)" aria-label="Previous days"
-        class="hidden sm:flex w-7 h-7 rounded-lg bg-white/80 hover:bg-white text-vltava border border-vltava/10 items-center justify-center shrink-0 transition">
+        class="hidden sm:flex w-8 h-8 rounded-lg bg-white/80 hover:bg-white text-vltava border border-vltava/10 items-center justify-center shrink-0 transition">
         <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><polyline points="15 18 9 12 15 6"/></svg>
       </button>
 
@@ -525,7 +538,7 @@
       </div>
 
       <button onclick="scrollDayRibbon(280)" aria-label="Next days"
-        class="hidden sm:flex w-7 h-7 rounded-lg bg-white/80 hover:bg-white text-vltava border border-vltava/10 items-center justify-center shrink-0 transition">
+        class="hidden sm:flex w-8 h-8 rounded-lg bg-white/80 hover:bg-white text-vltava border border-vltava/10 items-center justify-center shrink-0 transition">
         <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><polyline points="9 18 15 12 9 6"/></svg>
       </button>
     </div>
@@ -545,14 +558,14 @@
 
     <!-- Mobile Bottom-Sheet Drag / Snap Handle. Stays put while the day list scrolls. -->
     <div id="sheetHandle" class="lg:hidden sticky top-0 z-10 flex items-center justify-between gap-2 px-3 py-2 border-b border-vltava/10 shrink-0 bg-white/85">
-      <button type="button" id="sheetGrab" class="flex items-center gap-2 min-w-0 text-[11px] font-bold text-slate-600">
+      <button type="button" id="sheetGrab" class="flex items-center gap-2 min-w-0 text-[11px] font-bold text-stone-600">
         <span class="w-9 h-1.5 rounded-full bg-vltava/30 inline-block shrink-0"></span>
         <span id="mobileSheetStateLabel" class="truncate">Drag or tap</span>
       </button>
       <div class="flex items-center gap-1 shrink-0">
-        <button type="button" data-sheet-snap="peek" onclick="setMobileSheetHeight('peek')" class="px-2 py-1 rounded-md bg-white/80 border border-vltava/10 text-[10px] font-bold text-vltava">Map</button>
-        <button type="button" data-sheet-snap="half" onclick="setMobileSheetHeight('half')" class="px-2 py-1 rounded-md bg-white/80 border border-vltava/10 text-[10px] font-bold text-vltava">Split</button>
-        <button type="button" data-sheet-snap="full" onclick="setMobileSheetHeight('full')" class="px-2 py-1 rounded-md bg-white/80 border border-vltava/10 text-[10px] font-bold text-vltava">Full</button>
+        <button type="button" data-sheet-snap="peek" onclick="setMobileSheetHeight('peek')" class="px-2.5 py-1.5 rounded-md bg-white/80 border border-vltava/10 text-[11px] font-bold text-vltava">Map</button>
+        <button type="button" data-sheet-snap="half" onclick="setMobileSheetHeight('half')" class="px-2.5 py-1.5 rounded-md bg-white/80 border border-vltava/10 text-[11px] font-bold text-vltava">Split</button>
+        <button type="button" data-sheet-snap="full" onclick="setMobileSheetHeight('full')" class="px-2.5 py-1.5 rounded-md bg-white/80 border border-vltava/10 text-[11px] font-bold text-vltava">Full</button>
       </div>
     </div>
 
@@ -575,8 +588,8 @@
         <div class="flex items-center gap-3">
           <div id="modalPatMatArt" class="w-11 h-11 rounded-2xl bg-amber-100/15 border border-white/15 flex items-center justify-center shrink-0"></div>
           <div>
-            <h2 class="font-display font-bold text-lg text-amber-200 leading-tight">A je to! Family Field Toolkit</h2>
-            <p class="text-xs text-slate-300">Bookings checklist, CZK currency math, Czech menu decoder &amp; Near Me radar</p>
+            <h2 class="font-display font-bold text-lg text-pilsner-light leading-tight">A je to! Family Field Toolkit</h2>
+            <p class="text-xs text-stone-300">Bookings checklist, CZK currency math, Czech menu decoder &amp; Near Me radar</p>
           </div>
         </div>
         <button onclick="closeModal('toolsModal')" class="w-11 h-11 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-lg flex items-center justify-center transition" aria-label="Close">&times;</button>
@@ -587,10 +600,10 @@
         <button id="tabBtn-checklist" onclick="switchToolsTab('checklist')" class="px-3 py-1.5 rounded-xl text-xs font-bold transition bg-vltava text-white">
           Bookings &amp; Holiday Rules
         </button>
-        <button id="tabBtn-currency" onclick="switchToolsTab('currency')" class="px-3 py-1.5 rounded-xl text-xs font-bold transition text-slate-700 hover:bg-white">
+        <button id="tabBtn-currency" onclick="switchToolsTab('currency')" class="px-3 py-1.5 rounded-xl text-xs font-bold transition text-stone-700 hover:bg-white">
           CZK Converter &amp; Decoder
         </button>
-        <button id="tabBtn-nearme" onclick="switchToolsTab('nearme')" class="px-3 py-1.5 rounded-xl text-xs font-bold transition text-slate-700 hover:bg-white">
+        <button id="tabBtn-nearme" onclick="switchToolsTab('nearme')" class="px-3 py-1.5 rounded-xl text-xs font-bold transition text-stone-700 hover:bg-white">
           Near Me Radar
         </button>
       </div>
@@ -607,8 +620,8 @@
     <div class="bg-parchment text-vltava rounded-3xl max-w-xl w-full max-h-[90vh] flex flex-col shadow-2xl border border-vltava/15 overflow-hidden">
       <div class="px-5 py-4 bg-vltava text-parchment flex items-center justify-between">
         <div>
-          <h2 class="font-display font-bold text-lg text-amber-200">Share &amp; Sync Family Atlas</h2>
-          <p class="text-xs text-slate-300">One link for every phone. Hearts, checks, and notes stay together.</p>
+          <h2 class="font-display font-bold text-lg text-pilsner-light">Share &amp; Sync Family Atlas</h2>
+          <p class="text-xs text-stone-300">One link for every phone. Hearts, checks, and notes stay together.</p>
         </div>
         <button onclick="closeModal('shareSyncModal')" class="w-11 h-11 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-lg flex items-center justify-center transition" aria-label="Close">&times;</button>
       </div>
@@ -622,20 +635,20 @@
                 &#10003; Compressed State Link Ready
               </span>
               <h3 id="shareHeading" class="font-bold text-sm text-vltava">Share this link</h3>
-              <p class="text-slate-600 leading-relaxed">
+              <p class="text-stone-600 leading-relaxed">
                 The plan is on this link. Hearts, finished stops, notes, custom pins, and the Dec 30 choice sync on their own. Each person taps their own name.
               </p>
             </div>
             <!-- Scannable Canvas QR Code -->
             <div class="shrink-0 flex flex-col items-center bg-parchment p-2 rounded-xl border border-stone-200">
-              <canvas id="syncQrCanvas" width="96" height="96" class="rounded"></canvas>
-              <span class="text-[9px] font-mono text-slate-500 mt-1">Scan at Table</span>
+              <canvas id="syncQrCanvas" width="96" height="96" class="rounded-md"></canvas>
+              <span class="text-[10px] font-mono text-stone-500 mt-1">Scan at Table</span>
             </div>
           </div>
 
           <div class="flex items-center gap-2">
-            <input id="shareUrlInput" type="text" readonly class="flex-1 px-3 py-2 rounded-xl bg-stone-100 border border-stone-300 font-mono text-[11px] text-slate-700 focus:outline-none" />
-            <button onclick="copyShareUrlFromInput()" class="px-3.5 py-2 rounded-xl bg-garnet hover:bg-[#9e2032] text-white font-bold text-xs shrink-0 transition shadow-2xs">
+            <input id="shareUrlInput" type="text" readonly class="flex-1 px-3 py-2 rounded-xl bg-stone-100 border border-stone-300 font-mono text-[11px] text-stone-700 focus:outline-none" />
+            <button onclick="copyShareUrlFromInput()" class="px-3.5 py-2 rounded-xl bg-garnet hover:bg-garnet-dark text-white font-bold text-xs shrink-0 transition shadow-2xs">
               Copy Link
             </button>
           </div>
@@ -644,10 +657,10 @@
             <button onclick="copyPlainTextDaySummary()" class="text-cobalt hover:underline font-bold">
               Copy Plain-Text Day Schedule for WhatsApp &rarr;
             </button>
-            <button onclick="copySnapshotLink()" class="text-slate-500 hover:underline font-bold">
-              Copy backup snapshot
+            <button onclick="copySnapshotLink()" class="text-stone-500 hover:underline font-bold">
+              Copy Backup Snapshot
             </button>
-            <span id="syncByteCount" class="font-mono text-[10px] text-slate-400">0 bytes</span>
+            <span id="syncByteCount" class="font-mono text-[10px] text-stone-400">0 bytes</span>
           </div>
         </div>
 
@@ -655,10 +668,10 @@
         <div class="bg-white rounded-2xl p-4 border border-stone-200 shadow-2xs flex flex-wrap items-center justify-between gap-3">
           <div>
             <h4 class="font-bold text-sm text-vltava">JSON Trip File Backup</h4>
-            <p class="text-slate-600 mt-0.5">Save a backup file or restore from an exported <code class="font-mono">.json</code> snapshot.</p>
+            <p class="text-stone-600 mt-0.5">Save a backup file or restore from an exported <code class="font-mono">.json</code> snapshot.</p>
           </div>
           <div class="flex items-center gap-2">
-            <button onclick="exportTripJson()" class="px-3 py-2 rounded-xl bg-vltava hover:bg-slate-800 text-white font-bold text-xs transition">
+            <button onclick="exportTripJson()" class="px-3 py-2 rounded-xl bg-vltava hover:bg-vltava/90 text-white font-bold text-xs transition">
               Export .json
             </button>
             <label class="px-3 py-2 rounded-xl bg-stone-100 hover:bg-stone-200 text-vltava border border-stone-300 font-bold text-xs cursor-pointer transition">
@@ -671,9 +684,9 @@
         <div class="bg-amber-50/75 rounded-2xl p-4 border border-amber-200/90 space-y-2.5">
           <div class="flex items-center justify-between">
             <h4 class="font-bold text-sm text-vltava">Live sync across phones</h4>
-            <span id="syncBadge" class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-stone-200 text-slate-700">Connecting</span>
+            <span id="syncBadge" class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-stone-200 text-stone-700">Connecting</span>
           </div>
-          <p class="text-slate-700 leading-relaxed">
+          <p class="text-stone-700 leading-relaxed">
             Hearts, checkmarks, notes, custom pins, and the Dec 30 choice are shared by every phone. The day open on this phone stays on this phone.
           </p>
           <div id="syncLiveState" class="hidden text-linden font-bold">This phone is on the shared family copy.</div>
@@ -687,8 +700,8 @@
     <div class="bg-parchment text-vltava rounded-3xl max-w-md w-full flex flex-col shadow-2xl border border-vltava/15 overflow-hidden">
       <div class="px-5 py-4 bg-vltava text-parchment flex items-center justify-between">
         <div>
-          <h2 class="font-display font-bold text-lg text-amber-200">Add Custom Stop</h2>
-          <p id="customPinModalSub" class="text-xs text-slate-300">Pinning onto active day itinerary</p>
+          <h2 class="font-display font-bold text-lg text-pilsner-light">Add Custom Stop</h2>
+          <p id="customPinModalSub" class="text-xs text-stone-300">Pinning onto active day itinerary</p>
         </div>
         <button onclick="closeModal('customPinModal')" class="w-11 h-11 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-lg flex items-center justify-center" aria-label="Close">&times;</button>
       </div>
@@ -735,7 +748,7 @@
           </button>
           <div class="flex items-center gap-2">
             <button type="button" onclick="closeModal('customPinModal')" class="px-3.5 py-2 rounded-xl border border-stone-300 font-semibold">Cancel</button>
-            <button type="submit" class="px-4 py-2 rounded-xl bg-garnet hover:bg-[#9e2032] text-white font-bold shadow">Save Pin</button>
+            <button type="submit" class="px-4 py-2 rounded-xl bg-garnet hover:bg-garnet-dark text-white font-bold shadow">Save Pin</button>
           </div>
         </div>
       </form>
@@ -744,28 +757,28 @@
 
 
   <div id="whoModal" class="hidden fixed inset-0 z-[860] bg-vltava/70 backdrop-blur-sm flex items-center justify-center p-3">
-    <div class="atlas-glass w-full max-w-sm rounded-3xl p-5 shadow-2xl max-h-[90vh] overflow-y-auto" role="dialog" aria-modal="true" aria-labelledby="whoTitle">
-      <h2 id="whoTitle" class="font-display font-bold text-xl text-vltava">Who is holding this phone?</h2>
-      <p id="whoIntro" class="text-sm text-slate-600 mt-1 leading-relaxed">Pick who is holding this phone.</p>
+    <div class="bg-parchment text-vltava w-full max-w-sm rounded-3xl p-5 shadow-2xl border border-vltava/15 max-h-[90vh] overflow-y-auto" role="dialog" aria-modal="true" aria-labelledby="whoTitle">
+      <h2 id="whoTitle" class="font-display font-bold text-lg text-vltava">Who is holding this phone?</h2>
+      <p id="whoIntro" class="text-sm text-stone-600 mt-1 leading-relaxed">Pick who is holding this phone.</p>
       <div id="whoChoices" class="mt-4 flex flex-col gap-2"></div>
-      <button type="button" id="whoSkip" onclick="closeWhoModal()" class="hidden mt-3 text-[11px] font-semibold text-slate-500 underline">Keep the current person</button>
+      <button type="button" id="whoSkip" onclick="closeWhoModal()" class="hidden mt-3 text-[11px] font-semibold text-stone-500 underline">Keep the Current Person</button>
     </div>
   </div>
 
   <div id="celebrateLayer" class="fixed inset-0 z-[870]"></div>
 
   <div id="tripCelebrate" class="hidden fixed inset-0 z-[880] bg-vltava/60 backdrop-blur-sm flex items-center justify-center p-4">
-    <div class="atlas-glass max-w-sm w-full rounded-3xl p-6 text-center shadow-2xl">
+    <div class="bg-parchment text-vltava max-w-sm w-full rounded-3xl p-6 text-center shadow-2xl border border-vltava/15">
       <div id="tripCelebrateArt" class="w-24 h-24 mx-auto"></div>
       <h2 class="font-display font-bold text-2xl text-vltava mt-3">The trip is done</h2>
-      <p id="tripCelebrateCopy" class="text-sm text-slate-600 mt-2"></p>
+      <p id="tripCelebrateCopy" class="text-sm text-stone-600 mt-2"></p>
       <button type="button" onclick="closeTripCelebrate()" class="mt-4 px-4 py-2 rounded-xl bg-garnet text-white text-sm font-bold">Close</button>
     </div>
   </div>
 
   <!-- ==================== 8. FLOATING TOAST NOTIFICATION ==================== -->
   <div id="atlasToast" class="hidden fixed bottom-5 left-1/2 -translate-x-1/2 z-[900] atlas-glass-dark text-parchment px-4 py-2.5 rounded-2xl text-xs font-semibold flex items-center gap-2.5 shadow-2xl">
-    <span class="w-2 h-2 rounded-full bg-amber-400"></span>
+    <span class="w-2 h-2 rounded-full bg-pilsner-light"></span>
     <span id="atlasToastMsg">Synced!</span>
   </div>
 
@@ -1231,7 +1244,7 @@
      */
     const TRIP_PRIVATE = /*__TRIP_PRIVATE_START__*/null/*__TRIP_PRIVATE_END__*/;
     if (!TRIP_PRIVATE || !Array.isArray(TRIP_PRIVATE.family) || !TRIP_PRIVATE.family.length || !Array.isArray(TRIP_PRIVATE.tripDays) || !TRIP_PRIVATE.tripDays.length) {
-      document.body.innerHTML = '<main style="font-family:sans-serif;padding:2rem;max-width:40rem"><h1>Trip file not loaded</h1><p>This copy has no private trip payload, so nothing personal is shown.</p></main>';
+      document.body.innerHTML = '<main style="font-family:sans-serif;padding:2rem;max-width:40rem;color:#f4efe6"><h1>Trip file not loaded</h1><p>This copy has no private trip payload, so nothing personal is shown.</p></main>';
       throw new Error('trip payload missing');
     }
     const FAMILY_MEMBERS = TRIP_PRIVATE.family;
@@ -1247,7 +1260,7 @@
     const CATEGORY_META = {
       transit: { label: 'Transit / Drive', color: '#255485', badge: 'bg-blue-50 text-cobalt border-blue-200' },
       food:    { label: 'Meal', color: '#9A3412', badge: 'bg-orange-50 text-orange-950 border-orange-200' },
-      cafe:    { label: 'Café', color: '#9F1239', badge: 'bg-rose-50 text-rose-900 border-rose-200' },
+      cafe:    { label: 'Café', color: '#7A4B2A', badge: 'bg-stone-100 text-coffee border-stone-300' },
       beer:    { label: 'Beer', color: '#C97A1E', badge: 'bg-amber-50 text-amber-900 border-amber-200' },
       sight:   { label: 'Castle & Culture', color: '#B8293D', badge: 'bg-rose-50 text-garnet border-rose-200' },
       walk:    { label: 'Walk & Viewpoint', color: '#245C46', badge: 'bg-emerald-50 text-linden border-emerald-200' },
@@ -1514,13 +1527,13 @@
         label.textContent = text;
         label.className = mode === 'live'
           ? 'font-medium text-linden'
-          : mode === 'warn' ? 'font-medium text-pilsner' : 'font-medium text-slate-500';
+          : mode === 'warn' ? 'font-medium text-pilsner' : 'font-medium text-stone-500';
       }
       if (badge) {
         badge.textContent = mode === 'live' ? 'Live' : mode === 'warn' ? 'This phone' : 'Connecting';
         badge.className = mode === 'live'
           ? 'px-2 py-0.5 rounded-full text-[10px] font-bold bg-linden text-white'
-          : 'px-2 py-0.5 rounded-full text-[10px] font-bold bg-stone-200 text-slate-700';
+          : 'px-2 py-0.5 rounded-full text-[10px] font-bold bg-stone-200 text-stone-700';
       }
       const liveBox = document.getElementById('syncLiveState');
       if (liveBox) liveBox.classList.toggle('hidden', mode !== 'live');
@@ -1814,8 +1827,8 @@
           <div class="w-full h-full flex flex-col items-center justify-center bg-vltava text-parchment p-6 text-center">
             <div class="max-w-md space-y-3 atlas-glass-dark p-6 rounded-3xl">
               <div class="w-12 h-12 mx-auto">${CZECH_GERMAN_SVGS.krtek()}</div>
-              <h2 class="font-display font-bold text-lg text-amber-200">Offline Itinerary Mode</h2>
-              <p class="text-xs text-slate-300 leading-relaxed">
+              <h2 class="font-display font-bold text-lg text-pilsner-light">Offline Itinerary Mode</h2>
+              <p class="text-xs text-stone-300 leading-relaxed">
                 External map tiles are temporarily unreachable, but your full 17-day itinerary, votes, checklist, and one-tap Google Maps / Mapy.cz deep links remain 100% active.
               </p>
             </div>
@@ -1972,11 +1985,11 @@
               <span class="px-2 py-0.5 rounded-md bg-linden/15 text-linden font-bold text-[10px] uppercase tracking-wider">Honest Guide Gem</span>
             </div>
             <h4 class="font-display font-bold text-sm text-vltava leading-snug">${esc(gem.title)}</h4>
-            <div class="text-[11px] font-medium text-slate-500">${esc(gem.neighborhood)}</div>
-            <p class="text-xs text-slate-700 leading-relaxed">${esc(gem.tip)}</p>
+            <div class="text-[11px] font-medium text-stone-500">${esc(gem.neighborhood)}</div>
+            <p class="text-xs text-stone-700 leading-relaxed">${esc(gem.tip)}</p>
             <div class="pt-1.5 flex items-center gap-1.5">
               <button onclick="slotGemIntoActiveDay('${gem.id}')"
-                class="flex-1 py-1.5 px-2.5 rounded-xl bg-linden hover:bg-[#1c4837] text-white text-[11px] font-bold transition shadow-2xs cursor-pointer">
+                class="flex-1 py-1.5 px-2.5 rounded-xl bg-linden hover:bg-linden-dark text-white text-[11px] font-bold transition shadow-2xs cursor-pointer">
                 + Slot into Today's Route
               </button>
               <a href="https://www.google.com/maps/search/?api=1&query=${safeCoord(gem.lat)},${safeCoord(gem.lng)}" target="_blank" rel="noopener noreferrer"
@@ -2014,9 +2027,9 @@
     const MODE_META = {
       walk: { key: 'walk', label: 'Walk', profile: 'foot', color: '#245C46', dash: null },
       tram: { key: 'tram', label: 'Tram', profile: 'foot', color: '#C97A1E', dash: '7 6' },
-      metro: { key: 'metro', label: 'Metro', profile: 'foot', color: '#6D28D9', dash: '2 7' },
+      metro: { key: 'metro', label: 'Metro', profile: 'foot', color: '#5B6573', dash: '2 7' },
       bus: { key: 'bus', label: 'Bus', profile: 'driving', color: '#255485', dash: '10 7' },
-      train: { key: 'train', label: 'Train', profile: null, color: '#0F766E', dash: '1 8' },
+      train: { key: 'train', label: 'Train', profile: null, color: '#8A5212', dash: '1 8' },
       car: { key: 'car', label: 'Car', profile: 'driving', color: '#B8293D', dash: null }
     };
     const roadCache = {};
@@ -2143,7 +2156,7 @@
       return `
         <div class="flex items-center gap-2 pl-5 py-0.5">
           <div class="w-0.5 h-4" style="background:${plan.color}"></div>
-          <span class="font-mono text-[10px] font-medium px-2 py-0.5 rounded-full bg-vltava/5 text-slate-700">
+          <span class="font-mono text-[10px] font-medium px-2 py-0.5 rounded-full bg-vltava/5 text-stone-700">
             &darr; ${esc(plan.label)} &bull; ${legDistanceLabel(km)} &bull; ${esc(legClock(km, plan))}
           </span>
         </div>`;
@@ -2200,13 +2213,13 @@
           <div class="p-3 rounded-2xl bg-amber-50 border border-amber-300 text-xs text-amber-950 leading-relaxed">
             <div class="font-bold">${esc(user)}, you are not in Czechia yet.</div>
             <p class="mt-1">You land ${esc(when)}. The stops below are the family plan. Your own routes start on your first day.</p>
-            <button type="button" onclick="selectDay(${arrive})" class="mt-2 px-2.5 py-1.5 rounded-lg bg-vltava text-amber-100 text-[11px] font-bold">Jump to your first day</button>
+            <button type="button" onclick="selectDay(${arrive})" class="mt-2 px-2.5 py-1.5 rounded-lg bg-vltava text-pilsner-light text-[11px] font-bold">Jump to Your First Day</button>
           </div>`;
       }
       const park = parkingCopy(user, idx, day);
       if (park) {
         html += `
-          <div class="p-3 rounded-2xl bg-white border border-vltava/10 text-xs text-slate-700 leading-relaxed">
+          <div class="p-3 rounded-2xl bg-white border border-vltava/10 text-xs text-stone-700 leading-relaxed">
             <div class="text-[10px] font-extrabold uppercase tracking-wider text-cobalt">Overnight parking</div>
             <p class="mt-1">${esc(park)}</p>
           </div>`;
@@ -2214,7 +2227,7 @@
       const blurb = routeBlurb(user, day);
       if (blurb) {
         html += `
-          <div class="p-3 rounded-2xl bg-white/90 border border-vltava/10 text-xs text-slate-700 leading-relaxed">
+          <div class="p-3 rounded-2xl bg-white/90 border border-vltava/10 text-xs text-stone-700 leading-relaxed">
             <div class="text-[10px] font-extrabold uppercase tracking-wider text-garnet">${userIsHere(user, idx) ? 'Your route' : 'Family route'}</div>
             <p class="mt-1">${esc(blurb)}</p>
           </div>`;
@@ -2572,7 +2585,7 @@
     function spawnConfetti(count) {
       const layer = document.getElementById('celebrateLayer');
       if (!layer) return;
-      const colors = ['#B8293D', '#FBBF24', '#245C46', '#255485', '#C97A1E', '#6D28D9'];
+      const colors = ['#B8293D', '#F3D28F', '#245C46', '#255485', '#C97A1E', '#141923'];
       for (let i = 0; i < count; i++) {
         const bit = document.createElement('span');
         bit.className = 'confetti-bit';
@@ -2653,7 +2666,7 @@
           m.bindPopup(`
             <div class="space-y-1.5 p-0.5">
               <div class="font-display font-bold text-sm text-vltava">${esc(hub.name)}</div>
-              <div class="text-xs text-slate-600">${esc(hub.note || "")}</div>
+              <div class="text-xs text-stone-600">${esc(hub.note || "")}</div>
               <button onclick="jumpFromOverviewToDay(${hub.dayIdx})" class="w-full mt-1 py-1.5 px-3 rounded-xl bg-garnet text-white text-xs font-bold">
                 Open ${TRIP_DAYS[hub.dayIdx].shortDate} Itinerary &rarr;
               </button>
@@ -2693,7 +2706,7 @@
           html: `
             <div class="relative flex items-center justify-center w-9 h-9 cursor-pointer transition-transform ${isSelected ? 'scale-115 z-50' : 'hover:scale-105'}">
               ${isSelected ? '<span class="pin-pulse-ring"></span>' : ''}
-              <div class="w-8 h-8 rounded-full flex flex-col items-center justify-center text-white border-2 ${isSelected ? 'border-amber-200 ring-2 ring-vltava/30' : 'border-white'} shadow-lg"
+              <div class="w-8 h-8 rounded-full flex flex-col items-center justify-center text-white border-2 ${isSelected ? 'border-pilsner-light ring-2 ring-vltava/30' : 'border-white'} shadow-lg"
                 style="background-color: ${bg};">
                 <span class="font-mono font-bold text-xs leading-none">${isDone ? '&#10003;' : stopNum}</span>
                 <span class="opacity-85 mt-0.5">${getCategoryMicroSvg(stop.category)}</span>
@@ -2708,12 +2721,12 @@
           <div class="min-w-[230px] max-w-[270px] space-y-2 p-0.5">
             <div class="flex items-center justify-between gap-2">
               <span class="font-mono text-[11px] font-bold text-garnet">#${stopNum} &bull; ${esc(stop.time)}</span>
-              <span class="text-[10px] font-semibold text-slate-500">${esc(stop.neighborhood)}</span>
+              <span class="text-[10px] font-semibold text-stone-500">${esc(stop.neighborhood)}</span>
             </div>
             <h4 class="font-display font-bold text-sm text-vltava leading-snug">${esc(stop.title)}</h4>
             <img data-stop-photo="${safeDomId(stop.id)}" alt="" class="hidden w-full h-28 object-cover rounded-xl" />
-            <p data-photo-credit class="hidden text-[10px] text-slate-400"></p>
-            <p class="text-xs text-slate-700 leading-relaxed">${esc(stop.tip)}</p>
+            <p data-photo-credit class="hidden text-[10px] text-stone-400"></p>
+            <p class="text-xs text-stone-700 leading-relaxed">${esc(stop.tip)}</p>
             <div class="pt-1.5 flex items-center gap-1.5">
               <a href="https://www.google.com/maps/search/?api=1&query=${safeCoord(stop.lat)},${safeCoord(stop.lng)}" target="_blank" rel="noopener noreferrer"
                 class="flex-1 text-center py-1.5 rounded-xl bg-vltava text-parchment text-[11px] font-bold">
@@ -2990,7 +3003,7 @@
         return `
           <button onclick="setActiveUser('${id}')"
             class="px-2 py-1 rounded-lg text-[11px] font-bold transition ${
-              active ? 'bg-vltava text-parchment shadow-2xs' : 'text-slate-600 hover:bg-vltava/5'
+              active ? 'bg-vltava text-parchment shadow-2xs' : 'text-stone-600 hover:bg-vltava/5'
             }">
             ${esc(m.label)}
           </button>`;
@@ -3015,12 +3028,12 @@
       const bOv = document.getElementById('btnScopeOverview');
       const compactLbl = document.getElementById('compactScopeLabel');
       if (state.overviewMode) {
-        bDay.className = 'px-2.5 py-1 rounded-lg text-xs font-semibold transition text-slate-700 hover:text-vltava';
+        bDay.className = 'px-2.5 py-1 rounded-lg text-xs font-semibold transition text-stone-700 hover:text-vltava';
         bOv.className = 'px-2.5 py-1 rounded-lg text-xs font-bold transition bg-garnet text-white shadow-2xs';
         compactLbl.textContent = 'Day Route';
       } else {
         bDay.className = 'px-2.5 py-1 rounded-lg text-xs font-bold transition bg-vltava text-parchment shadow-2xs';
-        bOv.className = 'px-2.5 py-1 rounded-lg text-xs font-semibold transition text-slate-700 hover:text-vltava';
+        bOv.className = 'px-2.5 py-1 rounded-lg text-xs font-semibold transition text-stone-700 hover:text-vltava';
         compactLbl.textContent = 'Overview';
       }
     }
@@ -3044,7 +3057,7 @@
         btn.className = 'flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-linden text-white border border-linden text-xs font-bold transition shadow-2xs';
         badge.textContent = 'ON';
       } else {
-        btn.className = 'flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-white/80 text-slate-700 border border-vltava/15 text-xs font-bold transition';
+        btn.className = 'flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-white/80 text-stone-700 border border-vltava/15 text-xs font-bold transition';
         badge.textContent = 'OFF';
       }
       persistState();
@@ -3096,7 +3109,7 @@
             ${renderProgressRing(doneCount, stops.length, isActive)}
             <div class="leading-none text-center">
               <div class="font-mono text-[11px] font-bold tracking-tight whitespace-nowrap">${day.shortDate} ${flag}</div>
-              <div class="text-[10px] mt-1 whitespace-nowrap ${isActive ? 'text-amber-200 font-medium' : 'text-slate-500'}">
+              <div class="text-[10px] mt-1 whitespace-nowrap ${isActive ? 'text-pilsner-light font-medium' : 'text-stone-500'}">
                 ${here ? day.region : 'Away'}
               </div>
             </div>
@@ -3143,7 +3156,7 @@
             </div>
             <div class="min-w-0">
               <div class="flex items-center gap-1.5 flex-wrap">
-                <span class="font-mono text-[10px] font-bold px-2 py-0.5 rounded-md bg-vltava text-amber-200">
+                <span class="font-mono text-[10px] font-bold px-2 py-0.5 rounded-md bg-vltava text-pilsner-light">
                   ${day.fullDate} ${flag}
                 </span>
                 <span class="text-[11px] font-bold ${day.country === 'DE' ? 'text-cobalt' : 'text-linden'}">
@@ -3164,7 +3177,7 @@
             <span>Drop Pin</span>
           </button>
         </div>
-        <p class="text-xs text-slate-600 mt-1.5 leading-relaxed">${esc(day.summary)}</p>
+        <p class="text-xs text-stone-600 mt-1.5 leading-relaxed">${esc(day.summary)}</p>
         ${lodgingHtml(day)}
       `;
 
@@ -3191,11 +3204,11 @@
             <div class="text-[10px] font-extrabold uppercase tracking-wider text-amber-950">Flexible Day Route Option</div>
             <div class="grid grid-cols-2 gap-1.5">
               <button onclick="setDayVariant('${day.id}', 'prague')"
-                class="px-2.5 py-2 rounded-xl text-xs font-bold border transition text-left ${mode === 'prague' ? 'bg-vltava text-amber-200 border-vltava shadow-2xs' : 'bg-white text-vltava border-stone-300'}">
+                class="px-2.5 py-2 rounded-xl text-xs font-bold border transition text-left ${mode === 'prague' ? 'bg-vltava text-pilsner-light border-vltava shadow-2xs' : 'bg-white text-vltava border-stone-300'}">
                 A: Modern Prague
               </button>
               <button onclick="setDayVariant('${day.id}', 'krumlov')"
-                class="px-2.5 py-2 rounded-xl text-xs font-bold border transition text-left ${mode === 'krumlov' ? 'bg-vltava text-amber-200 border-vltava shadow-2xs' : 'bg-white text-vltava border-stone-300'}">
+                class="px-2.5 py-2 rounded-xl text-xs font-bold border transition text-left ${mode === 'krumlov' ? 'bg-vltava text-pilsner-light border-vltava shadow-2xs' : 'bg-white text-vltava border-stone-300'}">
                 B: Český Krumlov
               </button>
             </div>
@@ -3211,18 +3224,18 @@
         html += `
           <div class="p-3.5 rounded-2xl bg-vltava text-parchment border border-white/10 shadow-md">
             <div class="flex items-center justify-between gap-2">
-              <span class="inline-flex items-center gap-1.5 font-mono text-[10px] font-bold uppercase tracking-wider text-amber-300">
-                <span class="w-2 h-2 rounded-full bg-amber-400 animate-ping"></span>
+              <span class="inline-flex items-center gap-1.5 font-mono text-[10px] font-bold uppercase tracking-wider text-pilsner-light">
+                <span class="w-2 h-2 rounded-full bg-pilsner-light animate-ping"></span>
                 Up Next &bull; #${num} (${esc(upNext.time)})
               </span>
               <button onclick="toggleStopComplete('${safeDomId(upNext.id)}')"
-                class="px-2.5 py-1 rounded-lg bg-linden hover:bg-[#1c4837] text-white text-[11px] font-bold transition">
+                class="px-2.5 py-1 rounded-lg bg-linden hover:bg-linden-dark text-white text-[11px] font-bold transition">
                 &#10003; Mark Done
               </button>
             </div>
             <div class="font-display font-bold text-sm text-white mt-1">${esc(upNext.title)}</div>
             <div class="flex flex-wrap items-center gap-1.5 mt-2.5">
-              <button onclick="focusStop('${safeDomId(upNext.id)}', true)" class="px-2.5 py-1.5 rounded-lg bg-garnet hover:bg-[#9e2032] text-white text-[11px] font-bold transition">
+              <button onclick="focusStop('${safeDomId(upNext.id)}', true)" class="px-2.5 py-1.5 rounded-lg bg-garnet hover:bg-garnet-dark text-white text-[11px] font-bold transition">
                 Center Pin
               </button>
               <a href="https://www.google.com/maps/search/?api=1&query=${safeCoord(upNext.lat)},${safeCoord(upNext.lng)}" target="_blank" rel="noopener noreferrer"
@@ -3276,24 +3289,24 @@
 
               <div class="flex-1 min-w-0">
                 <div class="flex items-center justify-between gap-2 flex-wrap">
-                  <span class="font-mono text-[11px] font-semibold text-slate-500">${esc(stop.time)}</span>
+                  <span class="font-mono text-[11px] font-semibold text-stone-500">${esc(stop.time)}</span>
                   <div class="flex items-center gap-1.5">
                     <span class="px-2 py-0.5 rounded-md border text-[10px] font-bold ${cat.badge}">
                       ${cat.label}
                     </span>
                     <button onclick="event.stopPropagation(); toggleStopComplete('${safeDomId(stop.id)}')"
                       class="px-2 py-0.5 rounded-md text-[10px] font-bold border transition ${
-                        isDone ? 'bg-linden text-white border-linden' : 'bg-stone-100 hover:bg-emerald-50 text-slate-700 border-stone-300'
+                        isDone ? 'bg-linden text-white border-linden' : 'bg-stone-100 hover:bg-emerald-50 text-stone-700 border-stone-300'
                       }">
                       ${isDone ? 'Done' : 'Check'}
                     </button>
                   </div>
                 </div>
 
-                <h3 class="font-display font-bold text-sm sm:text-[15px] text-vltava mt-1 leading-snug ${isDone ? 'line-through text-slate-500' : ''}">
+                <h3 class="font-display font-bold text-sm sm:text-base text-vltava mt-1 leading-snug ${isDone ? 'line-through text-stone-500' : ''}">
                   ${esc(stop.title)}
                 </h3>
-                <div class="text-[11px] text-slate-500 font-medium mt-0.5">${esc(stop.neighborhood)}</div>
+                <div class="text-[11px] text-stone-500 font-medium mt-0.5">${esc(stop.neighborhood)}</div>
 
                 ${stop.booking ? `
                   <div class="mt-1.5 inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-amber-100/90 text-amber-950 border border-amber-300 text-[10px] font-bold">
@@ -3301,8 +3314,8 @@
                   </div>` : ''}
 
                 <img data-stop-photo="${safeDomId(stop.id)}" alt="" class="hidden mt-2 w-full h-40 object-cover rounded-xl border border-stone-200" />
-                <p data-photo-credit class="hidden text-[10px] text-slate-400 mt-1"></p>
-                <p class="text-xs text-slate-600 mt-2 leading-relaxed">${esc(stop.tip)}</p>
+                <p data-photo-credit class="hidden text-[10px] text-stone-400 mt-1"></p>
+                <p class="text-xs text-stone-600 mt-2 leading-relaxed">${esc(stop.tip)}</p>
                 ${routeNote(state.activeUser, stop, day) ? `<p class="text-[11px] font-medium text-cobalt mt-1.5">${esc(routeNote(state.activeUser, stop, day))}</p>` : ''}
 
                 <!-- Card Footer: Family Upvotes & Direct Maps Deep Links -->
@@ -3311,7 +3324,7 @@
                     class="inline-flex items-center gap-1 px-2 py-1 rounded-lg text-[11px] font-bold border transition ${
                       hasVoted
                         ? 'bg-rose-50 text-garnet border-rose-300'
-                        : 'bg-stone-50 hover:bg-rose-50/70 text-slate-600 border-stone-200'
+                        : 'bg-stone-50 hover:bg-rose-50/70 text-stone-600 border-stone-200'
                     }" title="Upvote as ${state.activeUser}">
                     <span>${hasVoted ? '&hearts;' : '&#9825;'}</span>
                     <span>${votes.length ? esc(votes.join(', ')) : 'Vote'}</span>
@@ -3342,7 +3355,7 @@
       html += `
         <div class="rounded-2xl p-3 bg-white/85 border border-vltava/12 space-y-1.5">
           <div class="flex items-center justify-between">
-            <label for="dayNoteField" class="text-[10px] font-extrabold uppercase tracking-wider text-slate-500">
+            <label for="dayNoteField" class="text-[10px] font-extrabold uppercase tracking-wider text-stone-500">
               Family Notes &bull; ${day.shortDate}
             </label>
             <button onclick="startDropPinMode()" class="text-[11px] font-bold text-garnet hover:underline">
@@ -3571,27 +3584,27 @@
         const btn = document.getElementById(`tabBtn-${t}`);
         btn.className = t === tab
           ? 'px-3 py-1.5 rounded-xl text-xs font-bold transition bg-vltava text-white shadow-2xs'
-          : 'px-3 py-1.5 rounded-xl text-xs font-bold transition text-slate-700 hover:bg-white';
+          : 'px-3 py-1.5 rounded-xl text-xs font-bold transition text-stone-700 hover:bg-white';
       });
 
       const body = document.getElementById('toolsModalBody');
 
       if (tab === 'checklist') {
         const mine = checklistForUser(state.activeUser);
-        body.innerHTML = `<p class="text-[11px] text-slate-500 px-1">Showing what ${esc(state.activeUser)} needs to handle.</p>` + mine.map(item => {
+        body.innerHTML = `<p class="text-[11px] text-stone-500 px-1">Showing what ${esc(state.activeUser)} needs to handle.</p>` + mine.map(item => {
           const checked = !!state.checkedBookings[item.id];
           return `
             <label onclick="toggleBookingItem('${item.id}')"
               class="flex items-start gap-3 p-3 rounded-2xl border cursor-pointer transition ${
                 checked ? 'bg-emerald-50/75 border-emerald-200' : 'bg-white hover:border-garnet/40 border-stone-200'
               }">
-              <input type="checkbox" ${checked ? 'checked' : ''} class="mt-1 w-4 h-4 accent-[#245C46] rounded" />
+              <input type="checkbox" ${checked ? 'checked' : ''} class="mt-1 w-4 h-4 accent-[#245C46] rounded-md" />
               <div class="flex-1 min-w-0">
                 <div class="flex items-center gap-2 flex-wrap">
-                  <span class="font-mono text-[10px] font-bold px-2 py-0.5 rounded bg-vltava text-amber-200">${item.day}</span>
-                  <span class="font-bold text-xs sm:text-sm ${checked ? 'line-through text-slate-500' : 'text-vltava'}">${item.title}</span>
+                  <span class="font-mono text-[10px] font-bold px-2 py-0.5 rounded-md bg-vltava text-pilsner-light">${item.day}</span>
+                  <span class="font-bold text-xs sm:text-sm ${checked ? 'line-through text-stone-500' : 'text-vltava'}">${item.title}</span>
                 </div>
-                <p class="text-xs text-slate-600 mt-1 leading-relaxed">${item.desc}</p>
+                <p class="text-xs text-stone-600 mt-1 leading-relaxed">${item.desc}</p>
               </div>
             </label>`;
         }).join('');
@@ -3600,11 +3613,11 @@
           <div class="bg-white rounded-2xl p-4 border border-stone-200 space-y-3">
             <div class="flex items-center justify-between flex-wrap gap-1">
               <h3 class="font-display font-bold text-base text-vltava">Koruna in USD and AUD</h3>
-              <span id="rateLabel" class="font-mono text-[11px] text-slate-500">Approximate until today's rates load</span>
+              <span id="rateLabel" class="font-mono text-[11px] text-stone-500">Approximate until today's rates load</span>
             </div>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 items-center">
               <div>
-                <label class="block font-mono text-[10px] font-bold uppercase text-slate-500 mb-1">Czech Koruna (Kč)</label>
+                <label class="block font-mono text-[10px] font-bold uppercase text-stone-500 mb-1">Czech Koruna (Kč)</label>
                 <input id="czkAmountInput" type="number" value="250" min="0" oninput="recalcCzk()"
                   class="w-full px-3.5 py-2 rounded-xl border border-stone-300 font-mono text-lg font-bold text-vltava focus:outline-none focus:border-garnet" />
               </div>
@@ -3619,7 +3632,7 @@
                 </div>
               </div>
             </div>
-            <p class="text-[11px] text-slate-600">Dresden and Nuremberg charge euros. This amount is about <strong id="convEur" class="font-mono text-vltava">&euro;9.92</strong>.</p>
+            <p class="text-[11px] text-stone-600">Dresden and Nuremberg charge euros. This amount is about <strong id="convEur" class="font-mono text-vltava">&euro;9.92</strong>.</p>
             <div class="flex flex-wrap gap-1.5 pt-1">
               <button onclick="setCzkQuick(65)" class="px-2.5 py-1 rounded-lg bg-stone-100 hover:bg-amber-100 font-mono text-[11px] font-semibold">65 Kč (Tank Pilsner)</button>
               <button onclick="setCzkQuick(90)" class="px-2.5 py-1 rounded-lg bg-stone-100 hover:bg-amber-100 font-mono text-[11px] font-semibold">90 Kč (Petřín Funicular)</button>
@@ -3634,27 +3647,27 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
               <div class="p-2.5 rounded-xl bg-parchment border border-stone-200">
                 <div class="font-bold text-vltava">Hladinka (Classic Beer Pour)</div>
-                <p class="text-slate-600 mt-0.5">Smooth pour with 3 fingers of dense wet foam that keeps tank Pilsner fresh.</p>
+                <p class="text-stone-600 mt-0.5">Smooth pour with 3 fingers of dense wet foam that keeps tank Pilsner fresh.</p>
               </div>
               <div class="p-2.5 rounded-xl bg-parchment border border-stone-200">
                 <div class="font-bold text-vltava">Šnyt &amp; Mlíko</div>
-                <p class="text-slate-600 mt-0.5"><em>Šnyt</em> is a half-beer taster; <em>Mlíko</em> is a mug of sweet, creamy wet foam.</p>
+                <p class="text-stone-600 mt-0.5"><em>Šnyt</em> is a half-beer taster; <em>Mlíko</em> is a mug of sweet, creamy wet foam.</p>
               </div>
               <div class="p-2.5 rounded-xl bg-parchment border border-stone-200">
                 <div class="font-bold text-vltava">Svíčková na smetaně</div>
-                <p class="text-slate-600 mt-0.5">Braised beef sirloin in root-vegetable cream sauce with bread dumplings &amp; cranberries.</p>
+                <p class="text-stone-600 mt-0.5">Braised beef sirloin in root-vegetable cream sauce with bread dumplings &amp; cranberries.</p>
               </div>
               <div class="p-2.5 rounded-xl bg-parchment border border-stone-200">
                 <div class="font-bold text-vltava">Smažený sýr ("Smažák")</div>
-                <p class="text-slate-600 mt-0.5">Crispy breaded fried Eidam cheese served with potatoes and homemade tartar sauce.</p>
+                <p class="text-stone-600 mt-0.5">Crispy breaded fried Eidam cheese served with potatoes and homemade tartar sauce.</p>
               </div>
               <div class="p-2.5 rounded-xl bg-parchment border border-stone-200">
                 <div class="font-bold text-vltava">Větrník (Myšák Pastry)</div>
-                <p class="text-slate-600 mt-0.5">First-Republic choux pastry filled with caramel &amp; vanilla creams—better than trdelník.</p>
+                <p class="text-stone-600 mt-0.5">First-Republic choux pastry filled with caramel &amp; vanilla creams—better than trdelník.</p>
               </div>
               <div class="p-2.5 rounded-xl bg-parchment border border-stone-200">
                 <div class="font-bold text-vltava">Svařák &amp; Medovina</div>
-                <p class="text-slate-600 mt-0.5">Spiced Czech mulled wine (<em>svařák</em>) and warm honey wine (<em>medovina</em>).</p>
+                <p class="text-stone-600 mt-0.5">Spiced Czech mulled wine (<em>svařák</em>) and warm honey wine (<em>medovina</em>).</p>
               </div>
             </div>
           </div>`;
@@ -3673,7 +3686,7 @@
         body.innerHTML = `
           <div class="p-3 rounded-2xl bg-white border border-stone-200 flex flex-wrap items-center justify-between gap-2 text-xs">
             <div>
-              <span class="text-slate-500 font-semibold">Distance from:</span>
+              <span class="text-stone-500 font-semibold">Distance from:</span>
               <strong class="text-vltava ml-1">${origin.label}</strong>
             </div>
             <div class="flex items-center gap-1.5">
@@ -3686,16 +3699,16 @@
               <div class="p-3.5 rounded-2xl bg-white border border-stone-200 flex items-start justify-between gap-3">
                 <div class="min-w-0">
                   <div class="flex items-center gap-2 flex-wrap">
-                    <span class="font-mono text-[11px] font-bold px-2 py-0.5 rounded bg-linden/15 text-linden">
+                    <span class="font-mono text-[11px] font-bold px-2 py-0.5 rounded-md bg-linden/15 text-linden">
                       ${g.leg.dist} (${g.leg.time})
                     </span>
-                    <span class="text-[11px] text-slate-500">${g.neighborhood}</span>
+                    <span class="text-[11px] text-stone-500">${g.neighborhood}</span>
                   </div>
                   <h4 class="font-display font-bold text-sm text-vltava mt-1">${g.title}</h4>
-                  <p class="text-xs text-slate-600 mt-1 leading-relaxed">${g.tip}</p>
+                  <p class="text-xs text-stone-600 mt-1 leading-relaxed">${g.tip}</p>
                 </div>
                 <button onclick="slotGemIntoActiveDay('${g.id}'); closeModal('toolsModal');"
-                  class="shrink-0 px-3 py-2 rounded-xl bg-linden hover:bg-[#1c4837] text-white text-xs font-bold transition">
+                  class="shrink-0 px-3 py-2 rounded-xl bg-linden hover:bg-linden-dark text-white text-xs font-bold transition">
                   + Slot
                 </button>
               </div>`).join('')}
