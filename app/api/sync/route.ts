@@ -1,5 +1,6 @@
 import { sql } from "../../../src/lib/db";
 import { authorize } from "../../../src/lib/auth";
+import { cookieUnlocks, gateCodeFromEnv, readCookie } from "../../../src/lib/gate.ts";
 import { emptyShared, mergeShared, sanitizeShared, type SharedState } from "../../../src/lib/sync-state";
 
 export const runtime = "nodejs";
@@ -26,7 +27,12 @@ function revisionOf(row: SyncRow): number {
   return Number.isFinite(n) ? n : 0;
 }
 
+function locked(): Response {
+  return Response.json({ error: "locked" }, { status: 401, headers: { "cache-control": "no-store" } });
+}
+
 export async function GET(request: Request) {
+  if (!cookieUnlocks(readCookie(request.headers.get("cookie")), gateCodeFromEnv())) return locked();
   const auth = await authorize(request);
   if (auth instanceof Response) return auth;
   try {
@@ -46,6 +52,7 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
+  if (!cookieUnlocks(readCookie(request.headers.get("cookie")), gateCodeFromEnv())) return locked();
   const auth = await authorize(request);
   if (auth instanceof Response) return auth;
   if (request.headers.get("x-atlas-client") !== "1") {

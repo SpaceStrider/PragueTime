@@ -12,13 +12,13 @@ function withVote(base: SharedState, stop: string, member: string, at: number, o
   return next;
 }
 
-const ethan = withVote(emptyShared(), "d1-s1", "Ethan", 10, true);
-const debi = withVote(emptyShared(), "d1-s1", "Debi", 12, true);
-const both = mergeShared(ethan, debi);
-assert.deepEqual(both.v["d1-s1"]?.sort(), ["Debi", "Ethan"]);
+const alex = withVote(emptyShared(), "d1-s1", "Alex", 10, true);
+const sam = withVote(emptyShared(), "d1-s1", "Sam", 12, true);
+const both = mergeShared(alex, sam);
+assert.deepEqual(both.v["d1-s1"]?.sort(), ["Alex", "Sam"]);
 
-const removed = mergeShared(both, withVote(emptyShared(), "d1-s1", "Ethan", 20, false));
-assert.deepEqual(removed.v["d1-s1"], ["Debi"]);
+const removed = mergeShared(both, withVote(emptyShared(), "d1-s1", "Alex", 20, false));
+assert.deepEqual(removed.v["d1-s1"], ["Sam"]);
 
 const noteA = emptyShared();
 noteA.n["day-1"] = "boat";
@@ -30,13 +30,13 @@ assert.equal(mergeShared(noteA, noteB).n["day-1"], "hotel confirmed");
 assert.equal(mergeShared(noteB, noteA).n["day-1"], "hotel confirmed");
 
 const dirty = sanitizeShared({
-  v: { "d1-s1": ["Mom", "Dad", "<script>"] },
+  v: { "d1-s1": ["ElderOne", "ElderTwo", "<script>"] },
   n: { "day-1": "hello<script>", "nope": "x" },
   x: {
     "day-3": [{ id: "custom-boat", title: "Botel", category: "food", lat: 50.1, lng: 14.4, tip: "ok", time: "15:00", neighborhood: "Vltava", isCustom: true }],
   },
 });
-assert.deepEqual(dirty.v["d1-s1"]?.sort(), ["Debi", "Tom"]);
+assert.deepEqual(dirty.v["d1-s1"]?.sort(), ["Riley", "Sam"]);
 assert.equal(dirty.n["day-1"], "hello<script>");
 assert.equal(dirty.n.nope, undefined);
 assert.equal(dirty.x["day-3"]?.[0]?.title, "Botel");

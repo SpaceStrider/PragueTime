@@ -1,0 +1,194 @@
+{
+  "defaultUser": "Alex",
+  "awayVoice": "Sam",
+  "dateRange": "1–3 Jun 2028",
+  "shareHeading": "Text this link to the group",
+  "whoIntro": "Pick who is holding this phone. Routes follow that person.",
+  "legacyMembers": {
+    "ElderOne": "Sam",
+    "ElderTwo": "Riley"
+  },
+  "defaultVariants": {},
+  "family": [
+    { "id": "Alex", "label": "Alex", "color": "#B8293D", "arrives": 0, "role": "home" },
+    { "id": "Sam", "label": "Sam", "color": "#245C46", "arrives": 0, "role": "driver" },
+    { "id": "Riley", "label": "Riley", "color": "#255485", "arrives": 0, "role": "driver" },
+    { "id": "Casey", "label": "Casey", "color": "#C97A1E", "arrives": 1, "role": "guest" },
+    { "id": "Jamie", "label": "Jamie", "color": "#6D28D9", "arrives": 1, "role": "guest" }
+  ],
+  "places": {
+    "house": {
+      "lat": 50.0865,
+      "lng": 14.4114,
+      "name": "Sample house, Example Lane 1",
+      "mapLabel": "Sample house"
+    },
+    "boat": {
+      "lat": 50.092,
+      "lng": 14.416,
+      "name": "Sample boat",
+      "mapLabel": "Boat",
+      "whenOrigin": " You leave from the sample boat.",
+      "whenEnd": " Tonight is the sample boat."
+    },
+    "lodging": {
+      "lat": 50.087,
+      "lng": 14.421,
+      "name": "Sample flat, Example Street 10",
+      "mapLabel": "Sample flat",
+      "whenOrigin": " The flat is Example Street 10."
+    },
+    "airport": {
+      "lat": 50.1008,
+      "lng": 14.26,
+      "name": "Sample airport",
+      "mapLabel": "Airport"
+    },
+    "awayNight": {
+      "lat": 50.075,
+      "lng": 14.42,
+      "name": "Sample overnight",
+      "mapLabel": "Overnight"
+    }
+  },
+  "tripDays": [
+    {
+      "id": "day-1",
+      "shortDate": "Mon 1",
+      "fullDate": "Mon 1 Jun 2028",
+      "country": "CZ",
+      "region": "Prague",
+      "mascot": "krtek",
+      "title": "Sample arrival day",
+      "summary": "A fictional arrival so the atlas still builds.",
+      "alert": null,
+      "sleepByRole": {
+        "home": "You sleep at the sample house.",
+        "driver": "You sleep on the sample boat."
+      },
+      "route": {
+        "usesCar": true,
+        "startPlaceByRole": { "home": "house", "driver": "airport", "guest": "airport" },
+        "endPlaceByRole": { "driver": "boat" },
+        "skipStopsByRole": { "home": ["d1-s1"] },
+        "stopNotesByRole": {
+          "home": { "d1-s1": "The drivers land here. Your line stays at the sample house." }
+        },
+        "blurbByRole": {
+          "home": "You are already at the sample house. The drivers come into town for the afternoon."
+        },
+        "parkingByRole": {
+          "home": "The sample car goes back with the drivers.",
+          "driver": "Park at the sample boat."
+        }
+      },
+      "stops": [
+        {
+          "id": "d1-s1",
+          "time": "12:00–13:00",
+          "title": "Sample airport pickup",
+          "category": "transit",
+          "lat": 50.1008,
+          "lng": 14.26,
+          "neighborhood": "Airport",
+          "tip": "Fictional pickup. No real booking.",
+          "booking": null
+        },
+        {
+          "id": "d1-s2",
+          "time": "15:00–16:30",
+          "title": "Charles Bridge stroll",
+          "category": "walk",
+          "lat": 50.0865,
+          "lng": 14.4114,
+          "neighborhood": "Karlův most",
+          "tip": "A public bridge. This stop is sample copy.",
+          "booking": null
+        },
+        {
+          "id": "d1-s3",
+          "time": "18:00–19:30",
+          "title": "Sample dinner",
+          "category": "food",
+          "lat": 50.087,
+          "lng": 14.4213,
+          "neighborhood": "Old Town",
+          "tip": "Placeholder meal for the sample group.",
+          "booking": "Sample reservation"
+        }
+      ]
+    },
+    {
+      "id": "day-2",
+      "shortDate": "Tue 2",
+      "fullDate": "Tue 2 Jun 2028",
+      "country": "CZ",
+      "region": "Prague Castle",
+      "mascot": "rumcajs",
+      "title": "Sample castle day",
+      "summary": "The sample group meets for a fictional castle walk.",
+      "alert": null,
+      "sleep": "Tonight is the sample flat.",
+      "route": {
+        "startPlace": "lodging",
+        "startPlaceByRole": { "home": "house" },
+        "parkingByRole": { "driver": "Use the sample flat's parking note." }
+      },
+      "stops": [
+        {
+          "id": "d2-s1",
+          "time": "10:00–12:00",
+          "title": "Prague Castle courtyard",
+          "category": "sight",
+          "lat": 50.0909,
+          "lng": 14.4005,
+          "neighborhood": "Pražský hrad",
+          "tip": "Public castle grounds. Sample timing only.",
+          "booking": null
+        },
+        {
+          "id": "d2-s2",
+          "time": "13:00–14:30",
+          "title": "Sample lunch",
+          "category": "food",
+          "lat": 50.088,
+          "lng": 14.403,
+          "neighborhood": "Malá Strana",
+          "tip": "Placeholder lunch.",
+          "booking": null
+        }
+      ]
+    }
+  ],
+  "districts": [
+    { "name": "Staré Město", "lat": 50.0878, "lng": 14.4216 },
+    { "name": "Malá Strana", "lat": 50.0856, "lng": 14.4042 },
+    { "name": "Hradčany", "lat": 50.0908, "lng": 14.3928 }
+  ],
+  "regionalHubs": [
+    {
+      "name": "Prague",
+      "lat": 50.0865,
+      "lng": 14.415,
+      "dayIdx": 0,
+      "note": "Sample stay near the old town.",
+      "primary": true
+    }
+  ],
+  "regionalArcs": [],
+  "bookingChecklist": [
+    {
+      "id": "chk-sample-car",
+      "who": ["Sam", "Riley"],
+      "day": "Mon 1 Jun",
+      "title": "Sample car",
+      "desc": "Fictional car for the sample day. No rental contract."
+    },
+    {
+      "id": "chk-sample-flat",
+      "day": "Tue 2 Jun",
+      "title": "Sample flat",
+      "desc": "Placeholder lodging. No real address or confirmation code."
+    }
+  ]
+}
