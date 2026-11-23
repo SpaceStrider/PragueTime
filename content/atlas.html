@@ -2506,62 +2506,161 @@
         const looseWord = word.replace(/(.)\1+/g, '$1');
         if (hits.indexOf(looseWord) === -1 && looseName.indexOf(looseWord) !== -1) hits.push(looseWord);
       });
-      if (!hits.length) return 0;
-      if (hits.length >= 2) {
-        const ranked = hits.slice().sort((a, b) => b.length - a.length);
-        const gap = Math.abs(looseName.indexOf(ranked[0]) - looseName.indexOf(ranked[1]));
-        if (gap > 22) return 0;
-      }
+      if (hits.length < 2) return 0;
+      const ranked = hits.slice().sort((a, b) => b.length - a.length);
+      const gap = Math.abs(looseName.indexOf(ranked[0]) - looseName.indexOf(ranked[1]));
+      if (gap > 22) return 0;
       return hits.reduce((sum, word) => sum + word.length, 0);
     }
 
+    function rankPhotoFiles(files, stop) {
+      const words = photoWords(stop.title || '');
+      let best = '';
+      let bestScore = 0;
+      files.forEach(file => {
+        const base = fileScore(file, words);
+        if (base <= 0) return;
+        const score = base + photoPlaceBonus(file, stop);
+        if (score > bestScore) {
+          bestScore = score;
+          best = file;
+        }
+      });
+      return best;
+    }
+
+    function commonsFileTitle(value) {
+      if (typeof value !== 'string') return '';
+      const text = value.trim();
+      if (!text) return '';
+      let name = '';
+      if (/^https?:\/\//i.test(text)) {
+      try {
+        const url = new URL(text);
+        const host = url.hostname.replace(/^www\./, '');
+        if (host !== 'commons.wikimedia.org' && host !== 'upload.wikimedia.org') return '';
+        const wiki = url.pathname.match(/\/wiki\/(?:File:|Special:FilePath\/)([^#?]+)/i);
+        if (wiki) name = decodeURIComponent(wiki[1]);
+        else {
+          const upload = url.pathname.match(/\/([^/]+\.(?:jpe?g|png|webp))$/i);
+          if (upload) name = decodeURIComponent(upload[1]);
+        }
+      } catch (e) {
+        return '';
+      }
+      } else {
+        name = text;
+      }
+      name = name.replace(/_/g, ' ').trim();
+      if (!name || /^https?:/i.test(name)) return '';
+      if (!/^File:/i.test(name)) {
+        if (!/\.(jpe?g|png|webp)$/i.test(name)) return '';
+        name = 'File:' + name;
+      }
+      if (!/\.(jpe?g|png|webp)$/i.test(name) || /[<>"']/.test(name)) return '';
+      return name;
+    }
+
+    function plainCommonsText(value) {
+      return String(value || '')
+        .replace(/<[^>]+>/g, ' ')
+        .replace(/&amp;/g, '&')
+        .replace(/&lt;/g, '<')
+        .replace(/&gt;/g, '>')
+        .replace(/&quot;/g, '"')
+        .replace(/&#0*39;/g, "'")
+        .replace(/\s+/g, ' ')
+        .trim();
+    }
+
+    const PHOTO_STORAGE_KEY = 'atlas-stop-photos';
+    const PHOTO_CACHE_VERSION = 1;
+
+    function readStoredPhoto(stopId, overrideFile) {
+      try {
+        const raw = localStorage.getItem(PHOTO_STORAGE_KEY);
+        if (!raw) return null;
+        const data = JSON.parse(raw);
+        if (!data || data.v !== PHOTO_CACHE_VERSION || !data.stops) return null;
+        const row = data.stops[stopId];
+        if (!row || typeof row.src !== 'string') return null;
+        if (overrideFile && row.file !== overrideFile) return null;
+        return row;
+      } catch (e) {
+        return null;
+      }
+    }
+
+    function writeStoredPhoto(stopId, photo) {
+      try {
+        let data = { v: PHOTO_CACHE_VERSION, stops: {} };
+        const raw = localStorage.getItem(PHOTO_STORAGE_KEY);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (parsed && parsed.v === PHOTO_CACHE_VERSION && parsed.stops) data = parsed;
+        }
+        data.stops[stopId] = photo;
+        localStorage.setItem(PHOTO_STORAGE_KEY, JSON.stringify(data));
+      } catch (e) {}
+    }
+
     async function commonsFiles(query) {
-      const url = 'https://commons.wikimedia.org/w/api.php?action=query&format=json&origin=*&list=search&srnamespace=6&srlimit=6&srsearch=' + encodeURIComponent(query);
+      const url = 'https://commons.wikimedia.org/w/api.php?action=query&format=json&origin=*&list=search&srnamespace=6&srlimit=8&srsearch=' + encodeURIComponent(query);
       const data = await fetch(url).then(r => r.json());
       return ((data.query && data.query.search) || []).map(hit => hit.title);
     }
 
-    async function commonsThumb(fileTitle) {
-      const url = 'https://commons.wikimedia.org/w/api.php?action=query&format=json&origin=*&prop=imageinfo&iiprop=url&iiurlwidth=960&titles=' + encodeURIComponent(fileTitle);
+    async function commonsNearby(lat, lng) {
+      const url = 'https://commons.wikimedia.org/w/api.php?action=query&format=json&origin=*&list=geosearch&gsnamespace=6&gsprimary=all&gsradius=150&gslimit=20&gscoord=' + encodeURIComponent(lat + '|' + lng);
+      const data = await fetch(url).then(r => r.json());
+      return ((data.query && data.query.geosearch) || []).map(hit => hit.title);
+    }
+
+    async function commonsImage(fileTitle) {
+      const url = 'https://commons.wikimedia.org/w/api.php?action=query&format=json&origin=*&prop=imageinfo&iiprop=url|extmetadata&iiurlwidth=960&titles=' + encodeURIComponent(fileTitle);
       const data = await fetch(url).then(r => r.json());
       const page = Object.values((data.query && data.query.pages) || {})[0];
       const info = page && page.imageinfo && page.imageinfo[0];
-      return info ? (info.thumburl || info.url || '') : '';
+      const src = info && (info.thumburl || info.url || '');
+      if (!src || String(src).indexOf('https://') !== 0) return null;
+      const meta = (info.extmetadata || {});
+      const author = plainCommonsText(meta.Artist && meta.Artist.value).slice(0, 80);
+      const license = plainCommonsText(meta.LicenseShortName && meta.LicenseShortName.value).slice(0, 40);
+      return {
+        src: src,
+        file: fileTitle,
+        fileName: fileTitle.replace(/^File:/i, ''),
+        author: author,
+        license: license,
+        page: 'https://commons.wikimedia.org/wiki/' + encodeURIComponent(fileTitle.replace(/ /g, '_'))
+      };
     }
 
     async function requestStopPhoto(stop) {
       if (!stop) return;
       const key = stop.id || (stop.lat + ',' + stop.lng);
-      if (photoCache[key] && photoCache[key] !== 'pending') {
-        paintStopPhoto(stop, photoCache[key]);
+      const override = commonsFileTitle(stop.photo);
+      const stored = readStoredPhoto(key, override);
+      if (stored) {
+        photoCache[key] = stored;
+        paintStopPhoto(stop, stored);
         return;
       }
       if (photoCache[key] === 'pending') return;
       photoCache[key] = 'pending';
-      const query = photoQuery(stop);
-      const words = photoWords(query + ' ' + (stop.neighborhood || '') + ' ' + (stop.title || ''));
       try {
-        const queries = [query];
-        const loose = foldText(query).replace(/(.)\1+/g, '$1');
-        if (loose && queries.indexOf(loose) === -1) queries.push(loose);
-        const place = String(stop.neighborhood || '').split(',')[0].trim();
-        if (place && query.toLowerCase().indexOf(place.toLowerCase()) === -1) queries.push(query + ' ' + place);
-        if (foldText(query).indexOf('prague') === -1 && foldText(query).indexOf('praha') === -1) queries.push(query + ' Prague');
-        let best = '';
-        let bestScore = 0;
-        for (let i = 0; i < queries.length; i++) {
-          const files = await commonsFiles(queries[i]);
-          files.forEach(file => {
-            const score = fileScore(file, words) + photoPlaceBonus(file, stop);
-            if (score > bestScore) {
-              bestScore = score;
-              best = file;
-            }
-          });
+        let file = override;
+        if (!file) {
+          const nearby = Number.isFinite(Number(stop.lat)) && Number.isFinite(Number(stop.lng))
+            ? await commonsNearby(Number(stop.lat), Number(stop.lng))
+            : [];
+          file = nearby.length ? rankPhotoFiles(nearby, stop) : rankPhotoFiles(await commonsFiles(photoQuery(stop)), stop);
         }
-        const src = best ? await commonsThumb(best) : '';
-        photoCache[key] = src ? { src: src, title: best.replace(/^File:/, '') } : { src: '' };
-        paintStopPhoto(stop, photoCache[key]);
+        const photo = file ? await commonsImage(file) : null;
+        const record = photo || { src: '', file: file || '', fileName: '', author: '', license: '', page: '' };
+        photoCache[key] = record;
+        writeStoredPhoto(key, record);
+        paintStopPhoto(stop, record);
       } catch (e) {
         photoCache[key] = { src: '' };
       }
@@ -2572,13 +2671,22 @@
       const id = safeDomId(stop.id);
       document.querySelectorAll('[data-stop-photo="' + id + '"]').forEach(img => {
         img.src = photo.src;
-        img.alt = photo.title || stop.title;
+        img.alt = photo.fileName || stop.title;
         img.classList.remove('hidden');
         const cap = img.nextElementSibling;
-        if (cap && cap.hasAttribute('data-photo-credit')) {
-          cap.textContent = 'Photo of this place, from Wikimedia Commons.';
-          cap.classList.remove('hidden');
+        if (!cap || !cap.hasAttribute('data-photo-credit')) return;
+        cap.replaceChildren();
+        if (photo.page) {
+          const link = document.createElement('a');
+          link.href = photo.page;
+          link.target = '_blank';
+          link.rel = 'noopener noreferrer';
+          link.textContent = photo.fileName || 'Wikimedia Commons';
+          cap.appendChild(link);
         }
+        const credit = [photo.author, photo.license].filter(Boolean).join(' · ');
+        if (credit) cap.appendChild(document.createTextNode((photo.page ? ' · ' : '') + credit));
+        cap.classList.remove('hidden');
       });
     }
 
