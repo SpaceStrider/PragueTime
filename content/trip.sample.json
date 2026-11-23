@@ -103,7 +103,8 @@
           "lng": 14.4114,
           "neighborhood": "Karlův most",
           "tip": "A public bridge. This stop is sample copy.",
-          "booking": null
+          "booking": null,
+          "photo": "File:Charles Bridge - beggar.jpg"
         },
         {
           "id": "d1-s3",
@@ -144,7 +145,8 @@
           "lng": 14.4005,
           "neighborhood": "Pražský hrad",
           "tip": "Public castle grounds. Sample timing only.",
-          "booking": null
+          "booking": null,
+          "photo": "File:St. Vitus Cathedral, Prague, Czechia (Unsplash).jpg"
         },
         {
           "id": "d2-s2",

@@ -5,7 +5,7 @@
     "dev": "next dev",
     "build": "next build && node scripts/migrate.mjs",
     "start": "next start",
-    "test": "node --experimental-strip-types scripts/test-merge.ts && node --experimental-strip-types scripts/test-payload.ts && node --experimental-strip-types scripts/test-gate.ts"
+    "test": "node --experimental-strip-types scripts/test-merge.ts && node --experimental-strip-types scripts/test-payload.ts && node --experimental-strip-types scripts/test-gate.ts && node --experimental-strip-types scripts/test-photo.ts"
   },
   "dependencies": {
     "@electric-sql/pglite": "^0.3.14",
