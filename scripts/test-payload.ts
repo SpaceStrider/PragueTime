@@ -20,6 +20,10 @@ assert.equal(hostile.includes("</script><script>"), false);
 assert.match(hostile, /\\u003c\/script>/);
 
 const previous = process.env.TRIP_PRIVATE_JSON;
+const sample = await readFile("content/trip.sample.json", "utf8");
+process.env.TRIP_PRIVATE_JSON = "Here is the secret:\n```json\n" + sample + "\n```";
+assert.match(await renderAtlasHtml(), /Alex/);
+
 process.env.TRIP_PRIVATE_JSON = "{\"not-valid\"";
 try {
   await renderAtlasHtml();
