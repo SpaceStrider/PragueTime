@@ -9,4 +9,5 @@ await writeFile(path.join(outDir, "index.html"), html);
 for (const file of ["favicon.ico", "favicon.png", "apple-touch-icon.png"]) {
   await copyFile(path.join("content", file), path.join(outDir, file));
 }
+await copyFile(path.join("public", "atlas.css"), path.join(outDir, "atlas.css"));
 await writeFile(path.join(outDir, ".nojekyll"), "");
