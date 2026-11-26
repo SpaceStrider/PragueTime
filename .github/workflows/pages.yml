@@ -38,6 +38,7 @@ jobs:
           test -f content/atlas.html
           mkdir -p _site
           cp content/atlas.html _site/index.html
+          cp public/atlas.css _site/atlas.css
           cp content/favicon.ico content/favicon.png content/apple-touch-icon.png _site/
           touch _site/.nojekyll
 

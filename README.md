@@ -11,8 +11,8 @@ Open the local URL. Votes, checkmarks, notes, and custom pins sync through `/api
 
 ## GitHub Pages
 
-The static atlas is published from `main` by `.github/workflows/pages.yml`. After that workflow succeeds, the page is:
+The static atlas is published from `main` by `.github/workflows/pages.yml` when Pages is set to GitHub Actions. The page is:
 
-https://spacestrider.github.io/CzechTrip/
+https://spacestrider.github.io/PragueTime/
 
-This repository is private, and GitHub Pages is not turned on yet. A private repository can publish a Page only on a plan that includes private Pages. On a free plan, make the repository public before merging, or the deploy step will stop with a Pages permission error. The public Page shows the itinerary to anyone with the link. On that Page, each phone keeps its own votes and notes. Live sync across phones stays on the hosted app, which has the database.
+That address is the map and the plan. Live sync across phones stays on the hosted app, which has the database.

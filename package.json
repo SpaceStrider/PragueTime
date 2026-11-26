@@ -5,7 +5,8 @@
     "dev": "next dev",
     "build": "next build && node scripts/migrate.mjs",
     "start": "next start",
-    "test": "node --experimental-strip-types scripts/test-merge.ts"
+    "test": "node --experimental-strip-types scripts/test-merge.ts",
+    "css": "npx --yes tailwindcss@3.4.17 -c tailwind.config.js -i content/tailwind.css -o public/atlas.css --minify"
   },
   "dependencies": {
     "@electric-sql/pglite": "^0.3.14",

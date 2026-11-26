@@ -2,45 +2,21 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Prague Time</title>
   <link rel="icon" href="favicon.ico" sizes="32x32" />
   <link rel="icon" type="image/png" href="favicon.png" sizes="64x64" />
   <link rel="apple-touch-icon" href="apple-touch-icon.png" />
 
-  <!-- Editorial & Technical Typography: Fraunces, Plus Jakarta Sans, JetBrains Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="preconnect" href="https://unpkg.com" />
+  <link rel="preconnect" href="https://tile.openstreetmap.org" />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=JetBrains+Mono:wght@500;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
 
-  <!-- Leaflet 1.9.4 Retina Cartography -->
+  <link rel="stylesheet" href="atlas.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
-
-  <!-- Tailwind CSS -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"></script>
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          fontFamily: {
-            display: ['Fraunces', 'Georgia', 'serif'],
-            sans: ['Plus Jakarta Sans', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
-            mono: ['JetBrains Mono', 'ui-monospace', 'SFMono-Regular', 'monospace']
-          },
-          colors: {
-            vltava: '#141923',
-            garnet: '#B8293D',
-            pilsner: '#C97A1E',
-            linden: '#245C46',
-            cobalt: '#255485',
-            parchment: '#FCFAF6'
-          }
-        }
-      }
-    };
-  </script>
+  <script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
 
   <style>
     :root {
@@ -69,6 +45,13 @@
       background-color: #141923;
     }
 
+    button, a, select, label { touch-action: manipulation; }
+    #dayRibbonScroll > button { min-height: 2.75rem; }
+    .scale-115 { transform: scale(1.15); }
+    @media (max-width: 639px) {
+      input, select, textarea { font-size: 16px !important; }
+    }
+
     /* Full-Bleed Map Viewport */
     #map {
       position: fixed;
@@ -93,6 +76,7 @@
       box-shadow: 0 12px 34px -8px rgba(20, 25, 35, 0.18), 0 2px 8px -2px rgba(20, 25, 35, 0.08);
       position: relative;
     }
+    .fixed.atlas-glass { position: fixed; }
 
     .atlas-glass::before {
       content: "";
@@ -384,7 +368,7 @@
     <div class="atlas-glass rounded-2xl px-2.5 sm:px-4 py-1.5 sm:py-2 flex flex-col gap-1.5 sm:flex-row sm:items-center sm:justify-between sm:gap-2 pointer-events-auto">
       <!-- Left: Krtek Emblem & Editorial Atlas Title -->
       <div class="flex items-center gap-2.5 min-w-0">
-        <div id="headerKrtekSlot" class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-amber-50 border border-amber-200/80 flex items-center justify-center shrink-0 shadow-2xs" title="Krtek — Your Bohemian Winter Guide"></div>
+        <div id="headerKrtekSlot" class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-amber-50 border border-amber-200/80 flex items-center justify-center shrink-0 shadow-sm" title="Krtek — Your Bohemian Winter Guide"></div>
         <div class="min-w-0">
           <div class="flex items-center gap-2">
             <h1 class="font-display font-bold text-sm sm:text-base md:text-lg tracking-tight text-vltava truncate">
@@ -405,7 +389,7 @@
       <div class="flex items-center gap-0.5 sm:gap-2 min-w-0 overflow-x-auto no-scrollbar flex-nowrap sm:overflow-visible sm:justify-end">
         <!-- View Scope Toggle: Day Route vs Central Europe Overview -->
         <div class="hidden xl:inline-flex rounded-xl bg-vltava/5 p-1 border border-vltava/10">
-          <button id="btnScopeDay" onclick="setOverviewMode(false)" class="px-2.5 py-1 rounded-lg text-xs font-bold transition bg-vltava text-parchment shadow-2xs">
+          <button id="btnScopeDay" onclick="setOverviewMode(false)" class="px-2.5 py-1 rounded-lg text-xs font-bold transition bg-vltava text-parchment shadow-sm">
             Day Route
           </button>
           <button id="btnScopeOverview" onclick="setOverviewMode(true)" class="px-2.5 py-1 rounded-lg text-xs font-semibold transition text-slate-700 hover:text-vltava">
@@ -446,7 +430,7 @@
 
         <!-- Honest Guide Gems Toggle (Bob & Bobek Icon) -->
         <button id="btnGemsToggle" onclick="toggleHonestGems()"
-          class="flex items-center gap-1.5 px-2 py-1.5 sm:px-2.5 rounded-xl bg-linden text-white border border-linden text-xs font-bold transition shadow-2xs shrink-0"
+          class="flex items-center gap-1.5 px-2 py-1.5 sm:px-2.5 rounded-xl bg-linden text-white border border-linden text-xs font-bold transition shadow-sm shrink-0"
           title="Toggle Bob & Bobek's Honest Guide Hidden Gems (+ pins)">
           <span id="btnBobekIcon" class="w-5 h-5 flex items-center justify-center shrink-0"></span>
           <span class="hidden md:inline">Gems</span>
@@ -455,7 +439,7 @@
 
         <!-- Tools & Checklist Drawer Button (Pat & Mat Icon) -->
         <button onclick="openToolsModal('checklist')"
-          class="flex items-center gap-1.5 px-2 py-1.5 sm:px-2.5 rounded-xl bg-amber-50 hover:bg-amber-100 text-vltava border border-amber-300/80 text-xs font-bold transition shadow-2xs shrink-0"
+          class="flex items-center gap-1.5 px-2 py-1.5 sm:px-2.5 rounded-xl bg-amber-50 hover:bg-amber-100 text-vltava border border-amber-300/80 text-xs font-bold transition shadow-sm shrink-0"
           title="Pat & Mat's Trip Prep Checklist, CZK Converter & Near Me Finder">
           <span id="btnPatMatIcon" class="w-5 h-5 flex items-center justify-center shrink-0"></span>
           <span class="hidden md:inline">Tools</span>
@@ -530,7 +514,7 @@
   </aside>
 
   <!-- ==================== 5. TOOLS & CHECKLIST MODAL (PAT & MAT + HONEST GUIDE) ==================== -->
-  <div id="toolsModal" class="hidden fixed inset-0 z-[800] bg-vltava/70 backdrop-blur-xs flex items-center justify-center p-3 sm:p-5">
+  <div id="toolsModal" class="hidden fixed inset-0 z-[800] bg-vltava/70 backdrop-blur-sm flex items-center justify-center p-3 sm:p-5">
     <div class="bg-parchment text-vltava rounded-3xl max-w-2xl w-full max-h-[88vh] flex flex-col shadow-2xl border border-vltava/15 overflow-hidden">
       <!-- Modal Header -->
       <div class="px-5 py-4 bg-vltava text-parchment flex items-center justify-between gap-3">
@@ -565,7 +549,7 @@
   </div>
 
   <!-- ==================== 6. SHARE & GITHUB PAGES SYNC MODAL ==================== -->
-  <div id="shareSyncModal" class="hidden fixed inset-0 z-[800] bg-vltava/70 backdrop-blur-xs flex items-center justify-center p-3 sm:p-5">
+  <div id="shareSyncModal" class="hidden fixed inset-0 z-[800] bg-vltava/70 backdrop-blur-sm flex items-center justify-center p-3 sm:p-5">
     <div class="bg-parchment text-vltava rounded-3xl max-w-xl w-full max-h-[90vh] flex flex-col shadow-2xl border border-vltava/15 overflow-hidden">
       <div class="px-5 py-4 bg-vltava text-parchment flex items-center justify-between">
         <div>
@@ -577,7 +561,7 @@
 
       <div class="flex-1 overflow-y-auto atlas-scroll p-4 sm:p-5 space-y-4 text-xs">
         <!-- Compressed URL Box + Instant QR Code -->
-        <div class="bg-white rounded-2xl p-4 border border-stone-200 shadow-2xs space-y-3">
+        <div class="bg-white rounded-2xl p-4 border border-stone-200 shadow-sm space-y-3">
           <div class="flex items-start justify-between gap-3">
             <div class="space-y-1">
               <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-linden/10 text-linden font-bold text-[11px]">
@@ -597,7 +581,7 @@
 
           <div class="flex items-center gap-2">
             <input id="shareUrlInput" type="text" readonly class="flex-1 px-3 py-2 rounded-xl bg-stone-100 border border-stone-300 font-mono text-[11px] text-slate-700 focus:outline-none" />
-            <button onclick="copyShareUrlFromInput()" class="px-3.5 py-2 rounded-xl bg-garnet hover:bg-[#9e2032] text-white font-bold text-xs shrink-0 transition shadow-2xs">
+            <button onclick="copyShareUrlFromInput()" class="px-3.5 py-2 rounded-xl bg-garnet hover:bg-[#9e2032] text-white font-bold text-xs shrink-0 transition shadow-sm">
               Copy Link
             </button>
           </div>
@@ -614,7 +598,7 @@
         </div>
 
         <!-- JSON Export / Import Backup -->
-        <div class="bg-white rounded-2xl p-4 border border-stone-200 shadow-2xs flex flex-wrap items-center justify-between gap-3">
+        <div class="bg-white rounded-2xl p-4 border border-stone-200 shadow-sm flex flex-wrap items-center justify-between gap-3">
           <div>
             <h4 class="font-bold text-sm text-vltava">JSON Trip File Backup</h4>
             <p class="text-slate-600 mt-0.5">Save a backup file or restore from an exported <code class="font-mono">.json</code> snapshot.</p>
@@ -645,7 +629,7 @@
   </div>
 
   <!-- ==================== 7. DROP CUSTOM PIN MODAL ==================== -->
-  <div id="customPinModal" class="hidden fixed inset-0 z-[800] bg-vltava/70 backdrop-blur-xs flex items-center justify-center p-3 sm:p-5">
+  <div id="customPinModal" class="hidden fixed inset-0 z-[800] bg-vltava/70 backdrop-blur-sm flex items-center justify-center p-3 sm:p-5">
     <div class="bg-parchment text-vltava rounded-3xl max-w-md w-full flex flex-col shadow-2xl border border-vltava/15 overflow-hidden">
       <div class="px-5 py-4 bg-vltava text-parchment flex items-center justify-between">
         <div>
@@ -2057,8 +2041,6 @@
       mobileSheetState: 'half', // 'peek' | 'half' | 'full'
       activeToolsTab: 'checklist',
       nearMeOrigin: null,
-      firebaseUrl: '',
-      firebasePin: ''
     };
 
     // URL-safe base64 helpers
@@ -2300,7 +2282,7 @@
         syncRevision = Number(data.revision) || syncRevision;
         holdRemote = false;
         if (sentGen === editGen && data.state) applyRemote(data.state);
-        setSyncStatus('live', 'Live across every phone');
+        setSyncStatus('live', 'Live');
       } catch (e) {
         setSyncStatus('warn', 'Saved on this phone');
       } finally {
@@ -2333,9 +2315,9 @@
             scheduleLivePush();
           } else if (rev > 0 && data.state) {
             applyRemote(data.state);
-            setSyncStatus('live', 'Live across every phone');
+            setSyncStatus('live', 'Live');
           } else {
-            setSyncStatus('live', 'Live across every phone');
+            setSyncStatus('live', 'Live');
           }
           return;
         }
@@ -2343,7 +2325,7 @@
           syncRevision = rev;
           applyRemote(data.state);
         }
-        setSyncStatus('live', 'Live across every phone');
+        setSyncStatus('live', 'Live');
       } catch (e) {
         setSyncStatus('warn', 'Saved on this phone');
       }
@@ -2660,7 +2642,7 @@
             <p class="text-xs text-slate-700 leading-relaxed">${esc(gem.tip)}</p>
             <div class="pt-1.5 flex items-center gap-1.5">
               <button onclick="slotGemIntoActiveDay('${gem.id}')"
-                class="flex-1 py-1.5 px-2.5 rounded-xl bg-linden hover:bg-[#1c4837] text-white text-[11px] font-bold transition shadow-2xs cursor-pointer">
+                class="flex-1 py-1.5 px-2.5 rounded-xl bg-linden hover:bg-[#1c4837] text-white text-[11px] font-bold transition shadow-sm cursor-pointer">
                 + Slot into Today's Route
               </button>
               <a href="https://www.google.com/maps/search/?api=1&query=${safeCoord(gem.lat)},${safeCoord(gem.lng)}" target="_blank" rel="noopener noreferrer"
@@ -3191,7 +3173,7 @@
     }
 
     async function commonsThumb(fileTitle) {
-      const url = 'https://commons.wikimedia.org/w/api.php?action=query&format=json&origin=*&prop=imageinfo&iiprop=url&iiurlwidth=960&titles=' + encodeURIComponent(fileTitle);
+      const url = 'https://commons.wikimedia.org/w/api.php?action=query&format=json&origin=*&prop=imageinfo&iiprop=url&iiurlwidth=640&titles=' + encodeURIComponent(fileTitle);
       const data = await fetch(url).then(r => r.json());
       const page = Object.values((data.query && data.query.pages) || {})[0];
       const info = page && page.imageinfo && page.imageinfo[0];
@@ -3227,6 +3209,7 @@
               best = file;
             }
           });
+          if (bestScore >= 14) break;
         }
         const src = best ? await commonsThumb(best) : '';
         photoCache[key] = src ? { src: src, title: best.replace(/^File:/, '') } : { src: '' };
@@ -3234,6 +3217,53 @@
       } catch (e) {
         photoCache[key] = { src: '' };
       }
+    }
+
+    const photoQueue = [];
+    let photoActive = 0;
+
+    function pumpStopPhotos() {
+      while (photoActive < 2 && photoQueue.length) {
+        const next = photoQueue.shift();
+        photoActive += 1;
+        requestStopPhoto(next).finally(() => {
+          photoActive -= 1;
+          pumpStopPhotos();
+        });
+      }
+    }
+
+    function scheduleStopPhoto(stop) {
+      if (!stop) return;
+      const key = stop.id || (stop.lat + ',' + stop.lng);
+      if (photoCache[key] && photoCache[key] !== 'pending') {
+        paintStopPhoto(stop, photoCache[key]);
+        return;
+      }
+      if (photoCache[key] === 'pending') return;
+      if (photoQueue.some(queued => queued.id === stop.id)) return;
+      photoQueue.push(stop);
+      pumpStopPhotos();
+    }
+
+    function watchStopPhotos() {
+      const root = document.getElementById('drawerStopsFeed');
+      if (!root) return;
+      const byId = {};
+      getDayStops(getCurrentDay()).forEach(stop => { byId[safeDomId(stop.id)] = stop; });
+      const imgs = [...root.querySelectorAll('[data-stop-photo]')];
+      if (typeof IntersectionObserver === 'undefined') {
+        imgs.forEach(img => scheduleStopPhoto(byId[img.getAttribute('data-stop-photo')]));
+        return;
+      }
+      const io = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+          if (!entry.isIntersecting) return;
+          io.unobserve(entry.target);
+          scheduleStopPhoto(byId[entry.target.getAttribute('data-stop-photo')]);
+        });
+      }, { root, rootMargin: '280px 0px' });
+      imgs.forEach(img => io.observe(img));
     }
 
     function paintStopPhoto(stop, photo) {
@@ -3393,7 +3423,7 @@
               <span class="text-[10px] font-semibold text-slate-500">${esc(stop.neighborhood)}</span>
             </div>
             <h4 class="font-display font-bold text-sm text-vltava leading-snug">${esc(stop.title)}</h4>
-            <img data-stop-photo="${safeDomId(stop.id)}" alt="" class="hidden w-full h-28 object-cover rounded-xl" />
+            <img data-stop-photo="${safeDomId(stop.id)}" alt="" decoding="async" loading="lazy" class="hidden w-full h-28 object-cover rounded-xl" />
             <p data-photo-credit class="hidden text-[10px] text-slate-400"></p>
             <p class="text-xs text-slate-700 leading-relaxed">${esc(stop.tip)}</p>
             <div class="pt-1.5 flex items-center gap-1.5">
@@ -3638,7 +3668,7 @@
         return `
           <button onclick="setActiveUser('${m.id}')"
             class="px-2 py-1 rounded-lg text-[11px] font-bold transition ${
-              active ? 'bg-vltava text-parchment shadow-2xs' : 'text-slate-600 hover:bg-vltava/5'
+              active ? 'bg-vltava text-parchment shadow-sm' : 'text-slate-600 hover:bg-vltava/5'
             }">
             ${m.label}
           </button>`;
@@ -3664,10 +3694,10 @@
       const compactLbl = document.getElementById('compactScopeLabel');
       if (state.overviewMode) {
         bDay.className = 'px-2.5 py-1 rounded-lg text-xs font-semibold transition text-slate-700 hover:text-vltava';
-        bOv.className = 'px-2.5 py-1 rounded-lg text-xs font-bold transition bg-garnet text-white shadow-2xs';
+        bOv.className = 'px-2.5 py-1 rounded-lg text-xs font-bold transition bg-garnet text-white shadow-sm';
         compactLbl.textContent = 'Day Route';
       } else {
-        bDay.className = 'px-2.5 py-1 rounded-lg text-xs font-bold transition bg-vltava text-parchment shadow-2xs';
+        bDay.className = 'px-2.5 py-1 rounded-lg text-xs font-bold transition bg-vltava text-parchment shadow-sm';
         bOv.className = 'px-2.5 py-1 rounded-lg text-xs font-semibold transition text-slate-700 hover:text-vltava';
         compactLbl.textContent = 'Overview';
       }
@@ -3689,7 +3719,7 @@
       const btn = document.getElementById('btnGemsToggle');
       const badge = document.getElementById('gemsStatusBadge');
       if (state.showGems) {
-        btn.className = 'flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-linden text-white border border-linden text-xs font-bold transition shadow-2xs';
+        btn.className = 'flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-linden text-white border border-linden text-xs font-bold transition shadow-sm';
         badge.textContent = 'ON';
       } else {
         btn.className = 'flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-white/80 text-slate-700 border border-vltava/15 text-xs font-bold transition';
@@ -3786,7 +3816,7 @@
       document.getElementById('drawerDayHeader').innerHTML = `
         <div class="flex items-start justify-between gap-3">
           <div class="flex items-start gap-2.5 min-w-0">
-            <div class="w-11 h-11 rounded-2xl bg-amber-50/90 border border-amber-200/80 p-1 shrink-0 shadow-2xs">
+            <div class="w-11 h-11 rounded-2xl bg-amber-50/90 border border-amber-200/80 p-1 shrink-0 shadow-sm">
               ${mascotFn()}
             </div>
             <div class="min-w-0">
@@ -3806,7 +3836,7 @@
           </div>
 
           <button onclick="startDropPinMode()"
-            class="shrink-0 flex items-center gap-1 px-2.5 py-2 rounded-xl bg-white hover:bg-amber-50 text-vltava border border-vltava/15 text-[11px] font-bold transition shadow-2xs"
+            class="shrink-0 flex items-center gap-1 px-2.5 py-2 rounded-xl bg-white hover:bg-amber-50 text-vltava border border-vltava/15 text-[11px] font-bold transition shadow-sm"
             title="Click anywhere on the map to drop a custom pin">
             <span class="text-garnet font-extrabold text-sm leading-none">+</span>
             <span>Drop Pin</span>
@@ -3839,11 +3869,11 @@
             <div class="text-[10px] font-extrabold uppercase tracking-wider text-amber-950">Flexible Day Route Option</div>
             <div class="grid grid-cols-2 gap-1.5">
               <button onclick="setDayVariant('${day.id}', 'prague')"
-                class="px-2.5 py-2 rounded-xl text-xs font-bold border transition text-left ${mode === 'prague' ? 'bg-vltava text-amber-200 border-vltava shadow-2xs' : 'bg-white text-vltava border-stone-300'}">
+                class="px-2.5 py-2 rounded-xl text-xs font-bold border transition text-left ${mode === 'prague' ? 'bg-vltava text-amber-200 border-vltava shadow-sm' : 'bg-white text-vltava border-stone-300'}">
                 A: Modern Prague
               </button>
               <button onclick="setDayVariant('${day.id}', 'krumlov')"
-                class="px-2.5 py-2 rounded-xl text-xs font-bold border transition text-left ${mode === 'krumlov' ? 'bg-vltava text-amber-200 border-vltava shadow-2xs' : 'bg-white text-vltava border-stone-300'}">
+                class="px-2.5 py-2 rounded-xl text-xs font-bold border transition text-left ${mode === 'krumlov' ? 'bg-vltava text-amber-200 border-vltava shadow-sm' : 'bg-white text-vltava border-stone-300'}">
                 B: Český Krumlov
               </button>
             </div>
@@ -3913,11 +3943,11 @@
                 ? 'bg-white border-garnet ring-2 ring-garnet/20 shadow-md'
                 : isDone
                   ? 'bg-white/60 border-vltava/10 opacity-80'
-                  : 'bg-white/90 hover:bg-white border-vltava/12 shadow-2xs'
+                  : 'bg-white/90 hover:bg-white border-vltava/12 shadow-sm'
             }">
             <div class="flex items-start gap-3">
               <!-- Numbered Pin Badge -->
-              <div class="w-7 h-7 rounded-full flex items-center justify-center text-white font-mono font-bold text-xs shrink-0 mt-0.5 shadow-2xs"
+              <div class="w-7 h-7 rounded-full flex items-center justify-center text-white font-mono font-bold text-xs shrink-0 mt-0.5 shadow-sm"
                 style="background-color: ${pinColor}">
                 ${isDone ? '&#10003;' : stopNum}
               </div>
@@ -3948,7 +3978,7 @@
                     <span>&#9733; ${esc(stop.booking)}</span>
                   </div>` : ''}
 
-                <img data-stop-photo="${safeDomId(stop.id)}" alt="" class="hidden mt-2 w-full h-40 object-cover rounded-xl border border-stone-200" />
+                <img data-stop-photo="${safeDomId(stop.id)}" alt="" decoding="async" loading="lazy" class="hidden mt-2 w-full h-40 object-cover rounded-xl border border-stone-200" />
                 <p data-photo-credit class="hidden text-[10px] text-slate-400 mt-1"></p>
                 <p class="text-xs text-slate-600 mt-2 leading-relaxed">${esc(stop.tip)}</p>
                 ${routeNote(state.activeUser, stop, day) ? `<p class="text-[11px] font-medium text-cobalt mt-1.5">${esc(routeNote(state.activeUser, stop, day))}</p>` : ''}
@@ -4003,7 +4033,7 @@
         </div>`;
 
       feed.innerHTML = html;
-      stops.forEach(stop => requestStopPhoto(stop));
+      watchStopPhotos();
     }
 
     function updateDayNote(dayId, val) {
@@ -4218,7 +4248,7 @@
       ['checklist', 'currency', 'nearme'].forEach(t => {
         const btn = document.getElementById(`tabBtn-${t}`);
         btn.className = t === tab
-          ? 'px-3 py-1.5 rounded-xl text-xs font-bold transition bg-vltava text-white shadow-2xs'
+          ? 'px-3 py-1.5 rounded-xl text-xs font-bold transition bg-vltava text-white shadow-sm'
           : 'px-3 py-1.5 rounded-xl text-xs font-bold transition text-slate-700 hover:bg-white';
       });
 
@@ -4459,9 +4489,24 @@
     }
 
     // Crisp deterministic finder-pattern + data-hash QR-style matrix visual
-    function drawVisualQrMatrix(canvasId, text) {
+    function loadQrCode() {
+      if (typeof qrcode === 'function') return Promise.resolve();
+      if (!loadQrCode.pending) {
+        loadQrCode.pending = new Promise((resolve, reject) => {
+          const script = document.createElement('script');
+          script.src = 'https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js';
+          script.onload = () => resolve();
+          script.onerror = () => reject(new Error('qr'));
+          document.head.appendChild(script);
+        });
+      }
+      return loadQrCode.pending;
+    }
+
+    async function drawVisualQrMatrix(canvasId, text) {
       const c = document.getElementById(canvasId);
       if (!c) return;
+      try { await loadQrCode(); } catch (e) {}
       if (typeof qrcode === 'function') {
         try {
           const qr = qrcode(0, 'M');
