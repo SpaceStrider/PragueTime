@@ -4209,7 +4209,10 @@
       renderDrawerContent();
     }
 
-    window.onload = async function () {
+    let atlasBooted = false;
+    async function bootAtlas() {
+      if (atlasBooted) return;
+      atlasBooted = true;
       syncThemeButton();
       syncFestiveButton();
       renderSnow();
@@ -4251,7 +4254,9 @@
         if (hud) new ResizeObserver(syncHudInset).observe(hud);
       }
       startLiveSync();
-    };
+    }
+    window.onload = bootAtlas;
+    document.addEventListener("DOMContentLoaded", bootAtlas);
   </script>
 </body>
 </html>
