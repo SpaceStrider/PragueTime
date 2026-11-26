@@ -1,4 +1,4 @@
-import { copyFile, mkdir, writeFile } from "node:fs/promises";
+import { copyFile, cp, mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { renderPublishedHtml } from "../src/lib/publish-site.ts";
 
@@ -9,4 +9,5 @@ await writeFile(path.join(outDir, "index.html"), html);
 for (const file of ["favicon.ico", "favicon.png", "apple-touch-icon.png"]) {
   await copyFile(path.join("content", file), path.join(outDir, file));
 }
+await cp(path.join("public", "guides"), path.join(outDir, "guides"), { recursive: true });
 await writeFile(path.join(outDir, ".nojekyll"), "");
