@@ -502,7 +502,7 @@
       <div class="festive-lights" aria-hidden="true"></div>
       <!-- Guide emblem and atlas title -->
       <div class="flex items-center gap-2.5 min-w-0">
-        <div id="headerKrtekSlot" class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-amber-50 border border-amber-200/80 flex items-center justify-center shrink-0 shadow-2xs" title="Trip guide"></div>
+        <div id="headerKrtekSlot" class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-amber-50 border border-amber-200/80 flex items-center justify-center shrink-0 shadow-2xs" title="Krtek — Your Bohemian Winter Guide"></div>
         <div class="min-w-0">
           <div class="flex items-center gap-2">
             <h1 class="font-display font-bold text-sm sm:text-base md:text-lg tracking-tight text-vltava truncate">
@@ -571,7 +571,7 @@
         <!-- Hidden gems toggle -->
         <button id="btnGemsToggle" onclick="toggleHonestGems()"
           class="flex items-center gap-1.5 px-2 py-1.5 sm:px-2.5 rounded-xl bg-linden text-white border border-linden text-xs font-bold transition shadow-2xs shrink-0"
-          title="Show or hide the hidden gems">
+          title="Toggle Bob & Bobek's Honest Guide Hidden Gems (+ pins)">
           <span id="btnBobekIcon" class="w-5 h-5 flex items-center justify-center shrink-0"></span>
           <span class="hidden md:inline">Gems</span>
           <span id="gemsStatusBadge" class="hidden sm:inline text-[10px] font-mono bg-white/20 px-1.5 py-0.5 rounded-md">ON</span>
@@ -580,7 +580,7 @@
         <!-- Toolkit button -->
         <button onclick="openToolsModal('checklist')"
           class="flex items-center gap-1.5 px-2 py-1.5 sm:px-2.5 rounded-xl bg-amber-50 hover:bg-amber-100 text-vltava border border-amber-300/80 text-xs font-bold transition shadow-2xs shrink-0"
-          title="Trip toolkit: bookings, currency, and nearby places">
+          title="Pat & Mat's Trip Prep Checklist, CZK Converter & Near Me Finder">
           <span id="btnPatMatIcon" class="w-5 h-5 flex items-center justify-center shrink-0"></span>
           <span class="hidden md:inline">Tools</span>
           <span id="headerChecklistCount" class="text-[10px] font-mono font-bold bg-pilsner text-white px-1.5 py-0.5 rounded-full">0/0</span>
@@ -661,7 +661,7 @@
         <div class="flex items-center gap-3">
           <div id="modalPatMatArt" class="w-11 h-11 rounded-2xl bg-amber-100/15 border border-white/15 flex items-center justify-center shrink-0"></div>
           <div>
-            <h2 class="font-display font-bold text-lg text-pilsner-light leading-tight">Field toolkit</h2>
+            <h2 class="font-display font-bold text-lg text-pilsner-light leading-tight">A je to! Family Field Toolkit</h2>
             <p class="text-xs text-stone-300">Bookings checklist, CZK currency math, Czech menu decoder &amp; Near Me radar</p>
           </div>
         </div>
@@ -880,7 +880,7 @@
      * =========================================================================
      */
     /**
-     * Original sticker critters. The object keys stay stable for saved trips.
+     * The same guides, drawn as fox-style stickers. Keys stay stable for saved trips.
      * Shadow, cream halo, and eyes are shared from #critterParts.
      */
     function critterSvg(label, compact, part) {
@@ -923,34 +923,68 @@
     }
 
     const CZECH_GERMAN_SVGS = {
-      krtek: (compact) => critterSvg('Pip', compact, {
-        body: roundBody('#C97A1E'),
-        ears: roundEars('#C97A1E'),
-        prop: `<rect x="44" y="36" width="12" height="14" rx="3" fill="#B8293D" stroke="#141923" stroke-width="3"/>`,
-        stripes: `<path d="M47 40 H53" stroke="#F3D28F" stroke-width="3"/>`,
-        nose: `<path d="M29 39 Q32 44 35 39" fill="#C97A1E" stroke="#141923" stroke-width="3"/>`
+      krtek: (compact) => critterSvg('Krtek', compact, {
+        back: `<ellipse cx="32" cy="56" rx="20" ry="6" fill="#7A4B2A"/>`,
+        body: `<ellipse cx="32" cy="40" rx="14" ry="16" fill="#141923" stroke="#141923" stroke-width="3"/>`,
+        ears: `<path d="M26 22 Q32 10 32 22" fill="none" stroke="#141923" stroke-width="3"/>
+          <path d="M32 18 V8" fill="none" stroke="#141923" stroke-width="3"/>
+          <path d="M32 22 Q38 10 40 20" fill="none" stroke="#141923" stroke-width="3"/>`,
+        muzzle: `<ellipse cx="32" cy="44" rx="8" ry="6" fill="#FCFAF6"/>`,
+        prop: `<path d="M46 24 L52 42" stroke="#C97A1E" stroke-width="3"/>
+          <path d="M44 18 H54 Q52 26 46 24 Z" fill="#B8293D" stroke="#141923" stroke-width="3"/>`,
+        stripes: `<path d="M46 21 H52" stroke="#F3D28F" stroke-width="3"/>`,
+        nose: `<ellipse cx="32" cy="42" rx="4.4" ry="3.1" fill="#B8293D"/>`,
+        brows: '',
+        cheeks: `<ellipse cx="24" cy="46" rx="3.2" ry="2" fill="#F3D28F"/>
+          <ellipse cx="40" cy="46" rx="3.2" ry="2" fill="#F3D28F"/>`
       }),
 
-      patAndMat: (compact) => critterSvg('Nib', compact, {
-        body: roundBody('#245C46'),
-        ears: roundEars('#245C46'),
-        muzzle: `<ellipse cx="32" cy="24" rx="3.4" ry="9" fill="#FCFAF6"/>
-          <ellipse cx="32" cy="42" rx="10" ry="7" fill="#FCFAF6"/>`,
-        prop: `<rect x="46" y="28" width="5" height="16" rx="1.5" fill="#255485" stroke="#141923" stroke-width="3"/>
-          <path d="M46 44 L48.5 52 L51 44 Z" fill="#F3D28F" stroke="#141923" stroke-width="3"/>`,
-        stripes: `<path d="M48.5 32 V40" stroke="#FCFAF6" stroke-width="3"/>`
+      patAndMat: (compact) => critterSvg('Pat and Mat', compact, {
+        body: `<ellipse cx="18" cy="48" rx="10" ry="11" fill="#C97A1E" stroke="#141923" stroke-width="3"/>
+          <ellipse cx="46" cy="48" rx="10" ry="11" fill="#B8293D" stroke="#141923" stroke-width="3"/>`,
+        ears: `<ellipse cx="18" cy="28" rx="8" ry="8" fill="#FCFAF6"/>
+          <ellipse cx="18" cy="28" rx="6.4" ry="6.4" fill="#F3D28F" stroke="#141923" stroke-width="3"/>
+          <path d="M11 26 Q18 16 25 26" fill="#255485" stroke="#141923" stroke-width="3"/>
+          <ellipse cx="46" cy="28" rx="8" ry="9" fill="#FCFAF6"/>
+          <ellipse cx="46" cy="28" rx="6.4" ry="7.2" fill="#F3D28F" stroke="#141923" stroke-width="3"/>
+          <path d="M38 24 Q46 14 54 24" fill="#C97A1E" stroke="#141923" stroke-width="3"/>
+          <circle cx="46" cy="14" r="3.1" fill="#F3D28F" stroke="#141923" stroke-width="3"/>`,
+        muzzle: '',
+        prop: '',
+        stripes: `<path d="M12 48 H24" stroke="#F3D28F" stroke-width="3"/>
+          <path d="M40 48 H52" stroke="#F3D28F" stroke-width="3"/>`,
+        eyes: `<use href="#critter-eye" x="13" y="24" width="6" height="7"/>
+          <use href="#critter-eye" x="19" y="24" width="6" height="7"/>
+          <use href="#critter-eye" x="41" y="24" width="6" height="7"/>
+          <use href="#critter-eye" x="47" y="24" width="6" height="7"/>`,
+        nose: '',
+        smile: `<path d="M15 32 Q18 35 21 32" fill="none" stroke="#141923" stroke-width="3"/>
+          <path d="M43 33 Q46 36 49 33" fill="none" stroke="#141923" stroke-width="3"/>`,
+        brows: '',
+        cheeks: ''
       }),
 
-      bobAndBobek: (compact) => critterSvg('Burr', compact, {
-        body: `<ellipse cx="32" cy="44" rx="17" ry="13" fill="#7A4B2A" stroke="#141923" stroke-width="3"/>`,
-        ears: `<ellipse cx="24" cy="24" rx="3.2" ry="8" fill="#FCFAF6"/>
-          <ellipse cx="32" cy="18" rx="3.2" ry="9" fill="#FCFAF6"/>
-          <ellipse cx="40" cy="24" rx="3.2" ry="8" fill="#FCFAF6"/>
-          <ellipse cx="24" cy="24" rx="2" ry="6" fill="#7A4B2A" stroke="#141923" stroke-width="3" transform="rotate(-18 24 24)"/>
-          <ellipse cx="32" cy="18" rx="2" ry="7" fill="#7A4B2A" stroke="#141923" stroke-width="3"/>
-          <ellipse cx="40" cy="24" rx="2" ry="6" fill="#7A4B2A" stroke="#141923" stroke-width="3" transform="rotate(18 40 24)"/>`,
-        prop: `<ellipse cx="48" cy="40" rx="5" ry="6.5" fill="#F3D28F" stroke="#141923" stroke-width="3"/>`,
-        stripes: `<path d="M48 36 V44" stroke="#C97A1E" stroke-width="3"/>`
+      bobAndBobek: (compact) => critterSvg('Bob and Bobek', compact, {
+        body: `<rect x="16" y="36" width="32" height="18" rx="3" fill="#141923" stroke="#141923" stroke-width="3"/>
+          <ellipse cx="32" cy="36" rx="20" ry="5" fill="#141923" stroke="#141923" stroke-width="3"/>`,
+        ears: `<ellipse cx="22" cy="16" rx="2.4" ry="8" fill="#FCFAF6" stroke="#141923" stroke-width="3"/>
+          <ellipse cx="28" cy="15" rx="2.4" ry="8" fill="#FCFAF6" stroke="#141923" stroke-width="3"/>
+          <ellipse cx="38" cy="20" rx="2.2" ry="6" fill="#FCFAF6" stroke="#141923" stroke-width="3"/>
+          <ellipse cx="44" cy="20" rx="2.2" ry="6" fill="#FCFAF6" stroke="#141923" stroke-width="3"/>
+          <ellipse cx="25" cy="28" rx="6" ry="6" fill="#FCFAF6" stroke="#141923" stroke-width="3"/>
+          <circle cx="41" cy="30" r="5.5" fill="#FCFAF6" stroke="#141923" stroke-width="3"/>`,
+        muzzle: '',
+        prop: '',
+        stripes: `<rect x="16" y="46" width="32" height="4" fill="#B8293D"/>`,
+        eyes: `<use href="#critter-eye" x="20" y="24" width="5" height="6"/>
+          <use href="#critter-eye" x="26" y="24" width="5" height="6"/>
+          <use href="#critter-eye" x="37" y="26" width="5" height="6"/>
+          <use href="#critter-eye" x="42" y="26" width="5" height="6"/>`,
+        nose: `<circle cx="25" cy="31" r="1.5" fill="#B8293D"/>
+          <circle cx="41" cy="33" r="1.4" fill="#B8293D"/>`,
+        smile: '',
+        brows: '',
+        cheeks: ''
       }),
 
       orloj: () => `
@@ -978,14 +1012,21 @@
         </svg>`,
 
       dresden: () => `
-        <svg viewBox="0 0 64 64" class="w-full h-full" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Dresden river bridge" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M6 50 H58" stroke="#245C46" stroke-width="3"/>
-          <rect x="8" y="34" width="8" height="16" rx="1" fill="#FCFAF6" stroke="#141923" stroke-width="3"/>
-          <rect x="48" y="34" width="8" height="16" rx="1" fill="#FCFAF6" stroke="#141923" stroke-width="3"/>
-          <path d="M12 40 Q32 16 52 40" fill="none" stroke="#255485" stroke-width="3"/>
-          <path d="M16 40 H48" stroke="#C97A1E" stroke-width="3"/>
+        <svg viewBox="0 0 64 64" class="w-full h-full" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Dresden Ampelmannchen">
+          <circle cx="32" cy="32" r="26" fill="#141923" stroke="#C97A1E" stroke-width="2.5"/>
+          <!-- Hat -->
+          <path d="M23 16C25 12 37 12 39 16H23Z" fill="#22C55E"/>
+          <rect x="20" y="16" width="22" height="2.6" rx="1.3" fill="#22C55E"/>
+          <!-- Head -->
+          <circle cx="31" cy="22.5" r="4" fill="#22C55E"/>
+          <!-- Striding Torso & Arms -->
+          <path d="M31 27L21 34M31 27L42 32" stroke="#22C55E" stroke-width="4.2" stroke-linecap="round"/>
+          <line x1="31" y1="27" x2="31" y2="39" stroke="#22C55E" stroke-width="6" stroke-linecap="round"/>
+          <!-- Striding Legs -->
+          <path d="M30 39L21 51M32 39L43 50" stroke="#22C55E" stroke-width="4.5" stroke-linecap="round"/>
         </svg>`,
 
+      // 7. Nuremberg Kaiserburg Tower & Pretzel
       nuremberg: () => `
         <svg viewBox="0 0 64 64" class="w-full h-full" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Nuremberg Kaiserburg and Pretzel">
           <rect x="10" y="32" width="26" height="24" rx="2" fill="#D6D3D1" stroke="#141923" stroke-width="1.6"/>
@@ -998,168 +1039,242 @@
           <circle cx="49" cy="36" r="1.2" fill="#FFFFFF"/>
         </svg>`,
 
-      rumcajs: (compact) => critterSvg('Acorn', compact, {
-        back: `<ellipse cx="50" cy="40" rx="11" ry="14" fill="#FCFAF6"/>
-          <ellipse cx="50" cy="40" rx="8" ry="11" fill="#C97A1E" stroke="#141923" stroke-width="3"/>`,
-        body: roundBody('#C97A1E'),
-        ears: roundEars('#C97A1E'),
-        prop: `<ellipse cx="14" cy="36" rx="4.2" ry="5.2" fill="#B8293D" stroke="#141923" stroke-width="3"/>
-          <rect x="11" y="31" width="6" height="4" rx="1.2" fill="#7A4B2A" stroke="#141923" stroke-width="3"/>`,
-        stripes: `<path d="M12.5 33 H15.5" stroke="#F3D28F" stroke-width="3"/>`
-      }),
-
-      vecernicek: (compact) => critterSvg('Lumen', compact, {
-        body: `<ellipse cx="32" cy="42" rx="16" ry="15" fill="#255485" stroke="#141923" stroke-width="3"/>`,
-        ears: `<path d="M18 26 Q14 8 28 22" fill="#FCFAF6"/>
-          <path d="M46 26 Q50 8 36 22" fill="#FCFAF6"/>
-          <path d="M19 24 Q16 12 27 22" fill="#255485" stroke="#141923" stroke-width="3"/>
-          <path d="M45 24 Q48 12 37 22" fill="#255485" stroke="#141923" stroke-width="3"/>`,
-        muzzle: `<ellipse cx="32" cy="44" rx="8" ry="6" fill="#FCFAF6"/>`,
-        prop: `<circle cx="50" cy="48" r="6" fill="#C97A1E" stroke="#141923" stroke-width="3"/>
-          <circle cx="50" cy="48" r="2.2" fill="#F3D28F"/>`,
-        nose: `<path d="M30 42 L32 47 L34 42 Z" fill="#C97A1E" stroke="#141923" stroke-width="3"/>`
-      }),
-
-      hurvinek: (compact) => critterSvg('Spool', compact, {
-        body: `<ellipse cx="32" cy="44" rx="14" ry="12" fill="#B8293D" stroke="#141923" stroke-width="3"/>`,
-        ears: `<ellipse cx="16" cy="28" rx="9" ry="10" fill="#FCFAF6"/>
-          <ellipse cx="48" cy="28" rx="9" ry="10" fill="#FCFAF6"/>
-          <ellipse cx="16" cy="28" rx="6" ry="7" fill="#B8293D" stroke="#141923" stroke-width="3"/>
-          <ellipse cx="48" cy="28" rx="6" ry="7" fill="#B8293D" stroke="#141923" stroke-width="3"/>
-          <ellipse cx="16" cy="28" rx="3" ry="3.6" fill="#F3D28F"/>
-          <ellipse cx="48" cy="28" rx="3" ry="3.6" fill="#F3D28F"/>`,
-        prop: `<ellipse cx="50" cy="50" rx="7" ry="4" fill="#FCFAF6" stroke="#141923" stroke-width="3"/>
-          <ellipse cx="50" cy="50" rx="2.2" ry="4" fill="#C97A1E" stroke="#141923" stroke-width="3"/>`
-      }),
-
-      sandmann: (compact) => critterSvg('Bell', compact, {
-        body: `<ellipse cx="32" cy="42" rx="16" ry="13" fill="#F3D28F" stroke="#141923" stroke-width="3"/>
-          <ellipse cx="22" cy="36" rx="7" ry="6" fill="#FCFAF6" stroke="#141923" stroke-width="3"/>
-          <ellipse cx="42" cy="36" rx="7" ry="6" fill="#FCFAF6" stroke="#141923" stroke-width="3"/>`,
-        ears: `<ellipse cx="18" cy="24" rx="5" ry="6" fill="#FCFAF6"/>
-          <ellipse cx="46" cy="24" rx="5" ry="6" fill="#FCFAF6"/>
-          <ellipse cx="18" cy="24" rx="3.2" ry="4" fill="#F3D28F" stroke="#141923" stroke-width="3"/>
-          <ellipse cx="46" cy="24" rx="3.2" ry="4" fill="#F3D28F" stroke="#141923" stroke-width="3"/>`,
-        prop: `<path d="M28 50 Q32 46 36 50 L34 58 Q32 60 30 58 Z" fill="#B8293D" stroke="#141923" stroke-width="3"/>
-          <circle cx="32" cy="57" r="1.5" fill="#141923"/>`,
-        stripes: `<path d="M32 46 V50" stroke="#141923" stroke-width="3"/>`
-      }),
-
-      machSebestova: (compact) => critterSvg('Boat', compact, {
-        body: `<ellipse cx="32" cy="40" rx="18" ry="14" fill="#245C46" stroke="#141923" stroke-width="3"/>`,
-        ears: `<ellipse cx="20" cy="18" rx="7" ry="5" fill="#FCFAF6"/>
-          <ellipse cx="44" cy="18" rx="7" ry="5" fill="#FCFAF6"/>
-          <ellipse cx="20" cy="18" rx="5" ry="3.4" fill="#245C46" stroke="#141923" stroke-width="3"/>
-          <ellipse cx="44" cy="18" rx="5" ry="3.4" fill="#245C46" stroke="#141923" stroke-width="3"/>`,
-        prop: `<path d="M44 50 Q52 40 60 50 Q52 54 44 50 Z" fill="#C97A1E" stroke="#141923" stroke-width="3"/>`,
-        stripes: `<path d="M48 48 H56" stroke="#FCFAF6" stroke-width="3"/>`,
-        smile: `<path d="M24 46 Q32 54 40 46" fill="none" stroke="#141923" stroke-width="3"/>`
-      }),
-
-      kremilek: (compact) => critterSvg('Shell', compact, {
-        back: `<ellipse cx="40" cy="34" rx="14" ry="12" fill="#FCFAF6"/>
-          <ellipse cx="40" cy="34" rx="11" ry="9" fill="#F3D28F" stroke="#141923" stroke-width="3"/>
-          <ellipse cx="40" cy="34" rx="5" ry="4" fill="#C97A1E" stroke="#141923" stroke-width="3"/>`,
-        body: `<ellipse cx="24" cy="46" rx="12" ry="8" fill="#7A4B2A" stroke="#141923" stroke-width="3"/>`,
-        ears: `<path d="M16 42 Q10 28 18 36" fill="none" stroke="#7A4B2A" stroke-width="3"/>
-          <path d="M26 40 Q30 26 34 36" fill="none" stroke="#7A4B2A" stroke-width="3"/>`,
-        muzzle: `<ellipse cx="22" cy="46" rx="6" ry="4" fill="#FCFAF6"/>`,
-        prop: `<path d="M6 28 Q14 18 20 28 Q12 26 6 28 Z" fill="#245C46" stroke="#141923" stroke-width="3"/>`,
-        stripes: `<path d="M9 26 Q14 24 17 28" fill="none" stroke="#F3D28F" stroke-width="3"/>`,
-        eyes: `<use href="#critter-eye" x="12" y="34" width="8" height="10"/>
-          <use href="#critter-eye" x="22" y="32" width="8" height="10"/>`,
-        nose: '',
-        smile: `<path d="M18 50 Q22 53 26 50" fill="none" stroke="#141923" stroke-width="3"/>`,
-        cheeks: `<ellipse cx="16" cy="48" rx="2" ry="1.2" fill="#B8293D" opacity="0.5"/>`,
+      rumcajs: (compact) => critterSvg('Rumcajs', compact, {
+        body: roundBody('#245C46'),
+        ears: `<path d="M16 28 Q18 6 32 16 Q46 6 48 28" fill="#FCFAF6"/>
+          <path d="M18 26 Q22 10 32 18 Q42 10 46 26" fill="#B8293D" stroke="#141923" stroke-width="3"/>
+          <path d="M30 14 L34 4 L38 14" fill="#F3D28F" stroke="#141923" stroke-width="3"/>`,
+        muzzle: `<ellipse cx="32" cy="44" rx="9" ry="7" fill="#F3D28F"/>
+          <path d="M24 40 Q32 48 40 40" fill="#7A4B2A"/>`,
+        prop: `<rect x="22" y="50" width="20" height="4" rx="1" fill="#C97A1E" stroke="#141923" stroke-width="3"/>`,
+        stripes: `<path d="M24 16 Q32 12 40 16" fill="none" stroke="#F3D28F" stroke-width="3"/>`,
+        nose: `<ellipse cx="32" cy="42" rx="2" ry="1.4" fill="#141923"/>`,
         brows: ''
       }),
 
-      ferda: (compact) => critterSvg('Dot', compact, {
-        body: `<ellipse cx="32" cy="42" rx="16" ry="14" fill="#B8293D" stroke="#141923" stroke-width="3"/>
-          <ellipse cx="32" cy="34" rx="4.5" ry="3.6" fill="#FCFAF6"/>`,
-        ears: `<ellipse cx="18" cy="24" rx="4" ry="3" fill="#141923"/>
-          <ellipse cx="46" cy="24" rx="4" ry="3" fill="#141923"/>`,
-        prop: `<ellipse cx="50" cy="50" rx="5" ry="4" fill="#C97A1E" stroke="#141923" stroke-width="3"/>
-          <path d="M47 48 H53" stroke="#141923" stroke-width="3"/>`
+      vecernicek: (compact) => critterSvg('Večerníček', compact, {
+        body: `<path d="M20 40 H44 L40 56 H24 Z" fill="#B8293D" stroke="#141923" stroke-width="3"/>`,
+        ears: `<path d="M22 30 Q22 12 32 18 Q42 12 42 30" fill="#FCFAF6"/>
+          <path d="M24 28 Q26 16 32 20 Q38 16 40 28" fill="#255485" stroke="#141923" stroke-width="3"/>
+          <path d="M30 16 L32 8 L34 16" fill="#F3D28F" stroke="#141923" stroke-width="3"/>`,
+        muzzle: `<circle cx="32" cy="34" r="8" fill="#F3D28F" stroke="#141923" stroke-width="3"/>`,
+        prop: `<circle cx="50" cy="16" r="4" fill="#F3D28F" stroke="#141923" stroke-width="3"/>`,
+        stripes: `<circle cx="28" cy="48" r="1.4" fill="#F3D28F"/>
+          <circle cx="36" cy="50" r="1.4" fill="#F3D28F"/>`,
+        eyes: `<use href="#critter-eye" x="26" y="28" width="7" height="8"/>
+          <g transform="translate(64 0) scale(-1 1)"><use href="#critter-eye" x="26" y="28" width="7" height="8"/></g>`,
+        nose: '',
+        smile: `<path d="M29 38 Q32 41 35 38" fill="none" stroke="#141923" stroke-width="3"/>`,
+        brows: ''
       }),
 
-      blaubaer: (compact) => critterSvg('Cove', compact, {
-        body: `<ellipse cx="32" cy="42" rx="18" ry="13" fill="#255485" stroke="#141923" stroke-width="3"/>`,
-        ears: '',
-        muzzle: `<ellipse cx="32" cy="44" rx="8" ry="5" fill="#FCFAF6"/>`,
-        prop: `<path d="M16 34 Q32 28 48 34 Q32 42 16 34 Z" fill="#B8293D" stroke="#141923" stroke-width="3"/>`,
-        stripes: `<path d="M22 35 H42" stroke="#F3D28F" stroke-width="3"/>`
+      hurvinek: (compact) => critterSvg('Hurvínek', compact, {
+        body: `<path d="M22 42 H42 L40 56 H24 Z" fill="#255485" stroke="#141923" stroke-width="3"/>`,
+        ears: `<path d="M20 28 Q24 12 32 20 Q40 12 44 28" fill="#F3D28F" stroke="#141923" stroke-width="3"/>
+          <path d="M20 24 Q24 12 32 20 Q40 12 44 24" fill="#B8293D" stroke="#141923" stroke-width="3"/>`,
+        muzzle: `<circle cx="32" cy="32" r="11" fill="#F3D28F" stroke="#141923" stroke-width="3"/>`,
+        prop: '',
+        stripes: `<circle cx="28" cy="48" r="1.5" fill="#F3D28F"/>
+          <circle cx="36" cy="48" r="1.5" fill="#F3D28F"/>`,
+        eyes: `<use href="#critter-eye" x="24" y="26" width="8" height="9"/>
+          <g transform="translate(64 0) scale(-1 1)"><use href="#critter-eye" x="24" y="26" width="8" height="9"/></g>`,
+        nose: '',
+        smile: `<path d="M28 38 Q32 42 36 38" fill="none" stroke="#141923" stroke-width="3"/>`,
+        brows: ''
       }),
 
-      pumuckl: (compact) => critterSvg('Kit', compact, {
-        body: `<ellipse cx="32" cy="44" rx="15" ry="13" fill="#C97A1E" stroke="#141923" stroke-width="3"/>`,
-        ears: `<path d="M16 28 Q18 8 28 22 Z" fill="#FCFAF6"/>
-          <path d="M48 28 Q46 8 36 22 Z" fill="#FCFAF6"/>
-          <path d="M18 26 Q20 12 27 22 Z" fill="#C97A1E" stroke="#141923" stroke-width="3"/>
-          <path d="M46 26 Q44 12 37 22 Z" fill="#C97A1E" stroke="#141923" stroke-width="3"/>`,
-        prop: `<ellipse cx="24" cy="32" rx="4.2" ry="3" fill="#B8293D" stroke="#141923" stroke-width="3"/>
-          <ellipse cx="40" cy="32" rx="4.2" ry="3" fill="#B8293D" stroke="#141923" stroke-width="3"/>
-          <circle cx="32" cy="32" r="2.3" fill="#F3D28F" stroke="#141923" stroke-width="3"/>`
+      sandmann: (compact) => critterSvg('Sandmännchen', compact, {
+        body: `<rect x="22" y="42" width="18" height="14" rx="3" fill="#255485" stroke="#141923" stroke-width="3"/>`,
+        ears: `<path d="M24 26 L32 8 L40 26 Z" fill="#FCFAF6"/>
+          <path d="M26 24 L32 12 L38 24 Z" fill="#B8293D" stroke="#141923" stroke-width="3"/>`,
+        muzzle: `<circle cx="32" cy="32" r="9" fill="#F3D28F" stroke="#141923" stroke-width="3"/>
+          <path d="M24 36 Q32 44 40 36" fill="#FCFAF6" stroke="#141923" stroke-width="3"/>`,
+        prop: `<ellipse cx="50" cy="48" rx="7" ry="6" fill="#C97A1E" stroke="#141923" stroke-width="3"/>`,
+        stripes: `<path d="M46 46 H54" stroke="#F3D28F" stroke-width="3"/>`,
+        eyes: `<use href="#critter-eye" x="25" y="26" width="7" height="8"/>
+          <g transform="translate(64 0) scale(-1 1)"><use href="#critter-eye" x="25" y="26" width="7" height="8"/></g>`,
+        nose: '',
+        smile: `<path d="M29 34 Q32 36 35 34" fill="none" stroke="#141923" stroke-width="3"/>`,
+        brows: ''
       }),
 
-      maxipes: (compact) => critterSvg('Brook', compact, {
-        body: `<ellipse cx="30" cy="44" rx="16" ry="12" fill="#245C46" stroke="#141923" stroke-width="3"/>`,
-        ears: `<ellipse cx="18" cy="28" rx="5" ry="5" fill="#FCFAF6"/>
-          <ellipse cx="34" cy="26" rx="5" ry="5" fill="#FCFAF6"/>
-          <ellipse cx="18" cy="28" rx="3.2" ry="3.2" fill="#245C46" stroke="#141923" stroke-width="3"/>
-          <ellipse cx="34" cy="26" rx="3.2" ry="3.2" fill="#245C46" stroke="#141923" stroke-width="3"/>`,
-        prop: `<ellipse cx="50" cy="46" rx="7" ry="3.4" fill="#255485" stroke="#141923" stroke-width="3"/>
-          <path d="M56 46 Q62 40 58 52" fill="#255485" stroke="#141923" stroke-width="3"/>`,
-        stripes: `<circle cx="47" cy="46" r="1.3" fill="#FCFAF6"/>`
+      machSebestova: (compact) => critterSvg('Mach and Šebestová', compact, {
+        body: `<path d="M10 40 H30 L28 56 H12 Z" fill="#255485" stroke="#141923" stroke-width="3"/>
+          <path d="M34 40 H54 L52 56 H36 Z" fill="#C97A1E" stroke="#141923" stroke-width="3"/>`,
+        ears: `<circle cx="20" cy="26" r="8" fill="#FCFAF6"/>
+          <circle cx="20" cy="26" r="6.5" fill="#F3D28F" stroke="#141923" stroke-width="3"/>
+          <circle cx="44" cy="26" r="8" fill="#FCFAF6"/>
+          <circle cx="44" cy="26" r="6.5" fill="#F3D28F" stroke="#141923" stroke-width="3"/>
+          <path d="M36 20 Q42 12 48 20" fill="#B8293D" stroke="#141923" stroke-width="3"/>`,
+        muzzle: '',
+        prop: `<circle cx="16" cy="26" r="3.2" fill="none" stroke="#141923" stroke-width="3"/>
+          <circle cx="24" cy="26" r="3.2" fill="none" stroke="#141923" stroke-width="3"/>`,
+        stripes: `<path d="M38 46 H50" stroke="#F3D28F" stroke-width="3"/>`,
+        eyes: `<circle cx="16" cy="26" r="1.1" fill="#141923"/>
+          <circle cx="24" cy="26" r="1.1" fill="#141923"/>
+          <use href="#critter-eye" x="39" y="22" width="5" height="6"/>
+          <use href="#critter-eye" x="45" y="22" width="5" height="6"/>`,
+        nose: '',
+        smile: `<path d="M17 31 Q20 33 23 31" fill="none" stroke="#141923" stroke-width="3"/>
+          <path d="M41 32 Q44 34 47 32" fill="none" stroke="#141923" stroke-width="3"/>`,
+        brows: '',
+        cheeks: ''
       }),
 
-      ctyrlistek: (compact) => critterSvg('Sprig', compact, {
-        body: `<ellipse cx="32" cy="46" rx="14" ry="12" fill="#FCFAF6" stroke="#141923" stroke-width="3"/>`,
-        ears: `<ellipse cx="24" cy="16" rx="5.2" ry="13" fill="#FCFAF6"/>
-          <ellipse cx="40" cy="16" rx="5.2" ry="13" fill="#FCFAF6"/>
-          <ellipse cx="24" cy="16" rx="3.2" ry="10" fill="#F3D28F" stroke="#141923" stroke-width="3"/>
-          <ellipse cx="40" cy="16" rx="3.2" ry="10" fill="#F3D28F" stroke="#141923" stroke-width="3"/>`,
-        muzzle: `<ellipse cx="32" cy="48" rx="7" ry="5" fill="#FCFAF6"/>`,
-        prop: `<circle cx="50" cy="18" r="3.3" fill="#245C46" stroke="#141923" stroke-width="3"/>
-          <circle cx="56" cy="24" r="3.3" fill="#245C46" stroke="#141923" stroke-width="3"/>
-          <circle cx="50" cy="30" r="3.3" fill="#245C46" stroke="#141923" stroke-width="3"/>`,
-        nose: `<ellipse cx="32" cy="46" rx="1.8" ry="1.3" fill="#B8293D"/>`
+      kremilek: (compact) => critterSvg('Křemílek and Vochomůrka', compact, {
+        body: `<circle cx="22" cy="40" r="12" fill="#F3D28F" stroke="#141923" stroke-width="3"/>
+          <circle cx="44" cy="42" r="10" fill="#C97A1E" stroke="#141923" stroke-width="3"/>`,
+        ears: `<path d="M14 30 H30 L28 18 H16 Z" fill="#FCFAF6"/>
+          <path d="M16 28 H28 L26 20 H18 Z" fill="#B8293D" stroke="#141923" stroke-width="3"/>`,
+        muzzle: '',
+        prop: `<rect x="20" y="18" width="4" height="4" fill="#F3D28F" stroke="#141923" stroke-width="3"/>`,
+        stripes: `<path d="M18 24 H26" stroke="#F3D28F" stroke-width="3"/>`,
+        eyes: `<use href="#critter-eye" x="15" y="34" width="6" height="7"/>
+          <use href="#critter-eye" x="22" y="34" width="6" height="7"/>
+          <use href="#critter-eye" x="38" y="36" width="6" height="7"/>
+          <use href="#critter-eye" x="45" y="36" width="6" height="7"/>`,
+        nose: '',
+        smile: `<path d="M18 44 Q22 47 26 44" fill="none" stroke="#141923" stroke-width="3"/>
+          <path d="M40 46 Q44 49 48 46" fill="none" stroke="#141923" stroke-width="3"/>`,
+        brows: '',
+        cheeks: ''
       }),
 
-      maus: (compact) => critterSvg('Walnut', compact, {
-        body: roundBody('#7A4B2A'),
-        ears: `<ellipse cx="20" cy="22" rx="7" ry="7" fill="#FCFAF6"/>
-          <ellipse cx="44" cy="22" rx="7" ry="7" fill="#FCFAF6"/>
-          <ellipse cx="20" cy="22" rx="4.6" ry="4.6" fill="#7A4B2A" stroke="#141923" stroke-width="3"/>
-          <ellipse cx="44" cy="22" rx="4.6" ry="4.6" fill="#7A4B2A" stroke="#141923" stroke-width="3"/>`,
-        prop: `<ellipse cx="48" cy="40" rx="5.2" ry="4" fill="#C97A1E" stroke="#141923" stroke-width="3"/>`,
-        stripes: `<path d="M45 40 H51" stroke="#7A4B2A" stroke-width="3"/>`,
-        cheeks: `<ellipse cx="22" cy="44" rx="3.4" ry="2.2" fill="#F3D28F"/>
-          <ellipse cx="42" cy="44" rx="3.4" ry="2.2" fill="#F3D28F"/>`
+      ferda: (compact) => critterSvg('Ferda', compact, {
+        body: `<ellipse cx="32" cy="42" rx="12" ry="16" fill="#C97A1E" stroke="#141923" stroke-width="3"/>`,
+        ears: `<path d="M24 24 Q18 8 22 6" fill="none" stroke="#141923" stroke-width="3"/>
+          <path d="M40 24 Q46 8 42 6" fill="none" stroke="#141923" stroke-width="3"/>
+          <circle cx="22" cy="6" r="2.2" fill="#141923"/>
+          <circle cx="42" cy="6" r="2.2" fill="#141923"/>`,
+        muzzle: `<ellipse cx="32" cy="30" rx="7" ry="6" fill="#F3D28F" stroke="#141923" stroke-width="3"/>`,
+        prop: '',
+        stripes: `<path d="M22 40 H42" stroke="#141923" stroke-width="3"/>
+          <path d="M22 48 H42" stroke="#141923" stroke-width="3"/>`,
+        eyes: `<use href="#critter-eye" x="26" y="24" width="6" height="7"/>
+          <g transform="translate(64 0) scale(-1 1)"><use href="#critter-eye" x="26" y="24" width="6" height="7"/></g>`,
+        nose: '',
+        smile: '',
+        brows: ''
       }),
 
-      maja: (compact) => critterSvg('Moth', compact, {
-        back: `<ellipse cx="14" cy="40" rx="12" ry="8" fill="#FCFAF6"/>
-          <ellipse cx="50" cy="40" rx="12" ry="8" fill="#FCFAF6"/>
-          <ellipse cx="14" cy="40" rx="9" ry="6" fill="#255485" stroke="#141923" stroke-width="3"/>
-          <ellipse cx="50" cy="40" rx="9" ry="6" fill="#255485" stroke="#141923" stroke-width="3"/>`,
-        body: `<ellipse cx="32" cy="42" rx="8" ry="14" fill="#F3D28F" stroke="#141923" stroke-width="3"/>`,
-        ears: `<ellipse cx="26" cy="20" rx="3.4" ry="4" fill="#FCFAF6"/>
-          <ellipse cx="38" cy="20" rx="3.4" ry="4" fill="#FCFAF6"/>
-          <ellipse cx="26" cy="20" rx="2.2" ry="2.8" fill="#F3D28F" stroke="#141923" stroke-width="3"/>
-          <ellipse cx="38" cy="20" rx="2.2" ry="2.8" fill="#F3D28F" stroke="#141923" stroke-width="3"/>`,
-        prop: `<circle cx="32" cy="14" r="3.2" fill="#B8293D" stroke="#141923" stroke-width="3"/>`,
-        muzzle: `<ellipse cx="32" cy="36" rx="5" ry="4" fill="#FCFAF6"/>`
+      blaubaer: (compact) => critterSvg("Käpt'n Blaubär", compact, {
+        body: roundBody('#255485'),
+        ears: `<ellipse cx="18" cy="24" rx="6" ry="6" fill="#FCFAF6"/>
+          <ellipse cx="46" cy="24" rx="6" ry="6" fill="#FCFAF6"/>
+          <ellipse cx="18" cy="24" rx="4" ry="4" fill="#255485" stroke="#141923" stroke-width="3"/>
+          <ellipse cx="46" cy="24" rx="4" ry="4" fill="#255485" stroke="#141923" stroke-width="3"/>
+          <path d="M20 18 H44 L42 10 H22 Z" fill="#141923" stroke="#141923" stroke-width="3"/>
+          <path d="M18 18 H46" stroke="#C97A1E" stroke-width="3"/>`,
+        muzzle: `<ellipse cx="32" cy="44" rx="8" ry="6" fill="#FCFAF6"/>`,
+        prop: `<circle cx="32" cy="8" r="2" fill="#F3D28F" stroke="#141923" stroke-width="3"/>`,
+        stripes: '',
+        nose: `<ellipse cx="32" cy="44" rx="2.4" ry="1.6" fill="#141923"/>`,
+        brows: ''
       }),
 
-      rakosnicek: (compact) => critterSvg('Puddle', compact, {
-        body: `<ellipse cx="32" cy="46" rx="16" ry="11" fill="#255485" stroke="#141923" stroke-width="3"/>`,
-        ears: '',
-        muzzle: `<ellipse cx="36" cy="40" rx="8" ry="6" fill="#FCFAF6"/>`,
-        prop: `<ellipse cx="32" cy="20" rx="13" ry="6" fill="#FCFAF6" stroke="#141923" stroke-width="3"/>
-          <ellipse cx="48" cy="42" rx="6" ry="3" fill="#C97A1E" stroke="#141923" stroke-width="3"/>`,
-        stripes: `<path d="M22 20 H42" stroke="#B8293D" stroke-width="3"/>`,
-        nose: `<ellipse cx="40" cy="40" rx="1.8" ry="1.3" fill="#141923"/>`
+      pumuckl: (compact) => critterSvg('Pumuckl', compact, {
+        body: `<path d="M24 46 H40 L37 58 H27 Z" fill="#245C46" stroke="#141923" stroke-width="3"/>`,
+        ears: `<path d="M14 34 Q8 12 24 24 Q18 8 32 18 Q46 8 40 24 Q56 12 50 34 Q44 20 32 26 Q20 20 14 34 Z" fill="#FCFAF6"/>
+          <path d="M16 32 Q12 16 26 24 Q20 12 32 20 Q44 12 38 24 Q52 16 48 32 Q42 22 32 26 Q22 22 16 32 Z" fill="#B8293D" stroke="#141923" stroke-width="3"/>`,
+        muzzle: `<circle cx="32" cy="40" r="9" fill="#F3D28F" stroke="#141923" stroke-width="3"/>`,
+        prop: '',
+        stripes: `<rect x="30" y="50" width="4" height="4" fill="#F3D28F"/>`,
+        eyes: `<use href="#critter-eye" x="25" y="34" width="7" height="8"/>
+          <g transform="translate(64 0) scale(-1 1)"><use href="#critter-eye" x="25" y="34" width="7" height="8"/></g>`,
+        nose: '',
+        smile: `<path d="M28 44 Q32 47 36 44" fill="none" stroke="#141923" stroke-width="3"/>`,
+        cheeks: `<circle cx="27" cy="43" r="1.1" fill="#C97A1E"/>
+          <circle cx="32" cy="45" r="1.1" fill="#C97A1E"/>
+          <circle cx="37" cy="43" r="1.1" fill="#C97A1E"/>`,
+        brows: ''
+      }),
+
+      maxipes: (compact) => critterSvg('Maxipes Fík', compact, {
+        body: `<ellipse cx="32" cy="40" rx="15" ry="13" fill="#C97A1E" stroke="#141923" stroke-width="3"/>`,
+        ears: `<path d="M14 30 L22 10 L30 28 Z" fill="#FCFAF6"/>
+          <path d="M50 30 L42 10 L34 28 Z" fill="#FCFAF6"/>
+          <path d="M16 28 L22 14 L28 28 Z" fill="#C97A1E" stroke="#141923" stroke-width="3"/>
+          <path d="M48 28 L42 14 L36 28 Z" fill="#C97A1E" stroke="#141923" stroke-width="3"/>`,
+        muzzle: `<ellipse cx="32" cy="46" rx="7" ry="5" fill="#F3D28F" stroke="#141923" stroke-width="3"/>`,
+        prop: `<path d="M46 36 Q56 34 52 46" fill="none" stroke="#C97A1E" stroke-width="3"/>`,
+        stripes: '',
+        nose: `<ellipse cx="32" cy="45" rx="2.6" ry="1.8" fill="#141923"/>`,
+        brows: ''
+      }),
+
+      ctyrlistek: (compact) => critterSvg('Čtyřlístek', compact, {
+        body: `<circle cx="22" cy="26" r="10" fill="#245C46" stroke="#141923" stroke-width="3"/>
+          <circle cx="42" cy="26" r="10" fill="#B8293D" stroke="#141923" stroke-width="3"/>
+          <circle cx="22" cy="44" r="10" fill="#C97A1E" stroke="#141923" stroke-width="3"/>
+          <circle cx="42" cy="44" r="10" fill="#255485" stroke="#141923" stroke-width="3"/>
+          <circle cx="32" cy="35" r="3.2" fill="#F3D28F" stroke="#141923" stroke-width="3"/>`,
+        ears: `<path d="M32 48 V58" stroke="#245C46" stroke-width="3"/>`,
+        muzzle: '',
+        prop: '',
+        stripes: '',
+        eyes: `<circle cx="19" cy="26" r="1.2" fill="#FCFAF6"/>
+          <circle cx="25" cy="26" r="1.2" fill="#FCFAF6"/>
+          <circle cx="39" cy="26" r="1.2" fill="#FCFAF6"/>
+          <circle cx="45" cy="26" r="1.2" fill="#FCFAF6"/>
+          <circle cx="19" cy="44" r="1.2" fill="#141923"/>
+          <circle cx="25" cy="44" r="1.2" fill="#141923"/>
+          <circle cx="39" cy="44" r="1.2" fill="#FCFAF6"/>
+          <circle cx="45" cy="44" r="1.2" fill="#FCFAF6"/>`,
+        nose: '',
+        smile: '',
+        brows: '',
+        cheeks: ''
+      }),
+
+      maus: (compact) => critterSvg('Die Maus', compact, {
+        body: `<circle cx="32" cy="40" r="14" fill="#C97A1E" stroke="#141923" stroke-width="3"/>`,
+        ears: `<circle cx="18" cy="20" r="9" fill="#FCFAF6"/>
+          <circle cx="46" cy="20" r="9" fill="#FCFAF6"/>
+          <circle cx="18" cy="20" r="6" fill="#C97A1E" stroke="#141923" stroke-width="3"/>
+          <circle cx="46" cy="20" r="6" fill="#C97A1E" stroke="#141923" stroke-width="3"/>
+          <ellipse cx="18" cy="20" rx="3" ry="3.4" fill="#F3D28F"/>
+          <ellipse cx="46" cy="20" rx="3" ry="3.4" fill="#F3D28F"/>`,
+        muzzle: `<ellipse cx="32" cy="46" rx="6" ry="4" fill="#F3D28F" stroke="#141923" stroke-width="3"/>`,
+        prop: `<path d="M42 50 Q52 56 54 46" fill="none" stroke="#C97A1E" stroke-width="3"/>`,
+        stripes: `<path d="M22 40 H12" stroke="#141923" stroke-width="3"/>
+          <path d="M42 40 H52" stroke="#141923" stroke-width="3"/>`,
+        nose: `<ellipse cx="32" cy="45" rx="2" ry="1.3" fill="#141923"/>`,
+        brows: ''
+      }),
+
+      maja: (compact) => critterSvg('Biene Maja', compact, {
+        back: `<ellipse cx="14" cy="36" rx="12" ry="8" fill="#FCFAF6"/>
+          <ellipse cx="50" cy="36" rx="12" ry="8" fill="#FCFAF6"/>
+          <ellipse cx="14" cy="36" rx="9" ry="6" fill="#255485" stroke="#141923" stroke-width="3"/>
+          <ellipse cx="50" cy="36" rx="9" ry="6" fill="#255485" stroke="#141923" stroke-width="3"/>`,
+        body: `<ellipse cx="32" cy="42" rx="10" ry="14" fill="#F3D28F" stroke="#141923" stroke-width="3"/>`,
+        ears: `<path d="M26 22 L22 8" stroke="#141923" stroke-width="3"/>
+          <path d="M38 22 L42 8" stroke="#141923" stroke-width="3"/>
+          <circle cx="22" cy="8" r="2.2" fill="#141923"/>
+          <circle cx="42" cy="8" r="2.2" fill="#141923"/>`,
+        muzzle: `<circle cx="32" cy="24" r="6" fill="#F3D28F" stroke="#141923" stroke-width="3"/>`,
+        prop: '',
+        stripes: `<path d="M22 38 H42" stroke="#141923" stroke-width="3"/>
+          <path d="M23 46 H41" stroke="#141923" stroke-width="3"/>`,
+        eyes: `<use href="#critter-eye" x="27" y="18" width="5" height="6"/>
+          <g transform="translate(64 0) scale(-1 1)"><use href="#critter-eye" x="27" y="18" width="5" height="6"/></g>`,
+        nose: '',
+        smile: `<path d="M30 26 Q32 28 34 26" fill="none" stroke="#141923" stroke-width="3"/>`,
+        brows: ''
+      }),
+
+      rakosnicek: (compact) => critterSvg('Rákosníček', compact, {
+        back: `<ellipse cx="32" cy="56" rx="16" ry="4" fill="#245C46"/>`,
+        body: `<circle cx="32" cy="40" r="13" fill="#245C46" stroke="#141923" stroke-width="3"/>`,
+        ears: `<path d="M32 28 V8" stroke="#245C46" stroke-width="3"/>
+          <path d="M32 16 Q42 12 48 8" fill="none" stroke="#245C46" stroke-width="3"/>
+          <path d="M32 20 Q22 16 16 10" fill="none" stroke="#245C46" stroke-width="3"/>`,
+        muzzle: `<ellipse cx="30" cy="40" rx="6" ry="7" fill="#F3D28F"/>`,
+        prop: '',
+        stripes: '',
+        nose: `<ellipse cx="30" cy="42" rx="1.6" ry="1.2" fill="#141923"/>`,
+        smile: `<path d="M27 46 Q30 48 34 46" fill="none" stroke="#141923" stroke-width="3"/>`,
+        brows: ''
       })
     };
 
@@ -2403,23 +2518,23 @@
 
     const WHO_STORAGE_KEY = 'prague_winter_atlas_who_v1';
     const MASCOT_NAMES = {
-      krtek: 'Pip',
-      rumcajs: 'Acorn',
-      bobAndBobek: 'Burr',
-      vecernicek: 'Lumen',
-      hurvinek: 'Spool',
-      sandmann: 'Bell',
-      machSebestova: 'Boat',
-      kremilek: 'Shell',
-      patAndMat: 'Nib',
-      ferda: 'Dot',
-      blaubaer: 'Cove',
-      pumuckl: 'Kit',
-      maxipes: 'Brook',
-      ctyrlistek: 'Sprig',
-      maus: 'Walnut',
-      maja: 'Moth',
-      rakosnicek: 'Puddle'
+      krtek: 'Krtek',
+      rumcajs: 'Rumcajs',
+      bobAndBobek: 'Bob and Bobek',
+      vecernicek: 'Večerníček',
+      hurvinek: 'Hurvínek',
+      sandmann: 'Sandmännchen',
+      machSebestova: 'Mach and Šebestová',
+      kremilek: 'Křemílek and Vochomůrka',
+      patAndMat: 'Pat and Mat',
+      ferda: 'Ferda the Ant',
+      blaubaer: 'Käpt’n Blaubär',
+      pumuckl: 'Pumuckl',
+      maxipes: 'Maxipes Fík',
+      ctyrlistek: 'Čtyřlístek',
+      maus: 'Die Maus',
+      maja: 'Biene Maja',
+      rakosnicek: 'Rákosníček'
     };
     const MODE_META = {
       walk: { key: 'walk', label: 'Walk', profile: 'foot', color: '#245C46', dash: null },
@@ -3131,7 +3246,7 @@
       const fn = CZECH_GERMAN_SVGS[day.mascot] || CZECH_GERMAN_SVGS.krtek;
       art.innerHTML = fn();
       const copy = document.getElementById('tripCelebrateCopy');
-      if (copy) copy.textContent = state.activeUser + ', every day on your trip is checked off. All set.';
+      if (copy) copy.textContent = state.activeUser + ', every day on your trip is checked off. A je to!';
       el.classList.remove('hidden');
     }
 
