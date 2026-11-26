@@ -137,8 +137,11 @@ export function gatePage(options: { failed: boolean; sealed?: string }): string 
         document.write(html);
         document.close();
       };
+      // A refresh decrypts during the gate page's own load. Writing the trip
+      // from inside that load handler replaces the document without firing the
+      // trip page's load event, so the shell appears and the data never paints.
       if (document.readyState === "complete") render();
-      else window.addEventListener("load", render, { once: true });
+      else window.addEventListener("load", () => setTimeout(render, 0), { once: true });
     }
 
     async function unlockWithKey(rawKey, store) {

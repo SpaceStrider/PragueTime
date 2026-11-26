@@ -90,6 +90,7 @@ process.env.TRIP_GATE_CODE = fixture;
 const published = await renderPublishedHtml();
 assert.equal(published.includes("Sample arrival"), false);
 assert.equal(published.includes("/^\\d{4}$/"), true);
+assert.match(published, /setTimeout\(render, 0\)/);
 const sealed = published.match(/id="gate-sealed"[^>]*>([^<]*)</)?.[1]?.trim() ?? "";
 assert.notEqual(sealed, "");
 assert.equal(sealed.includes(fixture), false);
