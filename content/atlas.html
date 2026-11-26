@@ -500,9 +500,9 @@
   <header class="hud-dock fixed z-[500] pointer-events-none flex flex-col">
     <div class="atlas-glass rounded-2xl px-2.5 sm:px-4 py-1.5 sm:py-2 flex flex-col gap-1.5 sm:flex-row sm:items-center sm:justify-between sm:gap-2 pointer-events-auto">
       <div class="festive-lights" aria-hidden="true"></div>
-      <!-- Left: Krtek Emblem & Editorial Atlas Title -->
+      <!-- Guide emblem and atlas title -->
       <div class="flex items-center gap-2.5 min-w-0">
-        <div id="headerKrtekSlot" class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-amber-50 border border-amber-200/80 flex items-center justify-center shrink-0 shadow-2xs" title="Krtek — Your Bohemian Winter Guide"></div>
+        <div id="headerKrtekSlot" class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-amber-50 border border-amber-200/80 flex items-center justify-center shrink-0 shadow-2xs" title="Trip guide"></div>
         <div class="min-w-0">
           <div class="flex items-center gap-2">
             <h1 class="font-display font-bold text-sm sm:text-base md:text-lg tracking-tight text-vltava truncate">
@@ -568,19 +568,19 @@
           class="lg:hidden bg-white/85 text-vltava text-[11px] sm:text-xs font-bold rounded-xl px-1.5 py-1.5 sm:px-2 sm:py-2 border border-vltava/15 focus:outline-none max-w-[3.9rem] sm:max-w-[5.5rem]">
         </select>
 
-        <!-- Honest Guide Gems Toggle (Bob & Bobek Icon) -->
+        <!-- Hidden gems toggle -->
         <button id="btnGemsToggle" onclick="toggleHonestGems()"
           class="flex items-center gap-1.5 px-2 py-1.5 sm:px-2.5 rounded-xl bg-linden text-white border border-linden text-xs font-bold transition shadow-2xs shrink-0"
-          title="Toggle Bob & Bobek's Honest Guide Hidden Gems (+ pins)">
+          title="Show or hide the hidden gems">
           <span id="btnBobekIcon" class="w-5 h-5 flex items-center justify-center shrink-0"></span>
           <span class="hidden md:inline">Gems</span>
           <span id="gemsStatusBadge" class="hidden sm:inline text-[10px] font-mono bg-white/20 px-1.5 py-0.5 rounded-md">ON</span>
         </button>
 
-        <!-- Tools & Checklist Drawer Button (Pat & Mat Icon) -->
+        <!-- Toolkit button -->
         <button onclick="openToolsModal('checklist')"
           class="flex items-center gap-1.5 px-2 py-1.5 sm:px-2.5 rounded-xl bg-amber-50 hover:bg-amber-100 text-vltava border border-amber-300/80 text-xs font-bold transition shadow-2xs shrink-0"
-          title="Pat & Mat's Trip Prep Checklist, CZK Converter & Near Me Finder">
+          title="Trip toolkit: bookings, currency, and nearby places">
           <span id="btnPatMatIcon" class="w-5 h-5 flex items-center justify-center shrink-0"></span>
           <span class="hidden md:inline">Tools</span>
           <span id="headerChecklistCount" class="text-[10px] font-mono font-bold bg-pilsner text-white px-1.5 py-0.5 rounded-full">0/0</span>
@@ -661,7 +661,7 @@
         <div class="flex items-center gap-3">
           <div id="modalPatMatArt" class="w-11 h-11 rounded-2xl bg-amber-100/15 border border-white/15 flex items-center justify-center shrink-0"></div>
           <div>
-            <h2 class="font-display font-bold text-lg text-pilsner-light leading-tight">A je to! Family Field Toolkit</h2>
+            <h2 class="font-display font-bold text-lg text-pilsner-light leading-tight">Field toolkit</h2>
             <p class="text-xs text-stone-300">Bookings checklist, CZK currency math, Czech menu decoder &amp; Near Me radar</p>
           </div>
         </div>
@@ -857,152 +857,140 @@
     <span id="atlasToastMsg">Synced!</span>
   </div>
 
+  <svg id="critterParts" aria-hidden="true" width="0" height="0" style="position:absolute;overflow:hidden">
+    <defs>
+      <symbol id="critter-shadow" viewBox="0 0 64 64">
+        <ellipse cx="32" cy="58.5" rx="16" ry="3.1" fill="#141923" opacity="0.18"/>
+      </symbol>
+      <symbol id="critter-halo" viewBox="0 0 64 64">
+        <ellipse cx="32" cy="40" rx="26" ry="20" fill="#FCFAF6"/>
+      </symbol>
+      <symbol id="critter-eye" viewBox="0 0 12 14">
+        <ellipse cx="6" cy="7" rx="4.6" ry="5.4" fill="#FCFAF6" stroke="#141923" stroke-width="3" stroke-linejoin="round"/>
+        <circle cx="7.1" cy="7.4" r="1.6" fill="#141923"/>
+      </symbol>
+    </defs>
+  </svg>
+
   <!-- ==================== APPLICATION SCRIPT ==================== -->
   <script>
     /**
      * =========================================================================
-     * 1. BESPOKE CZECH & GERMAN VECTOR SVG ICONOGRAPHY
+     * 1. ORIGINAL STICKER CRITTERS AND PLACE MARKS
      * =========================================================================
      */
+    /**
+     * Original sticker critters. The object keys stay stable for saved trips.
+     * Shadow, cream halo, and eyes are shared from #critterParts.
+     */
+    function critterSvg(label, compact, part) {
+      const cheeks = compact ? '' : (part.cheeks || `
+        <ellipse cx="22" cy="44" rx="2.6" ry="1.5" fill="#B8293D" opacity="0.5"/>
+        <ellipse cx="42" cy="44" rx="2.6" ry="1.5" fill="#B8293D" opacity="0.5"/>`);
+      const brows = compact ? '' : (part.brows || `
+        <path d="M19 26 Q23 23 27 26" fill="none" stroke="#141923" stroke-width="3"/>
+        <path d="M37 26 Q41 23 45 26" fill="none" stroke="#141923" stroke-width="3"/>`);
+      const stripes = compact ? '' : (part.stripes || '');
+      const eyes = part.eyes || `
+        <use href="#critter-eye" x="18" y="28" width="11" height="13"/>
+        <g transform="translate(64 0) scale(-1 1)"><use href="#critter-eye" x="18" y="28" width="11" height="13"/></g>`;
+      return `<svg viewBox="0 0 64 64" class="w-full h-full overflow-visible" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="${label}" stroke-linecap="round" stroke-linejoin="round">
+        <use href="#critter-shadow"/>
+        <use href="#critter-halo"/>
+        ${part.back || ''}
+        ${part.body || ''}
+        ${part.ears || ''}
+        ${part.muzzle || '<ellipse cx="32" cy="42" rx="10" ry="7" fill="#FCFAF6"/>'}
+        ${part.prop || ''}
+        ${stripes}
+        ${cheeks}
+        ${brows}
+        ${eyes}
+        ${part.nose || '<ellipse cx="32" cy="40" rx="2.1" ry="1.5" fill="#141923"/>'}
+        ${part.smile || '<path d="M28 46 Q32 50 36 46" fill="none" stroke="#141923" stroke-width="3"/>'}
+      </svg>`;
+    }
+
+    function roundBody(fill) {
+      return `<ellipse cx="32" cy="42" rx="16" ry="14" fill="${fill}" stroke="#141923" stroke-width="3"/>`;
+    }
+
+    function roundEars(fill) {
+      return `<ellipse cx="22" cy="20" rx="8" ry="10" fill="#FCFAF6"/>
+        <ellipse cx="42" cy="20" rx="8" ry="10" fill="#FCFAF6"/>
+        <ellipse cx="22" cy="20" rx="5.2" ry="7" fill="${fill}" stroke="#141923" stroke-width="3"/>
+        <ellipse cx="42" cy="20" rx="5.2" ry="7" fill="${fill}" stroke="#141923" stroke-width="3"/>`;
+    }
+
     const CZECH_GERMAN_SVGS = {
-      // 1. Krtek (The Little Mole) emerging from earth mound with red nose & shovel
-      krtek: () => `
-        <svg viewBox="0 0 64 64" class="w-full h-full" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Krtek the Little Mole">
-          <!-- Earth Mound -->
-          <path d="M6 56C10 43 20 39 32 39C44 39 54 43 58 56H6Z" fill="#7C5332"/>
-          <path d="M12 56C15 47 22 44 32 44C42 44 49 47 52 56H12Z" fill="#9A6B43"/>
-          <!-- Little Red Shovel -->
-          <line x1="49" y1="26" x2="53" y2="45" stroke="#D97706" stroke-width="2.5" stroke-linecap="round"/>
-          <path d="M46 23H52L51 28H47L46 23Z" fill="#B8293D"/>
-          <!-- Mole Body & Head -->
-          <path d="M18 45C18 30 22 19 32 19C42 19 46 30 46 45H18Z" fill="#1E242B"/>
-          <ellipse cx="28" cy="34" rx="6" ry="8" fill="#334155" opacity="0.55"/>
-          <!-- Three Signature Hairs -->
-          <path d="M32 19C32 14 29 11 27 10" stroke="#1E242B" stroke-width="2.2" stroke-linecap="round"/>
-          <path d="M32 19C32 13 32 10 32 8" stroke="#1E242B" stroke-width="2.2" stroke-linecap="round"/>
-          <path d="M32 19C33 14 36 11 38 10" stroke="#1E242B" stroke-width="2.2" stroke-linecap="round"/>
-          <!-- Friendly Eyes -->
-          <ellipse cx="27.5" cy="26.5" rx="3.4" ry="4.2" fill="#FFFFFF"/>
-          <ellipse cx="36.5" cy="26.5" rx="3.4" ry="4.2" fill="#FFFFFF"/>
-          <circle cx="28.3" cy="26.8" r="1.7" fill="#141923"/>
-          <circle cx="35.7" cy="26.8" r="1.7" fill="#141923"/>
-          <!-- Rosy Red Nose & Smile -->
-          <ellipse cx="32" cy="31.5" rx="4.2" ry="3" fill="#B8293D"/>
-          <circle cx="30.6" cy="30.6" r="1" fill="#FCA5A5"/>
-          <path d="M27 35.5C29.5 38 34.5 38 37 35.5" stroke="#F8FAFC" stroke-width="1.8" stroke-linecap="round"/>
-          <!-- Little Pink Paws -->
-          <ellipse cx="20" cy="41" rx="4.2" ry="2.8" fill="#F4A29E"/>
-          <ellipse cx="44" cy="41" rx="4.2" ry="2.8" fill="#F4A29E"/>
-        </svg>`,
+      krtek: (compact) => critterSvg('Pip', compact, {
+        body: roundBody('#C97A1E'),
+        ears: roundEars('#C97A1E'),
+        prop: `<rect x="44" y="36" width="12" height="14" rx="3" fill="#B8293D" stroke="#141923" stroke-width="3"/>`,
+        stripes: `<path d="M47 40 H53" stroke="#F3D28F" stroke-width="3"/>`,
+        nose: `<path d="M29 39 Q32 44 35 39" fill="#C97A1E" stroke="#141923" stroke-width="3"/>`
+      }),
 
-      // 2. Pat & Mat ("A je to!") in iconic yellow and red sweaters
-      patAndMat: () => `
-        <svg viewBox="0 0 64 64" class="w-full h-full" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Pat and Mat">
-          <!-- PAT (Left, Yellow Sweater & Cap) -->
-          <rect x="11" y="33" width="16" height="19" rx="5" fill="#FACC15" stroke="#141923" stroke-width="1.5"/>
-          <rect x="13" y="50" width="5" height="9" rx="2" fill="#255485"/>
-          <rect x="20" y="50" width="5" height="9" rx="2" fill="#255485"/>
-          <circle cx="19" cy="23" r="7.5" fill="#FDE68A" stroke="#141923" stroke-width="1.5"/>
-          <path d="M12 20C12 15 26 15 26 20H12Z" fill="#255485"/>
-          <rect x="19" y="18" width="9" height="2.2" rx="1" fill="#1E3A8A"/>
-          <circle cx="17" cy="22.5" r="1.1" fill="#141923"/>
-          <circle cx="21.5" cy="22.5" r="1.1" fill="#141923"/>
-          <circle cx="17.4" cy="22.1" r="0.4" fill="#FFFFFF"/>
-          <ellipse cx="15.2" cy="25" rx="1.3" ry="0.8" fill="#F0A3A0"/>
-          <path d="M16.5 26C18 27.5 20.5 27.5 22 26" stroke="#141923" stroke-width="1.4" stroke-linecap="round"/>
-          <!-- MAT (Right, Red Sweater & Pom-Pom Beanie) -->
-          <rect x="37" y="34" width="16" height="18" rx="5" fill="#B8293D" stroke="#141923" stroke-width="1.5"/>
-          <rect x="39" y="50" width="5" height="9" rx="2" fill="#475569"/>
-          <rect x="46" y="50" width="5" height="9" rx="2" fill="#475569"/>
-          <ellipse cx="45" cy="23" rx="6.8" ry="8" fill="#FDE68A" stroke="#141923" stroke-width="1.5"/>
-          <path d="M38 19C38 13 52 13 52 19H38Z" fill="#C97A1E"/>
-          <circle cx="45" cy="12.5" r="2.5" fill="#FACC15"/>
-          <circle cx="43" cy="22.5" r="1.1" fill="#141923"/>
-          <circle cx="47" cy="22.5" r="1.1" fill="#141923"/>
-          <path d="M42.5 26.5C44 28 46.5 28 48 26.5" stroke="#141923" stroke-width="1.4" stroke-linecap="round"/>
-        </svg>`,
+      patAndMat: (compact) => critterSvg('Nib', compact, {
+        body: roundBody('#245C46'),
+        ears: roundEars('#245C46'),
+        muzzle: `<ellipse cx="32" cy="24" rx="3.4" ry="9" fill="#FCFAF6"/>
+          <ellipse cx="32" cy="42" rx="10" ry="7" fill="#FCFAF6"/>`,
+        prop: `<rect x="46" y="28" width="5" height="16" rx="1.5" fill="#255485" stroke="#141923" stroke-width="3"/>
+          <path d="M46 44 L48.5 52 L51 44 Z" fill="#F3D28F" stroke="#141923" stroke-width="3"/>`,
+        stripes: `<path d="M48.5 32 V40" stroke="#FCFAF6" stroke-width="3"/>`
+      }),
 
-      // 3. Bob a Bobek (Two White Rabbits Peeking Out of Pokustón's Top Hat)
-      bobAndBobek: () => `
-        <svg viewBox="0 0 64 64" class="w-full h-full" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Bob and Bobek">
-          <!-- Bob (Tall Slender Rabbit Left) -->
-          <ellipse cx="23" cy="14" rx="2.4" ry="8" transform="rotate(-8 23 14)" fill="#FFFFFF" stroke="#141923" stroke-width="1.4"/>
-          <ellipse cx="23.4" cy="16" rx="1" ry="4" transform="rotate(-8 23.4 16)" fill="#FBCFE8"/>
-          <ellipse cx="28" cy="14" rx="2.4" ry="8" transform="rotate(6 28 14)" fill="#FFFFFF" stroke="#141923" stroke-width="1.4"/>
-          <ellipse cx="25.5" cy="26" rx="6.5" ry="8" fill="#FFFFFF" stroke="#141923" stroke-width="1.4"/>
-          <circle cx="23.5" cy="24.5" r="1.2" fill="#141923"/>
-          <circle cx="27.5" cy="24.5" r="1.2" fill="#141923"/>
-          <circle cx="25.5" cy="27" r="1.3" fill="#F472B6"/>
-          <!-- Bobek (Round Cute Rabbit Right) -->
-          <ellipse cx="38" cy="20" rx="2.2" ry="6" transform="rotate(-12 38 20)" fill="#FFFFFF" stroke="#141923" stroke-width="1.4"/>
-          <ellipse cx="43" cy="20" rx="2.2" ry="6" transform="rotate(12 43 20)" fill="#FFFFFF" stroke="#141923" stroke-width="1.4"/>
-          <circle cx="40.5" cy="29.5" r="6.5" fill="#FFFFFF" stroke="#141923" stroke-width="1.4"/>
-          <circle cx="38.7" cy="28.5" r="1.1" fill="#141923"/>
-          <circle cx="42.3" cy="28.5" r="1.1" fill="#141923"/>
-          <circle cx="40.5" cy="30.8" r="1.2" fill="#F472B6"/>
-          <!-- Magician Pokustón's Black Top Hat -->
-          <rect x="16" y="34" width="32" height="22" rx="3" fill="#141923"/>
-          <rect x="16" y="48" width="32" height="4.5" fill="#B8293D"/>
-          <ellipse cx="32" cy="34" rx="22" ry="4.5" fill="#1E293B" stroke="#141923" stroke-width="1.5"/>
-        </svg>`,
+      bobAndBobek: (compact) => critterSvg('Burr', compact, {
+        body: `<ellipse cx="32" cy="44" rx="17" ry="13" fill="#7A4B2A" stroke="#141923" stroke-width="3"/>`,
+        ears: `<ellipse cx="24" cy="24" rx="3.2" ry="8" fill="#FCFAF6"/>
+          <ellipse cx="32" cy="18" rx="3.2" ry="9" fill="#FCFAF6"/>
+          <ellipse cx="40" cy="24" rx="3.2" ry="8" fill="#FCFAF6"/>
+          <ellipse cx="24" cy="24" rx="2" ry="6" fill="#7A4B2A" stroke="#141923" stroke-width="3" transform="rotate(-18 24 24)"/>
+          <ellipse cx="32" cy="18" rx="2" ry="7" fill="#7A4B2A" stroke="#141923" stroke-width="3"/>
+          <ellipse cx="40" cy="24" rx="2" ry="6" fill="#7A4B2A" stroke="#141923" stroke-width="3" transform="rotate(18 40 24)"/>`,
+        prop: `<ellipse cx="48" cy="40" rx="5" ry="6.5" fill="#F3D28F" stroke="#141923" stroke-width="3"/>`,
+        stripes: `<path d="M48 36 V44" stroke="#C97A1E" stroke-width="3"/>`
+      }),
 
-      // 4. Prague Astronomical Clock (Orloj) Celestial Dial
       orloj: () => `
         <svg viewBox="0 0 64 64" class="w-full h-full" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Prague Astronomical Clock">
           <rect x="8" y="6" width="48" height="52" rx="10" fill="#1E293B" stroke="#C97A1E" stroke-width="2.5"/>
           <circle cx="32" cy="32" r="20" fill="#255485" stroke="#FBBF24" stroke-width="2.5"/>
           <circle cx="32" cy="32" r="14" fill="none" stroke="#FDE68A" stroke-width="1.2" stroke-dasharray="3 2"/>
           <circle cx="32" cy="32" r="6" fill="#245C46" stroke="#FBBF24" stroke-width="1.5"/>
-          <!-- Golden Sun Hand -->
           <line x1="32" y1="32" x2="43" y2="20" stroke="#FBBF24" stroke-width="2.2" stroke-linecap="round"/>
           <circle cx="43" cy="20" r="3" fill="#F59E0B"/>
-          <!-- Moon Hand -->
           <line x1="32" y1="32" x2="21" y2="39" stroke="#F8FAFC" stroke-width="1.8" stroke-linecap="round"/>
           <circle cx="21" cy="39" r="2.2" fill="#F8FAFC"/>
         </svg>`,
 
-      // 5. Tank Pilsner Mug (Hladinka Pour)
       pilsner: () => `
         <svg viewBox="0 0 64 64" class="w-full h-full" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Czech Tank Pilsner">
-          <!-- Handle -->
           <path d="M44 24H50C52.5 24 54 26 54 29V43C54 46 52.5 48 50 48H44" stroke="#94A3B8" stroke-width="4" stroke-linecap="round"/>
-          <!-- Glass Body -->
           <rect x="15" y="16" width="29" height="40" rx="5" fill="#F59E0B" stroke="#475569" stroke-width="2.2"/>
-          <!-- Golden Lager Gradient -->
           <rect x="17" y="25" width="25" height="29" rx="3" fill="#D97706"/>
-          <!-- Thick Creamy Hladinka Foam Crown -->
           <path d="M15 19C15 14 20 11 25 12C27 9 33 9 35 12C40 11 44 14 44 19V26H15V19Z" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.5"/>
-          <!-- Rising Bubbles -->
           <circle cx="23" cy="46" r="1.4" fill="#FEF3C7"/>
           <circle cx="30" cy="39" r="1.6" fill="#FEF3C7"/>
           <circle cx="35" cy="48" r="1.2" fill="#FEF3C7"/>
           <circle cx="26" cy="32" r="1.3" fill="#FEF3C7"/>
         </svg>`,
 
-      // 6. Dresden Ampelmännchen & Erzgebirge Nutcracker
       dresden: () => `
-        <svg viewBox="0 0 64 64" class="w-full h-full" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Dresden Ampelmannchen">
-          <circle cx="32" cy="32" r="26" fill="#141923" stroke="#C97A1E" stroke-width="2.5"/>
-          <!-- Hat -->
-          <path d="M23 16C25 12 37 12 39 16H23Z" fill="#22C55E"/>
-          <rect x="20" y="16" width="22" height="2.6" rx="1.3" fill="#22C55E"/>
-          <!-- Head -->
-          <circle cx="31" cy="22.5" r="4" fill="#22C55E"/>
-          <!-- Striding Torso & Arms -->
-          <path d="M31 27L21 34M31 27L42 32" stroke="#22C55E" stroke-width="4.2" stroke-linecap="round"/>
-          <line x1="31" y1="27" x2="31" y2="39" stroke="#22C55E" stroke-width="6" stroke-linecap="round"/>
-          <!-- Striding Legs -->
-          <path d="M30 39L21 51M32 39L43 50" stroke="#22C55E" stroke-width="4.5" stroke-linecap="round"/>
+        <svg viewBox="0 0 64 64" class="w-full h-full" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Dresden river bridge" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M6 50 H58" stroke="#245C46" stroke-width="3"/>
+          <rect x="8" y="34" width="8" height="16" rx="1" fill="#FCFAF6" stroke="#141923" stroke-width="3"/>
+          <rect x="48" y="34" width="8" height="16" rx="1" fill="#FCFAF6" stroke="#141923" stroke-width="3"/>
+          <path d="M12 40 Q32 16 52 40" fill="none" stroke="#255485" stroke-width="3"/>
+          <path d="M16 40 H48" stroke="#C97A1E" stroke-width="3"/>
         </svg>`,
 
-      // 7. Nuremberg Kaiserburg Tower & Pretzel
       nuremberg: () => `
         <svg viewBox="0 0 64 64" class="w-full h-full" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Nuremberg Kaiserburg and Pretzel">
-          <!-- Castle Stone Base & Sinwell Tower -->
           <rect x="10" y="32" width="26" height="24" rx="2" fill="#D6D3D1" stroke="#141923" stroke-width="1.6"/>
           <rect x="15" y="16" width="14" height="18" fill="#E7E5E4" stroke="#141923" stroke-width="1.6"/>
           <path d="M13 16L22 7L31 16H13Z" fill="#B8293D" stroke="#141923" stroke-width="1.5"/>
-          <!-- Warm Franconian Pretzel -->
           <path d="M44 33C38 33 35 38 37 43C39 48 49 48 51 43C53 38 50 33 44 33Z" stroke="#C97A1E" stroke-width="4.2" stroke-linecap="round"/>
           <path d="M38 41L50 51M50 41L38 51" stroke="#B45309" stroke-width="3.5" stroke-linecap="round"/>
           <circle cx="44" cy="33" r="1.2" fill="#FFFFFF"/>
@@ -1010,306 +998,169 @@
           <circle cx="49" cy="36" r="1.2" fill="#FFFFFF"/>
         </svg>`,
 
-      rumcajs: () => `
-        <svg viewBox="0 0 64 64" class="w-full h-full" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Rumcajs">
-          <path d="M16 50L20 58H28L26 50" fill="#6B3A1F" stroke="#141923" stroke-width="1.3"/>
-          <path d="M36 50L38 58H46L42 50" fill="#6B3A1F" stroke="#141923" stroke-width="1.3"/>
-          <path d="M20 36H44L40 52H24L20 36Z" fill="#1F6B45" stroke="#141923" stroke-width="1.5"/>
-          <path d="M24 36H40L38 44H26L24 36Z" fill="#2E8B57"/>
-          <rect x="18" y="40" width="28" height="4" rx="1.2" fill="#C97A1E" stroke="#141923" stroke-width="1.2"/>
-          <rect x="30" y="39" width="5" height="6" rx="1" fill="#FBBF24" stroke="#141923" stroke-width="1"/>
-          <circle cx="32" cy="28" r="11" fill="#F3C7A1" stroke="#141923" stroke-width="1.5"/>
-          <ellipse cx="32" cy="33" rx="7" ry="5" fill="#E8B48A"/>
-          <path d="M22 31C24 34 28 35 32 35C36 35 40 34 42 31" fill="#5C3A1E"/>
-          <path d="M24 30H40" stroke="#3F2A1A" stroke-width="1.4" stroke-linecap="round"/>
-          <circle cx="27.5" cy="26" r="1.5" fill="#141923"/>
-          <circle cx="36.5" cy="26" r="1.5" fill="#141923"/>
-          <circle cx="28.1" cy="25.4" r="0.5" fill="#FFFFFF"/>
-          <circle cx="37.1" cy="25.4" r="0.5" fill="#FFFFFF"/>
-          <ellipse cx="25" cy="29" rx="1.6" ry="1" fill="#F0A3A0" opacity="0.9"/>
-          <ellipse cx="39" cy="29" rx="1.6" ry="1" fill="#F0A3A0" opacity="0.9"/>
-          <path d="M14 24C18 8 46 8 50 24C46 18 40 14 32 14C24 14 18 18 14 24Z" fill="#B8293D" stroke="#141923" stroke-width="1.5"/>
-          <path d="M18 18C22 12 28 11 32 14" stroke="#E11D48" stroke-width="1.4" stroke-linecap="round"/>
-          <path d="M30 12L33 4L37 11" fill="#FBBF24" stroke="#141923" stroke-width="1.1"/>
-          <path d="M22 16L26 12M40 16L36 12" stroke="#FDE68A" stroke-width="1.2" stroke-linecap="round"/>
-        </svg>`,
+      rumcajs: (compact) => critterSvg('Acorn', compact, {
+        back: `<ellipse cx="50" cy="40" rx="11" ry="14" fill="#FCFAF6"/>
+          <ellipse cx="50" cy="40" rx="8" ry="11" fill="#C97A1E" stroke="#141923" stroke-width="3"/>`,
+        body: roundBody('#C97A1E'),
+        ears: roundEars('#C97A1E'),
+        prop: `<ellipse cx="14" cy="36" rx="4.2" ry="5.2" fill="#B8293D" stroke="#141923" stroke-width="3"/>
+          <rect x="11" y="31" width="6" height="4" rx="1.2" fill="#7A4B2A" stroke="#141923" stroke-width="3"/>`,
+        stripes: `<path d="M12.5 33 H15.5" stroke="#F3D28F" stroke-width="3"/>`
+      }),
 
-      vecernicek: () => `
-        <svg viewBox="0 0 64 64" class="w-full h-full" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Večerníček">
-          <path d="M22 40H42L38 56H26L22 40Z" fill="#9F1239" stroke="#141923" stroke-width="1.5"/>
-          <path d="M26 40H38L36 48H28L26 40Z" fill="#B8293D"/>
-          <circle cx="28" cy="46" r="1.1" fill="#FBBF24"/>
-          <circle cx="32" cy="50" r="1.1" fill="#FBBF24"/>
-          <circle cx="36" cy="45" r="1.1" fill="#FBBF24"/>
-          <circle cx="32" cy="33" r="9" fill="#F6D2B0" stroke="#141923" stroke-width="1.5"/>
-          <path d="M24 30C26 26 30 28 32 30" stroke="#8B5E34" stroke-width="1.6" stroke-linecap="round"/>
-          <path d="M40 30C38 26 34 28 32 30" stroke="#8B5E34" stroke-width="1.6" stroke-linecap="round"/>
-          <ellipse cx="29" cy="32" rx="1.6" ry="2" fill="#FFFFFF" stroke="#141923" stroke-width="0.8"/>
-          <ellipse cx="35" cy="32" rx="1.6" ry="2" fill="#FFFFFF" stroke="#141923" stroke-width="0.8"/>
-          <circle cx="29.4" cy="32.4" r="0.8" fill="#141923"/>
-          <circle cx="35.4" cy="32.4" r="0.8" fill="#141923"/>
-          <path d="M30 36C31 37 33 37 34 36" stroke="#141923" stroke-width="1.1" stroke-linecap="round"/>
-          <ellipse cx="26.5" cy="35" rx="1.5" ry="0.9" fill="#F0A3A0"/>
-          <ellipse cx="37.5" cy="35" rx="1.5" ry="0.9" fill="#F0A3A0"/>
-          <path d="M24 24C24 14 40 14 40 26V30H24V24Z" fill="#1E3A8A" stroke="#141923" stroke-width="1.5"/>
-          <path d="M27 20H37" stroke="#93C5FD" stroke-width="1.3"/>
-          <path d="M30 10L32 4L34 10L32 12Z" fill="#FBBF24" stroke="#141923" stroke-width="1"/>
-          <circle cx="48" cy="14" r="4" fill="#FDE68A" stroke="#141923" stroke-width="1"/>
-          <path d="M48 10V8M48 18V20M44 14H42M54 14H52" stroke="#FBBF24" stroke-width="1" stroke-linecap="round"/>
-        </svg>`,
+      vecernicek: (compact) => critterSvg('Lumen', compact, {
+        body: `<ellipse cx="32" cy="42" rx="16" ry="15" fill="#255485" stroke="#141923" stroke-width="3"/>`,
+        ears: `<path d="M18 26 Q14 8 28 22" fill="#FCFAF6"/>
+          <path d="M46 26 Q50 8 36 22" fill="#FCFAF6"/>
+          <path d="M19 24 Q16 12 27 22" fill="#255485" stroke="#141923" stroke-width="3"/>
+          <path d="M45 24 Q48 12 37 22" fill="#255485" stroke="#141923" stroke-width="3"/>`,
+        muzzle: `<ellipse cx="32" cy="44" rx="8" ry="6" fill="#FCFAF6"/>`,
+        prop: `<circle cx="50" cy="48" r="6" fill="#C97A1E" stroke="#141923" stroke-width="3"/>
+          <circle cx="50" cy="48" r="2.2" fill="#F3D28F"/>`,
+        nose: `<path d="M30 42 L32 47 L34 42 Z" fill="#C97A1E" stroke="#141923" stroke-width="3"/>`
+      }),
 
-      hurvinek: () => `
-        <svg viewBox="0 0 64 64" class="w-full h-full" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Hurvínek">
-          <path d="M26 46H38V56H30L26 50Z" fill="#1E3A8A" stroke="#141923" stroke-width="1.2"/>
-          <path d="M24 40H40L38 50H26L24 40Z" fill="#255485" stroke="#141923" stroke-width="1.4"/>
-          <circle cx="28" cy="45" r="1" fill="#FBBF24"/>
-          <circle cx="32" cy="47" r="1" fill="#FBBF24"/>
-          <circle cx="36" cy="45" r="1" fill="#FBBF24"/>
-          <path d="M30 40H34V44H30Z" fill="#FDE68A" stroke="#141923" stroke-width="0.8"/>
-          <circle cx="32" cy="30" r="13" fill="#F6CFA8" stroke="#141923" stroke-width="1.5"/>
-          <path d="M20 24C22 14 30 16 32 20C34 14 44 16 44 26" fill="#FBBF24" stroke="#141923" stroke-width="1.2"/>
-          <path d="M22 22C26 16 30 18 32 22" stroke="#F59E0B" stroke-width="1.3" stroke-linecap="round"/>
-          <path d="M18 20C22 8 42 8 46 20V24H18V20Z" fill="#B91C1C" stroke="#141923" stroke-width="1.4"/>
-          <path d="M22 16H42" stroke="#FCA5A5" stroke-width="1.4"/>
-          <ellipse cx="27" cy="30" rx="2" ry="2.4" fill="#FFFFFF" stroke="#141923" stroke-width="0.7"/>
-          <ellipse cx="37" cy="30" rx="2" ry="2.4" fill="#FFFFFF" stroke="#141923" stroke-width="0.7"/>
-          <circle cx="27.4" cy="30.4" r="1" fill="#141923"/>
-          <circle cx="37.4" cy="30.4" r="1" fill="#141923"/>
-          <path d="M28 36C30 38.2 34 38.2 36 36" stroke="#141923" stroke-width="1.3" stroke-linecap="round"/>
-          <ellipse cx="23.5" cy="33" rx="1.8" ry="1.1" fill="#F0A3A0"/>
-          <ellipse cx="40.5" cy="33" rx="1.8" ry="1.1" fill="#F0A3A0"/>
-        </svg>`,
+      hurvinek: (compact) => critterSvg('Spool', compact, {
+        body: `<ellipse cx="32" cy="44" rx="14" ry="12" fill="#B8293D" stroke="#141923" stroke-width="3"/>`,
+        ears: `<ellipse cx="16" cy="28" rx="9" ry="10" fill="#FCFAF6"/>
+          <ellipse cx="48" cy="28" rx="9" ry="10" fill="#FCFAF6"/>
+          <ellipse cx="16" cy="28" rx="6" ry="7" fill="#B8293D" stroke="#141923" stroke-width="3"/>
+          <ellipse cx="48" cy="28" rx="6" ry="7" fill="#B8293D" stroke="#141923" stroke-width="3"/>
+          <ellipse cx="16" cy="28" rx="3" ry="3.6" fill="#F3D28F"/>
+          <ellipse cx="48" cy="28" rx="3" ry="3.6" fill="#F3D28F"/>`,
+        prop: `<ellipse cx="50" cy="50" rx="7" ry="4" fill="#FCFAF6" stroke="#141923" stroke-width="3"/>
+          <ellipse cx="50" cy="50" rx="2.2" ry="4" fill="#C97A1E" stroke="#141923" stroke-width="3"/>`
+      }),
 
-      sandmann: () => `
-        <svg viewBox="0 0 64 64" class="w-full h-full" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Sandmännchen">
-          <rect x="22" y="40" width="18" height="16" rx="3" fill="#1D4E89" stroke="#141923" stroke-width="1.4"/>
-          <path d="M26 40H36V46H26Z" fill="#163A66"/>
-          <circle cx="27" cy="50" r="1" fill="#FBBF24"/>
-          <circle cx="31" cy="52" r="1" fill="#FBBF24"/>
-          <circle cx="35" cy="49" r="1" fill="#FBBF24"/>
-          <circle cx="32" cy="30" r="10" fill="#F3C7A1" stroke="#141923" stroke-width="1.5"/>
-          <path d="M24 34C27 41 37 41 40 34V38H24V34Z" fill="#F8FAFC" stroke="#141923" stroke-width="1.2"/>
-          <path d="M26 36C28 39 30 39 32 37C34 39 36 39 38 36" stroke="#CBD5E1" stroke-width="0.8"/>
-          <path d="M28 28H31" stroke="#141923" stroke-width="1.2" stroke-linecap="round"/>
-          <path d="M34 28H37" stroke="#141923" stroke-width="1.2" stroke-linecap="round"/>
-          <path d="M30 33C31 34 33 34 34 33" stroke="#141923" stroke-width="1" stroke-linecap="round"/>
-          <path d="M23 18L32 4L41 18H23Z" fill="#B91C1C" stroke="#141923" stroke-width="1.4"/>
-          <path d="M28 12L32 7L36 12" stroke="#FCA5A5" stroke-width="1.2"/>
-          <path d="M22 18H42" stroke="#7F1D1D" stroke-width="2" stroke-linecap="round"/>
-          <ellipse cx="50" cy="46" rx="7" ry="6" fill="#F59E0B" stroke="#141923" stroke-width="1.3"/>
-          <path d="M46 44H54M47 47H53M48 50H52" stroke="#FDE68A" stroke-width="1" stroke-linecap="round"/>
-          <path d="M44 40C46 36 54 36 56 40" stroke="#B45309" stroke-width="1.3" stroke-linecap="round"/>
-        </svg>`,
+      sandmann: (compact) => critterSvg('Bell', compact, {
+        body: `<ellipse cx="32" cy="42" rx="16" ry="13" fill="#F3D28F" stroke="#141923" stroke-width="3"/>
+          <ellipse cx="22" cy="36" rx="7" ry="6" fill="#FCFAF6" stroke="#141923" stroke-width="3"/>
+          <ellipse cx="42" cy="36" rx="7" ry="6" fill="#FCFAF6" stroke="#141923" stroke-width="3"/>`,
+        ears: `<ellipse cx="18" cy="24" rx="5" ry="6" fill="#FCFAF6"/>
+          <ellipse cx="46" cy="24" rx="5" ry="6" fill="#FCFAF6"/>
+          <ellipse cx="18" cy="24" rx="3.2" ry="4" fill="#F3D28F" stroke="#141923" stroke-width="3"/>
+          <ellipse cx="46" cy="24" rx="3.2" ry="4" fill="#F3D28F" stroke="#141923" stroke-width="3"/>`,
+        prop: `<path d="M28 50 Q32 46 36 50 L34 58 Q32 60 30 58 Z" fill="#B8293D" stroke="#141923" stroke-width="3"/>
+          <circle cx="32" cy="57" r="1.5" fill="#141923"/>`,
+        stripes: `<path d="M32 46 V50" stroke="#141923" stroke-width="3"/>`
+      }),
 
-      machSebestova: () => `
-        <svg viewBox="0 0 64 64" class="w-full h-full" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Mach and Šebestová">
-          <path d="M14 36H30L28 52H16L14 36Z" fill="#1D4E89" stroke="#141923" stroke-width="1.3"/>
-          <path d="M18 36H26V42H18Z" fill="#F8FAFC" stroke="#141923" stroke-width="0.8"/>
-          <path d="M34 36H50L48 52H36L34 36Z" fill="#C2410C" stroke="#141923" stroke-width="1.3"/>
-          <path d="M38 40H46" stroke="#FDBA74" stroke-width="1.4"/>
-          <circle cx="22" cy="26" r="8.5" fill="#F6CFA8" stroke="#141923" stroke-width="1.4"/>
-          <circle cx="42" cy="26" r="8.5" fill="#F6CFA8" stroke="#141923" stroke-width="1.4"/>
-          <path d="M16 20C18 16 26 16 28 20" stroke="#8B5E34" stroke-width="1.6" stroke-linecap="round"/>
-          <path d="M36 18C40 12 48 14 49 19" fill="#B8293D" stroke="#141923" stroke-width="1.1"/>
-          <circle cx="19" cy="25" r="2.3" fill="none" stroke="#141923" stroke-width="1.1"/>
-          <circle cx="25" cy="25" r="2.3" fill="none" stroke="#141923" stroke-width="1.1"/>
-          <path d="M21.2 25H22.8" stroke="#141923" stroke-width="1"/>
-          <circle cx="19" cy="25" r="0.7" fill="#141923"/>
-          <circle cx="25" cy="25" r="0.7" fill="#141923"/>
-          <ellipse cx="39.5" cy="25.5" rx="1.3" ry="1.6" fill="#FFFFFF" stroke="#141923" stroke-width="0.6"/>
-          <ellipse cx="44.5" cy="25.5" rx="1.3" ry="1.6" fill="#FFFFFF" stroke="#141923" stroke-width="0.6"/>
-          <circle cx="39.7" cy="25.8" r="0.6" fill="#141923"/>
-          <circle cx="44.7" cy="25.8" r="0.6" fill="#141923"/>
-          <path d="M20 29C21 30 23 30 24 29" stroke="#141923" stroke-width="1" stroke-linecap="round"/>
-          <path d="M40 30C41 31 43 31 44 30" stroke="#141923" stroke-width="1" stroke-linecap="round"/>
-          <ellipse cx="16.5" cy="28" rx="1.4" ry="0.8" fill="#F0A3A0"/>
-          <ellipse cx="46.5" cy="28" rx="1.4" ry="0.8" fill="#F0A3A0"/>
-        </svg>`,
+      machSebestova: (compact) => critterSvg('Boat', compact, {
+        body: `<ellipse cx="32" cy="40" rx="18" ry="14" fill="#245C46" stroke="#141923" stroke-width="3"/>`,
+        ears: `<ellipse cx="20" cy="18" rx="7" ry="5" fill="#FCFAF6"/>
+          <ellipse cx="44" cy="18" rx="7" ry="5" fill="#FCFAF6"/>
+          <ellipse cx="20" cy="18" rx="5" ry="3.4" fill="#245C46" stroke="#141923" stroke-width="3"/>
+          <ellipse cx="44" cy="18" rx="5" ry="3.4" fill="#245C46" stroke="#141923" stroke-width="3"/>`,
+        prop: `<path d="M44 50 Q52 40 60 50 Q52 54 44 50 Z" fill="#C97A1E" stroke="#141923" stroke-width="3"/>`,
+        stripes: `<path d="M48 48 H56" stroke="#FCFAF6" stroke-width="3"/>`,
+        smile: `<path d="M24 46 Q32 54 40 46" fill="none" stroke="#141923" stroke-width="3"/>`
+      }),
 
-      kremilek: () => `
-        <svg viewBox="0 0 64 64" class="w-full h-full" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Křemílek and Vochomůrka">
-          <circle cx="22" cy="36" r="13" fill="#F3C9A4" stroke="#141923" stroke-width="1.5"/>
-          <circle cx="45" cy="38" r="11" fill="#E7D3B0" stroke="#141923" stroke-width="1.5"/>
-          <ellipse cx="22" cy="40" rx="7" ry="5" fill="#E8B48A"/>
-          <ellipse cx="45" cy="42" rx="6" ry="4" fill="#D7C09A"/>
-          <path d="M14 26H30L28 16H16L14 26Z" fill="#B91C1C" stroke="#141923" stroke-width="1.3"/>
-          <path d="M16 20H28" stroke="#FCA5A5" stroke-width="1.3"/>
-          <rect x="20" y="16" width="4" height="4" fill="#FBBF24" stroke="#141923" stroke-width="0.8"/>
-          <ellipse cx="18" cy="34" rx="1.7" ry="2" fill="#FFFFFF" stroke="#141923" stroke-width="0.6"/>
-          <ellipse cx="25" cy="34" rx="1.7" ry="2" fill="#FFFFFF" stroke="#141923" stroke-width="0.6"/>
-          <circle cx="18.4" cy="34.4" r="0.8" fill="#141923"/>
-          <circle cx="25.4" cy="34.4" r="0.8" fill="#141923"/>
-          <ellipse cx="42" cy="37" rx="1.4" ry="1.7" fill="#FFFFFF" stroke="#141923" stroke-width="0.6"/>
-          <ellipse cx="48" cy="37" rx="1.4" ry="1.7" fill="#FFFFFF" stroke="#141923" stroke-width="0.6"/>
-          <circle cx="42.3" cy="37.3" r="0.7" fill="#141923"/>
-          <circle cx="48.3" cy="37.3" r="0.7" fill="#141923"/>
-          <path d="M19 40C21 42 24 42 26 40" stroke="#141923" stroke-width="1.2" stroke-linecap="round"/>
-          <path d="M43 42C44.5 43.4 46.5 43.4 48 42" stroke="#141923" stroke-width="1.1" stroke-linecap="round"/>
-          <ellipse cx="14" cy="37" rx="1.6" ry="1" fill="#F0A3A0"/>
-          <ellipse cx="51" cy="40" rx="1.4" ry="0.9" fill="#F0A3A0"/>
-        </svg>`,
+      kremilek: (compact) => critterSvg('Shell', compact, {
+        back: `<ellipse cx="40" cy="34" rx="14" ry="12" fill="#FCFAF6"/>
+          <ellipse cx="40" cy="34" rx="11" ry="9" fill="#F3D28F" stroke="#141923" stroke-width="3"/>
+          <ellipse cx="40" cy="34" rx="5" ry="4" fill="#C97A1E" stroke="#141923" stroke-width="3"/>`,
+        body: `<ellipse cx="24" cy="46" rx="12" ry="8" fill="#7A4B2A" stroke="#141923" stroke-width="3"/>`,
+        ears: `<path d="M16 42 Q10 28 18 36" fill="none" stroke="#7A4B2A" stroke-width="3"/>
+          <path d="M26 40 Q30 26 34 36" fill="none" stroke="#7A4B2A" stroke-width="3"/>`,
+        muzzle: `<ellipse cx="22" cy="46" rx="6" ry="4" fill="#FCFAF6"/>`,
+        prop: `<path d="M6 28 Q14 18 20 28 Q12 26 6 28 Z" fill="#245C46" stroke="#141923" stroke-width="3"/>`,
+        stripes: `<path d="M9 26 Q14 24 17 28" fill="none" stroke="#F3D28F" stroke-width="3"/>`,
+        eyes: `<use href="#critter-eye" x="12" y="34" width="8" height="10"/>
+          <use href="#critter-eye" x="22" y="32" width="8" height="10"/>`,
+        nose: '',
+        smile: `<path d="M18 50 Q22 53 26 50" fill="none" stroke="#141923" stroke-width="3"/>`,
+        cheeks: `<ellipse cx="16" cy="48" rx="2" ry="1.2" fill="#B8293D" opacity="0.5"/>`,
+        brows: ''
+      }),
 
-      ferda: () => `
-        <svg viewBox="0 0 64 64" class="w-full h-full" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Ferda the Ant">
-          <ellipse cx="32" cy="46" rx="9" ry="8" fill="#9F1239" stroke="#141923" stroke-width="1.4"/>
-          <ellipse cx="32" cy="34" rx="8" ry="7" fill="#B91C1C" stroke="#141923" stroke-width="1.4"/>
-          <ellipse cx="32" cy="34" rx="4" ry="3" fill="#E11D48"/>
-          <circle cx="32" cy="20" r="8" fill="#DC2626" stroke="#141923" stroke-width="1.4"/>
-          <path d="M26 16C22 10 18 8 16 6" stroke="#141923" stroke-width="1.5" stroke-linecap="round"/>
-          <path d="M38 16C42 10 46 8 48 6" stroke="#141923" stroke-width="1.5" stroke-linecap="round"/>
-          <circle cx="16" cy="6" r="1.6" fill="#141923"/>
-          <circle cx="48" cy="6" r="1.6" fill="#141923"/>
-          <ellipse cx="29" cy="19" rx="1.5" ry="1.8" fill="#FDE68A" stroke="#141923" stroke-width="0.6"/>
-          <ellipse cx="35" cy="19" rx="1.5" ry="1.8" fill="#FDE68A" stroke="#141923" stroke-width="0.6"/>
-          <circle cx="29.3" cy="19.4" r="0.7" fill="#141923"/>
-          <circle cx="35.3" cy="19.4" r="0.7" fill="#141923"/>
-          <path d="M30 23C31 24 33 24 34 23" stroke="#FDE68A" stroke-width="1" stroke-linecap="round"/>
-          <path d="M24 32H12M24 36H10M24 40H12M40 32H52M40 36H54M40 40H52" stroke="#141923" stroke-width="1.5" stroke-linecap="round"/>
-          <circle cx="12" cy="32" r="1.1" fill="#141923"/>
-          <circle cx="52" cy="32" r="1.1" fill="#141923"/>
-        </svg>`,
+      ferda: (compact) => critterSvg('Dot', compact, {
+        body: `<ellipse cx="32" cy="42" rx="16" ry="14" fill="#B8293D" stroke="#141923" stroke-width="3"/>
+          <ellipse cx="32" cy="34" rx="4.5" ry="3.6" fill="#FCFAF6"/>`,
+        ears: `<ellipse cx="18" cy="24" rx="4" ry="3" fill="#141923"/>
+          <ellipse cx="46" cy="24" rx="4" ry="3" fill="#141923"/>`,
+        prop: `<ellipse cx="50" cy="50" rx="5" ry="4" fill="#C97A1E" stroke="#141923" stroke-width="3"/>
+          <path d="M47 48 H53" stroke="#141923" stroke-width="3"/>`
+      }),
 
-      blaubaer: () => `
-        <svg viewBox="0 0 64 64" class="w-full h-full" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Käpt’n Blaubär">
-          <circle cx="22" cy="18" r="7" fill="#1D4E89" stroke="#141923" stroke-width="1.4"/>
-          <circle cx="42" cy="18" r="7" fill="#1D4E89" stroke="#141923" stroke-width="1.4"/>
-          <ellipse cx="22" cy="18" rx="3.2" ry="4" fill="#93C5FD"/>
-          <ellipse cx="42" cy="18" rx="3.2" ry="4" fill="#93C5FD"/>
-          <circle cx="32" cy="36" r="15" fill="#255485" stroke="#141923" stroke-width="1.5"/>
-          <ellipse cx="26" cy="32" rx="6" ry="8" fill="#3B82C4" opacity="0.55"/>
-          <ellipse cx="32" cy="42" rx="6" ry="4" fill="#F3C7A1" stroke="#141923" stroke-width="1.2"/>
-          <ellipse cx="32" cy="41" rx="2.2" ry="1.4" fill="#141923"/>
-          <ellipse cx="27" cy="33" rx="1.8" ry="2.2" fill="#FFFFFF" stroke="#141923" stroke-width="0.6"/>
-          <ellipse cx="37" cy="33" rx="1.8" ry="2.2" fill="#FFFFFF" stroke="#141923" stroke-width="0.6"/>
-          <circle cx="27.4" cy="33.4" r="0.9" fill="#141923"/>
-          <circle cx="37.4" cy="33.4" r="0.9" fill="#141923"/>
-          <path d="M18 14H46V18H18Z" fill="#0F2744" stroke="#141923" stroke-width="1.2"/>
-          <path d="M24 10H40L38 14H26L24 10Z" fill="#0F2744" stroke="#141923" stroke-width="1.2"/>
-          <path d="M30 10V6H34V10" stroke="#FBBF24" stroke-width="1.6"/>
-          <circle cx="32" cy="5" r="1.4" fill="#FBBF24"/>
-          <path d="M20 16H44" stroke="#FBBF24" stroke-width="2" stroke-linecap="round"/>
-        </svg>`,
+      blaubaer: (compact) => critterSvg('Cove', compact, {
+        body: `<ellipse cx="32" cy="42" rx="18" ry="13" fill="#255485" stroke="#141923" stroke-width="3"/>`,
+        ears: '',
+        muzzle: `<ellipse cx="32" cy="44" rx="8" ry="5" fill="#FCFAF6"/>`,
+        prop: `<path d="M16 34 Q32 28 48 34 Q32 42 16 34 Z" fill="#B8293D" stroke="#141923" stroke-width="3"/>`,
+        stripes: `<path d="M22 35 H42" stroke="#F3D28F" stroke-width="3"/>`
+      }),
 
-      pumuckl: () => `
-        <svg viewBox="0 0 64 64" class="w-full h-full" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Pumuckl">
-          <path d="M24 46H40L37 58H27L24 46Z" fill="#166534" stroke="#141923" stroke-width="1.4"/>
-          <path d="M28 48H36" stroke="#86EFAC" stroke-width="1.3"/>
-          <rect x="30" y="50" width="4" height="4" rx="0.6" fill="#FBBF24" stroke="#141923" stroke-width="0.7"/>
-          <circle cx="32" cy="38" r="10" fill="#F6CFA8" stroke="#141923" stroke-width="1.4"/>
-          <path d="M16 30C14 12 24 8 32 16C40 8 50 12 48 30C56 18 58 32 50 36C44 24 40 24 32 28C24 24 20 24 14 36C6 32 8 18 16 30Z" fill="#DC2626" stroke="#141923" stroke-width="1.3"/>
-          <path d="M20 22C24 16 28 18 30 22M34 20C38 14 44 16 46 22" stroke="#FCA5A5" stroke-width="1.2" stroke-linecap="round"/>
-          <ellipse cx="28.5" cy="37" rx="1.6" ry="1.9" fill="#FFFFFF" stroke="#141923" stroke-width="0.6"/>
-          <ellipse cx="35.5" cy="37" rx="1.6" ry="1.9" fill="#FFFFFF" stroke="#141923" stroke-width="0.6"/>
-          <circle cx="28.9" cy="37.4" r="0.8" fill="#141923"/>
-          <circle cx="35.9" cy="37.4" r="0.8" fill="#141923"/>
-          <circle cx="27" cy="41" r="0.7" fill="#C2410C"/>
-          <circle cx="32" cy="42" r="0.7" fill="#C2410C"/>
-          <circle cx="37" cy="41" r="0.7" fill="#C2410C"/>
-          <path d="M29 42C30.5 43.4 33.5 43.4 35 42" stroke="#141923" stroke-width="1.1" stroke-linecap="round"/>
-        </svg>`,
+      pumuckl: (compact) => critterSvg('Kit', compact, {
+        body: `<ellipse cx="32" cy="44" rx="15" ry="13" fill="#C97A1E" stroke="#141923" stroke-width="3"/>`,
+        ears: `<path d="M16 28 Q18 8 28 22 Z" fill="#FCFAF6"/>
+          <path d="M48 28 Q46 8 36 22 Z" fill="#FCFAF6"/>
+          <path d="M18 26 Q20 12 27 22 Z" fill="#C97A1E" stroke="#141923" stroke-width="3"/>
+          <path d="M46 26 Q44 12 37 22 Z" fill="#C97A1E" stroke="#141923" stroke-width="3"/>`,
+        prop: `<ellipse cx="24" cy="32" rx="4.2" ry="3" fill="#B8293D" stroke="#141923" stroke-width="3"/>
+          <ellipse cx="40" cy="32" rx="4.2" ry="3" fill="#B8293D" stroke="#141923" stroke-width="3"/>
+          <circle cx="32" cy="32" r="2.3" fill="#F3D28F" stroke="#141923" stroke-width="3"/>`
+      }),
 
-      maxipes: () => `
-        <svg viewBox="0 0 64 64" class="w-full h-full" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Maxipes Fík">
-          <path d="M12 28L20 12L28 26Z" fill="#C2410C" stroke="#141923" stroke-width="1.3"/>
-          <path d="M52 28L44 12L36 26Z" fill="#C2410C" stroke="#141923" stroke-width="1.3"/>
-          <path d="M16 22L22 16L24 24" fill="#FDBA74"/>
-          <path d="M48 22L42 16L40 24" fill="#FDBA74"/>
-          <ellipse cx="32" cy="38" rx="15" ry="13" fill="#F59E0B" stroke="#141923" stroke-width="1.5"/>
-          <ellipse cx="26" cy="36" rx="4" ry="5" fill="#FBBF24"/>
-          <ellipse cx="32" cy="44" rx="6" ry="4" fill="#FDE68A" stroke="#141923" stroke-width="1"/>
-          <ellipse cx="32" cy="43.5" rx="2.4" ry="1.5" fill="#141923"/>
-          <path d="M30 46C31 48 33 48 34 46" fill="#F472B6"/>
-          <ellipse cx="26" cy="36" rx="1.8" ry="2.2" fill="#FFFFFF" stroke="#141923" stroke-width="0.6"/>
-          <ellipse cx="38" cy="36" rx="1.8" ry="2.2" fill="#FFFFFF" stroke="#141923" stroke-width="0.6"/>
-          <circle cx="26.4" cy="36.4" r="0.9" fill="#141923"/>
-          <circle cx="38.4" cy="36.4" r="0.9" fill="#141923"/>
-          <circle cx="24" cy="42" r="1.3" fill="#B45309"/>
-          <circle cx="40" cy="42" r="1.3" fill="#B45309"/>
-          <path d="M22 50L18 58" stroke="#141923" stroke-width="2.2" stroke-linecap="round"/>
-          <path d="M42 50L46 58" stroke="#141923" stroke-width="2.2" stroke-linecap="round"/>
-          <path d="M46 34C52 36 54 42 50 46" stroke="#F59E0B" stroke-width="2.4" stroke-linecap="round"/>
-        </svg>`,
+      maxipes: (compact) => critterSvg('Brook', compact, {
+        body: `<ellipse cx="30" cy="44" rx="16" ry="12" fill="#245C46" stroke="#141923" stroke-width="3"/>`,
+        ears: `<ellipse cx="18" cy="28" rx="5" ry="5" fill="#FCFAF6"/>
+          <ellipse cx="34" cy="26" rx="5" ry="5" fill="#FCFAF6"/>
+          <ellipse cx="18" cy="28" rx="3.2" ry="3.2" fill="#245C46" stroke="#141923" stroke-width="3"/>
+          <ellipse cx="34" cy="26" rx="3.2" ry="3.2" fill="#245C46" stroke="#141923" stroke-width="3"/>`,
+        prop: `<ellipse cx="50" cy="46" rx="7" ry="3.4" fill="#255485" stroke="#141923" stroke-width="3"/>
+          <path d="M56 46 Q62 40 58 52" fill="#255485" stroke="#141923" stroke-width="3"/>`,
+        stripes: `<circle cx="47" cy="46" r="1.3" fill="#FCFAF6"/>`
+      }),
 
-      ctyrlistek: () => `
-        <svg viewBox="0 0 64 64" class="w-full h-full" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Čtyřlístek">
-          <path d="M32 34V58" stroke="#166534" stroke-width="2.4" stroke-linecap="round"/>
-          <path d="M32 50C38 52 42 56 44 58" stroke="#166534" stroke-width="1.6" stroke-linecap="round"/>
-          <circle cx="23" cy="24" r="10" fill="#15803D" stroke="#141923" stroke-width="1.4"/>
-          <circle cx="41" cy="24" r="10" fill="#B91C1C" stroke="#141923" stroke-width="1.4"/>
-          <circle cx="23" cy="42" r="10" fill="#C2410C" stroke="#141923" stroke-width="1.4"/>
-          <circle cx="41" cy="42" r="10" fill="#1D4E89" stroke="#141923" stroke-width="1.4"/>
-          <ellipse cx="20" cy="21" rx="3" ry="4" fill="#4ADE80" opacity="0.7"/>
-          <ellipse cx="38" cy="21" rx="3" ry="4" fill="#FCA5A5" opacity="0.8"/>
-          <ellipse cx="20" cy="39" rx="3" ry="4" fill="#FDBA74" opacity="0.8"/>
-          <ellipse cx="38" cy="39" rx="3" ry="4" fill="#93C5FD" opacity="0.8"/>
-          <circle cx="22" cy="24" r="0.9" fill="#141923"/>
-          <circle cx="26" cy="24" r="0.9" fill="#141923"/>
-          <circle cx="40" cy="24" r="0.9" fill="#FFFFFF"/>
-          <circle cx="44" cy="24" r="0.9" fill="#FFFFFF"/>
-          <circle cx="22" cy="42" r="0.9" fill="#141923"/>
-          <circle cx="26" cy="42" r="0.9" fill="#141923"/>
-          <circle cx="40" cy="42" r="0.9" fill="#FFFFFF"/>
-          <circle cx="44" cy="42" r="0.9" fill="#FFFFFF"/>
-          <circle cx="32" cy="33" r="3.2" fill="#FBBF24" stroke="#141923" stroke-width="1.1"/>
-        </svg>`,
+      ctyrlistek: (compact) => critterSvg('Sprig', compact, {
+        body: `<ellipse cx="32" cy="46" rx="14" ry="12" fill="#FCFAF6" stroke="#141923" stroke-width="3"/>`,
+        ears: `<ellipse cx="24" cy="16" rx="5.2" ry="13" fill="#FCFAF6"/>
+          <ellipse cx="40" cy="16" rx="5.2" ry="13" fill="#FCFAF6"/>
+          <ellipse cx="24" cy="16" rx="3.2" ry="10" fill="#F3D28F" stroke="#141923" stroke-width="3"/>
+          <ellipse cx="40" cy="16" rx="3.2" ry="10" fill="#F3D28F" stroke="#141923" stroke-width="3"/>`,
+        muzzle: `<ellipse cx="32" cy="48" rx="7" ry="5" fill="#FCFAF6"/>`,
+        prop: `<circle cx="50" cy="18" r="3.3" fill="#245C46" stroke="#141923" stroke-width="3"/>
+          <circle cx="56" cy="24" r="3.3" fill="#245C46" stroke="#141923" stroke-width="3"/>
+          <circle cx="50" cy="30" r="3.3" fill="#245C46" stroke="#141923" stroke-width="3"/>`,
+        nose: `<ellipse cx="32" cy="46" rx="1.8" ry="1.3" fill="#B8293D"/>`
+      }),
 
-      maus: () => `
-        <svg viewBox="0 0 64 64" class="w-full h-full" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Die Maus">
-          <circle cx="18" cy="18" r="9" fill="#EA580C" stroke="#141923" stroke-width="1.4"/>
-          <circle cx="46" cy="18" r="9" fill="#EA580C" stroke="#141923" stroke-width="1.4"/>
-          <ellipse cx="18" cy="18" rx="4" ry="5" fill="#FDBA74"/>
-          <ellipse cx="46" cy="18" rx="4" ry="5" fill="#FDBA74"/>
-          <circle cx="32" cy="38" r="15" fill="#F97316" stroke="#141923" stroke-width="1.5"/>
-          <ellipse cx="26" cy="34" rx="5" ry="7" fill="#FB923C"/>
-          <ellipse cx="32" cy="44" rx="5" ry="3.4" fill="#FDE68A" stroke="#141923" stroke-width="1"/>
-          <ellipse cx="32" cy="43.5" rx="1.8" ry="1.1" fill="#141923"/>
-          <ellipse cx="27" cy="35" rx="1.8" ry="2.2" fill="#FFFFFF" stroke="#141923" stroke-width="0.6"/>
-          <ellipse cx="37" cy="35" rx="1.8" ry="2.2" fill="#FFFFFF" stroke="#141923" stroke-width="0.6"/>
-          <circle cx="27.4" cy="35.4" r="0.9" fill="#141923"/>
-          <circle cx="37.4" cy="35.4" r="0.9" fill="#141923"/>
-          <path d="M22 40H14M22 43H12M42 40H50M42 43H52" stroke="#141923" stroke-width="1" stroke-linecap="round"/>
-          <path d="M40 50C46 54 52 50 54 44" stroke="#C2410C" stroke-width="2.2" stroke-linecap="round"/>
-        </svg>`,
+      maus: (compact) => critterSvg('Walnut', compact, {
+        body: roundBody('#7A4B2A'),
+        ears: `<ellipse cx="20" cy="22" rx="7" ry="7" fill="#FCFAF6"/>
+          <ellipse cx="44" cy="22" rx="7" ry="7" fill="#FCFAF6"/>
+          <ellipse cx="20" cy="22" rx="4.6" ry="4.6" fill="#7A4B2A" stroke="#141923" stroke-width="3"/>
+          <ellipse cx="44" cy="22" rx="4.6" ry="4.6" fill="#7A4B2A" stroke="#141923" stroke-width="3"/>`,
+        prop: `<ellipse cx="48" cy="40" rx="5.2" ry="4" fill="#C97A1E" stroke="#141923" stroke-width="3"/>`,
+        stripes: `<path d="M45 40 H51" stroke="#7A4B2A" stroke-width="3"/>`,
+        cheeks: `<ellipse cx="22" cy="44" rx="3.4" ry="2.2" fill="#F3D28F"/>
+          <ellipse cx="42" cy="44" rx="3.4" ry="2.2" fill="#F3D28F"/>`
+      }),
 
-      maja: () => `
-        <svg viewBox="0 0 64 64" class="w-full h-full" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Biene Maja">
-          <path d="M14 30C18 16 28 18 32 28C36 18 46 16 50 30" fill="#BFDBFE" stroke="#141923" stroke-width="1.2" opacity="0.9"/>
-          <path d="M18 26C22 20 28 22 32 28M32 28C36 22 42 20 46 26" stroke="#93C5FD" stroke-width="1"/>
-          <ellipse cx="32" cy="38" rx="11" ry="14" fill="#FBBF24" stroke="#141923" stroke-width="1.5"/>
-          <path d="M21 34H43V40H21Z" fill="#141923"/>
-          <path d="M21 44H43V48H21Z" fill="#141923"/>
-          <ellipse cx="27" cy="36" rx="3" ry="5" fill="#FDE68A" opacity="0.7"/>
-          <circle cx="32" cy="20" r="7" fill="#FBBF24" stroke="#141923" stroke-width="1.4"/>
-          <path d="M27 16C29 14 31 15 32 17" stroke="#F59E0B" stroke-width="1.2" stroke-linecap="round"/>
-          <ellipse cx="29.5" cy="19.5" rx="1.4" ry="1.7" fill="#FFFFFF" stroke="#141923" stroke-width="0.6"/>
-          <ellipse cx="34.5" cy="19.5" rx="1.4" ry="1.7" fill="#FFFFFF" stroke="#141923" stroke-width="0.6"/>
-          <circle cx="29.8" cy="19.8" r="0.7" fill="#141923"/>
-          <circle cx="34.8" cy="19.8" r="0.7" fill="#141923"/>
-          <path d="M30 23C31 24 33 24 34 23" stroke="#141923" stroke-width="1" stroke-linecap="round"/>
-          <path d="M28 14L25 6" stroke="#141923" stroke-width="1.3" stroke-linecap="round"/>
-          <path d="M36 14L39 6" stroke="#141923" stroke-width="1.3" stroke-linecap="round"/>
-          <circle cx="25" cy="6" r="1.5" fill="#141923"/>
-          <circle cx="39" cy="6" r="1.5" fill="#141923"/>
-          <ellipse cx="26" cy="22" rx="1.4" ry="0.8" fill="#F0A3A0"/>
-        </svg>`,
+      maja: (compact) => critterSvg('Moth', compact, {
+        back: `<ellipse cx="14" cy="40" rx="12" ry="8" fill="#FCFAF6"/>
+          <ellipse cx="50" cy="40" rx="12" ry="8" fill="#FCFAF6"/>
+          <ellipse cx="14" cy="40" rx="9" ry="6" fill="#255485" stroke="#141923" stroke-width="3"/>
+          <ellipse cx="50" cy="40" rx="9" ry="6" fill="#255485" stroke="#141923" stroke-width="3"/>`,
+        body: `<ellipse cx="32" cy="42" rx="8" ry="14" fill="#F3D28F" stroke="#141923" stroke-width="3"/>`,
+        ears: `<ellipse cx="26" cy="20" rx="3.4" ry="4" fill="#FCFAF6"/>
+          <ellipse cx="38" cy="20" rx="3.4" ry="4" fill="#FCFAF6"/>
+          <ellipse cx="26" cy="20" rx="2.2" ry="2.8" fill="#F3D28F" stroke="#141923" stroke-width="3"/>
+          <ellipse cx="38" cy="20" rx="2.2" ry="2.8" fill="#F3D28F" stroke="#141923" stroke-width="3"/>`,
+        prop: `<circle cx="32" cy="14" r="3.2" fill="#B8293D" stroke="#141923" stroke-width="3"/>`,
+        muzzle: `<ellipse cx="32" cy="36" rx="5" ry="4" fill="#FCFAF6"/>`
+      }),
 
-      rakosnicek: () => `
-        <svg viewBox="0 0 64 64" class="w-full h-full" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Rákosníček">
-          <ellipse cx="32" cy="56" rx="16" ry="4" fill="#166534" stroke="#141923" stroke-width="1.2"/>
-          <ellipse cx="26" cy="55" rx="6" ry="2" fill="#4ADE80"/>
-          <circle cx="32" cy="36" r="13" fill="#4ADE80" stroke="#141923" stroke-width="1.5"/>
-          <ellipse cx="27" cy="33" rx="5" ry="7" fill="#86EFAC"/>
-          <path d="M32 8V24" stroke="#166534" stroke-width="2.2" stroke-linecap="round"/>
-          <path d="M32 12C40 14 46 8 48 6" stroke="#15803D" stroke-width="1.6" stroke-linecap="round"/>
-          <path d="M32 16C24 18 18 12 16 8" stroke="#15803D" stroke-width="1.6" stroke-linecap="round"/>
-          <ellipse cx="28" cy="35" rx="1.7" ry="2" fill="#FFFFFF" stroke="#141923" stroke-width="0.6"/>
-          <ellipse cx="36" cy="35" rx="1.7" ry="2" fill="#FFFFFF" stroke="#141923" stroke-width="0.6"/>
-          <circle cx="28.4" cy="35.4" r="0.8" fill="#141923"/>
-          <circle cx="36.4" cy="35.4" r="0.8" fill="#141923"/>
-          <path d="M29 40C30.5 41.4 33.5 41.4 35 40" stroke="#141923" stroke-width="1.2" stroke-linecap="round"/>
-          <path d="M20 44C24 40 22 36 18 34" stroke="#166534" stroke-width="1.6" stroke-linecap="round"/>
-          <path d="M44 44C40 40 42 36 46 34" stroke="#166534" stroke-width="1.6" stroke-linecap="round"/>
-        </svg>`
+      rakosnicek: (compact) => critterSvg('Puddle', compact, {
+        body: `<ellipse cx="32" cy="46" rx="16" ry="11" fill="#255485" stroke="#141923" stroke-width="3"/>`,
+        ears: '',
+        muzzle: `<ellipse cx="36" cy="40" rx="8" ry="6" fill="#FCFAF6"/>`,
+        prop: `<ellipse cx="32" cy="20" rx="13" ry="6" fill="#FCFAF6" stroke="#141923" stroke-width="3"/>
+          <ellipse cx="48" cy="42" rx="6" ry="3" fill="#C97A1E" stroke="#141923" stroke-width="3"/>`,
+        stripes: `<path d="M22 20 H42" stroke="#B8293D" stroke-width="3"/>`,
+        nose: `<ellipse cx="40" cy="40" rx="1.8" ry="1.3" fill="#141923"/>`
+      })
     };
 
     /**
@@ -2552,23 +2403,23 @@
 
     const WHO_STORAGE_KEY = 'prague_winter_atlas_who_v1';
     const MASCOT_NAMES = {
-      krtek: 'Krtek',
-      rumcajs: 'Rumcajs',
-      bobAndBobek: 'Bob and Bobek',
-      vecernicek: 'Večerníček',
-      hurvinek: 'Hurvínek',
-      sandmann: 'Sandmännchen',
-      machSebestova: 'Mach and Šebestová',
-      kremilek: 'Křemílek and Vochomůrka',
-      patAndMat: 'Pat and Mat',
-      ferda: 'Ferda the Ant',
-      blaubaer: 'Käpt’n Blaubär',
-      pumuckl: 'Pumuckl',
-      maxipes: 'Maxipes Fík',
-      ctyrlistek: 'Čtyřlístek',
-      maus: 'Die Maus',
-      maja: 'Biene Maja',
-      rakosnicek: 'Rákosníček'
+      krtek: 'Pip',
+      rumcajs: 'Acorn',
+      bobAndBobek: 'Burr',
+      vecernicek: 'Lumen',
+      hurvinek: 'Spool',
+      sandmann: 'Bell',
+      machSebestova: 'Boat',
+      kremilek: 'Shell',
+      patAndMat: 'Nib',
+      ferda: 'Dot',
+      blaubaer: 'Cove',
+      pumuckl: 'Kit',
+      maxipes: 'Brook',
+      ctyrlistek: 'Sprig',
+      maus: 'Walnut',
+      maja: 'Moth',
+      rakosnicek: 'Puddle'
     };
     const MODE_META = {
       walk: { key: 'walk', label: 'Walk', profile: 'foot', color: '#245C46', dash: null },
@@ -3280,7 +3131,7 @@
       const fn = CZECH_GERMAN_SVGS[day.mascot] || CZECH_GERMAN_SVGS.krtek;
       art.innerHTML = fn();
       const copy = document.getElementById('tripCelebrateCopy');
-      if (copy) copy.textContent = state.activeUser + ', every day on your trip is checked off. A je to!';
+      if (copy) copy.textContent = state.activeUser + ', every day on your trip is checked off. All set.';
       el.classList.remove('hidden');
     }
 
@@ -3613,8 +3464,8 @@
       renderTripChrome();
       paintWhoFaces();
       paintHeaderMascot();
-      document.getElementById('btnBobekIcon').innerHTML = CZECH_GERMAN_SVGS.bobAndBobek();
-      document.getElementById('btnPatMatIcon').innerHTML = CZECH_GERMAN_SVGS.patAndMat();
+      document.getElementById('btnBobekIcon').innerHTML = CZECH_GERMAN_SVGS.bobAndBobek(true);
+      document.getElementById('btnPatMatIcon').innerHTML = CZECH_GERMAN_SVGS.patAndMat(true);
       document.getElementById('modalPatMatArt').innerHTML = CZECH_GERMAN_SVGS.patAndMat();
     }
 
