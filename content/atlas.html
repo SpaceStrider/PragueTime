@@ -30,46 +30,13 @@
   <!-- Editorial & Technical Typography: Fraunces, Plus Jakarta Sans, JetBrains Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preconnect" href="https://unpkg.com" />
+  <link rel="preconnect" href="https://tile.openstreetmap.org" />
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
 
-  <!-- Leaflet 1.9.4 Retina Cartography -->
+  <link rel="stylesheet" href="atlas.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
-
-  <!-- Tailwind CSS -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"></script>
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          fontFamily: {
-            display: ['Fraunces', 'Georgia', 'serif'],
-            sans: ['Plus Jakarta Sans', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
-            mono: ['JetBrains Mono', 'ui-monospace', 'SFMono-Regular', 'monospace']
-          },
-          colors: {
-            vltava: '#141923',
-            garnet: { DEFAULT: '#B8293D', dark: '#9E2032' },
-            pilsner: { DEFAULT: '#C97A1E', light: '#F3D28F' },
-            linden: { DEFAULT: '#245C46', dark: '#1C4837' },
-            cobalt: '#255485',
-            coffee: '#7A4B2A',
-            parchment: '#FCFAF6'
-          },
-          boxShadow: {
-            '2xs': '0 1px 0 0 rgb(0 0 0 / 0.05)'
-          },
-          backdropBlur: {
-            xs: '2px'
-          },
-          scale: {
-            '115': '1.15'
-          }
-        }
-      }
-    };
-  </script>
 
   <style>
     :root {
@@ -122,6 +89,11 @@
       border: 1px solid var(--glass-border);
       box-shadow: 0 12px 34px -8px rgba(20, 25, 35, 0.18), 0 2px 8px -2px rgba(20, 25, 35, 0.08);
       position: relative;
+    }
+    .fixed.atlas-glass { position: fixed; }
+    #dayRibbonScroll > button { min-height: 2.75rem; }
+    @media (max-width: 639px) {
+      input, select, textarea { font-size: 16px !important; }
     }
 
     .atlas-glass::before {
@@ -417,6 +389,9 @@
     html.theme-dark #themeToggle .theme-icon-sun { display: block; }
     html.theme-dark .skip-link { background: #1b2230; color: #f4efe6; }
     button, select, a { touch-action: manipulation; }
+    @media (max-width: 1023px) {
+      #atlasToast { bottom: var(--toast-lift, 1.25rem); }
+    }
     button:focus-visible, select:focus-visible, a:focus-visible {
       outline: 2px solid #b8293d;
       outline-offset: 2px;
@@ -606,7 +581,7 @@
           <div id="desktopVoterPills" class="flex items-center gap-0.5"></div>
         </div>
         <select id="mobileVoterSelect" onchange="setActiveUser(this.value)" aria-label="Who is holding this phone"
-          class="lg:hidden bg-white/85 text-vltava text-[11px] sm:text-xs font-bold rounded-xl px-1.5 py-1.5 sm:px-2 sm:py-2 border border-vltava/15 focus:outline-none max-w-[3.9rem] sm:max-w-[5.5rem]">
+          class="lg:hidden bg-white/85 text-vltava text-[11px] sm:text-xs font-bold rounded-xl pl-2 pr-6 py-1.5 sm:px-2 sm:py-2 border border-vltava/15 focus:outline-none max-w-[6.5rem] sm:max-w-[8rem]">
         </select>
 
         <!-- Hidden gems toggle -->
@@ -2896,7 +2871,7 @@
     }
 
     async function commonsImage(fileTitle) {
-      const url = 'https://commons.wikimedia.org/w/api.php?action=query&format=json&origin=*&prop=imageinfo&iiprop=url|extmetadata&iiurlwidth=960&titles=' + encodeURIComponent(fileTitle);
+      const url = 'https://commons.wikimedia.org/w/api.php?action=query&format=json&origin=*&prop=imageinfo&iiprop=url|extmetadata&iiurlwidth=640&titles=' + encodeURIComponent(fileTitle);
       const data = await fetch(url).then(r => r.json());
       const page = Object.values((data.query && data.query.pages) || {})[0];
       const info = page && page.imageinfo && page.imageinfo[0];
@@ -2943,6 +2918,56 @@
       } catch (e) {
         photoCache[key] = { src: '' };
       }
+    }
+
+    const photoQueue = [];
+    let photoActive = 0;
+
+    function pumpStopPhotos() {
+      while (photoActive < 2 && photoQueue.length) {
+        const next = photoQueue.shift();
+        photoActive += 1;
+        Promise.resolve(requestStopPhoto(next)).finally(() => {
+          photoActive -= 1;
+          pumpStopPhotos();
+        });
+      }
+    }
+
+    function scheduleStopPhoto(stop) {
+      if (!stop) return;
+      const key = stop.id || (stop.lat + ',' + stop.lng);
+      if (photoCache[key] && photoCache[key] !== 'pending') {
+        paintStopPhoto(stop, photoCache[key]);
+        return;
+      }
+      if (photoCache[key] === 'pending') return;
+      if (photoQueue.some(queued => queued.id === stop.id)) return;
+      photoQueue.push(stop);
+      pumpStopPhotos();
+    }
+
+    let photoWatch = null;
+    function watchStopPhotos() {
+      if (photoWatch) photoWatch.disconnect();
+      const root = document.getElementById('drawerStopsFeed');
+      if (!root) return;
+      const byId = {};
+      getDayStops(getCurrentDay()).forEach(stop => { byId[safeDomId(stop.id)] = stop; });
+      const imgs = [...root.querySelectorAll('[data-stop-photo]')];
+      if (typeof IntersectionObserver === 'undefined') {
+        imgs.forEach(img => scheduleStopPhoto(byId[img.getAttribute('data-stop-photo')]));
+        return;
+      }
+      const io = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+          if (!entry.isIntersecting) return;
+          io.unobserve(entry.target);
+          scheduleStopPhoto(byId[entry.target.getAttribute('data-stop-photo')]);
+        });
+      }, { root, rootMargin: '280px 0px' });
+      photoWatch = io;
+      imgs.forEach(img => io.observe(img));
     }
 
     function paintStopPhoto(stop, photo) {
@@ -3111,7 +3136,7 @@
               <span class="text-[10px] font-semibold text-stone-500">${esc(stop.neighborhood)}</span>
             </div>
             <h4 class="font-display font-bold text-sm text-vltava leading-snug">${esc(stop.title)}</h4>
-            <img data-stop-photo="${safeDomId(stop.id)}" alt="" class="hidden w-full h-28 object-cover rounded-xl" />
+            <img data-stop-photo="${safeDomId(stop.id)}" alt="" decoding="async" loading="lazy" class="hidden w-full h-28 object-cover rounded-xl" />
             <p data-photo-credit class="hidden text-[10px] text-stone-400"></p>
             <p class="text-xs text-stone-700 leading-relaxed">${esc(stop.tip)}</p>
             <div class="pt-1.5 flex items-center gap-1.5">
@@ -3702,7 +3727,7 @@
                     <span>&#9733; ${esc(stop.booking)}</span>
                   </div>` : ''}
 
-                <img data-stop-photo="${safeDomId(stop.id)}" alt="" class="hidden mt-2 w-full h-40 object-cover rounded-xl border border-stone-200" />
+                <img data-stop-photo="${safeDomId(stop.id)}" alt="" decoding="async" loading="lazy" class="hidden mt-2 w-full h-40 object-cover rounded-xl border border-stone-200" />
                 <p data-photo-credit class="hidden text-[10px] text-stone-400 mt-1"></p>
                 <p class="text-xs text-stone-600 mt-2 leading-relaxed">${esc(stop.tip)}</p>
                 ${routeNote(state.activeUser, stop, day) ? `<p class="text-[11px] font-medium text-cobalt mt-1.5">${esc(routeNote(state.activeUser, stop, day))}</p>` : ''}
@@ -3757,7 +3782,7 @@
         </div>`;
 
       feed.innerHTML = html;
-      stops.forEach(stop => requestStopPhoto(stop));
+      watchStopPhotos();
     }
 
     function updateDayNote(dayId, val) {
@@ -3866,6 +3891,8 @@
       const sheetTop = drawer.getBoundingClientRect().top;
       const headerBottom = header ? header.getBoundingClientRect().bottom : 0;
       const visibleMap = sheetTop - headerBottom;
+      const lift = Math.max(20, window.innerHeight - sheetTop + 12);
+      document.documentElement.style.setProperty('--toast-lift', lift + 'px');
       if (visibleMap < 42) {
         document.documentElement.classList.add('map-chrome-hidden');
       } else {
@@ -4212,10 +4239,27 @@
       }
     }
 
+    let qrCodePromise = null;
+    function loadQrCode() {
+      if (typeof qrcode === 'function') return Promise.resolve();
+      if (qrCodePromise) return qrCodePromise;
+      qrCodePromise = new Promise((resolve, reject) => {
+        const script = document.createElement('script');
+        script.src = 'https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js';
+        script.onload = () => resolve();
+        script.onerror = () => reject(new Error('qr'));
+        document.head.appendChild(script);
+      });
+      return qrCodePromise;
+    }
+
     // Crisp deterministic finder-pattern + data-hash QR-style matrix visual
     function drawVisualQrMatrix(canvasId, text) {
       const c = document.getElementById(canvasId);
       if (!c) return;
+      if (typeof qrcode !== 'function') {
+        loadQrCode().then(() => drawVisualQrMatrix(canvasId, text)).catch(() => {});
+      }
       if (typeof qrcode === 'function') {
         try {
           const qr = qrcode(0, 'M');
