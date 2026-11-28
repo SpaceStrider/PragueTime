@@ -725,7 +725,7 @@
               </span>
               <h3 id="shareHeading" class="font-bold text-sm text-vltava">Share this link</h3>
               <p class="text-stone-600 leading-relaxed">
-                The plan is on this link. Hearts, finished stops, notes, custom pins, and the Dec 30 choice sync on their own. Each person taps their own name.
+                The plan is on this link. Hearts, finished stops, notes, custom pins, and route choices sync on their own. Each person taps their own name.
               </p>
             </div>
             <!-- Scannable Canvas QR Code -->
@@ -776,7 +776,7 @@
             <span id="syncBadge" class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-stone-200 text-stone-700">Connecting</span>
           </div>
           <p class="text-stone-700 leading-relaxed">
-            Hearts, checkmarks, notes, custom pins, and the Dec 30 choice are shared by every phone. The day open on this phone stays on this phone.
+            Hearts, checkmarks, notes, custom pins, and route choices are shared by every phone. The day open on this phone stays on this phone.
           </p>
           <div id="syncLiveState" class="hidden text-linden font-bold">This phone is on the shared family copy.</div>
         </div>
@@ -4152,7 +4152,7 @@
 
     async function loadCzkRates() {
       try {
-        const res = await fetch('https://api.frankfurter.app/latest?from=CZK&to=USD,AUD,EUR');
+        const res = await fetch('https://api.frankfurter.dev/v1/latest?base=CZK&symbols=USD,AUD,EUR');
         if (!res.ok) return;
         const data = await res.json();
         if (!data.rates) return;
@@ -4253,64 +4253,39 @@
       return qrCodePromise;
     }
 
-    // Crisp deterministic finder-pattern + data-hash QR-style matrix visual
+    function drawQrUnavailable(c) {
+      const g = c.getContext('2d');
+      g.fillStyle = '#FCFAF6';
+      g.fillRect(0, 0, c.width, c.height);
+      g.fillStyle = '#141923';
+      g.font = `${Math.max(12, Math.round(c.width / 14))}px sans-serif`;
+      g.textAlign = 'center';
+      g.textBaseline = 'middle';
+      g.fillText('QR unavailable,', c.width / 2, c.height / 2 - c.width / 14);
+      g.fillText('copy the link instead', c.width / 2, c.height / 2 + c.width / 14);
+    }
+
     function drawVisualQrMatrix(canvasId, text) {
       const c = document.getElementById(canvasId);
       if (!c) return;
       if (typeof qrcode !== 'function') {
-        loadQrCode().then(() => drawVisualQrMatrix(canvasId, text)).catch(() => {});
+        loadQrCode().then(() => drawVisualQrMatrix(canvasId, text)).catch(() => drawQrUnavailable(c));
+        return;
       }
-      if (typeof qrcode === 'function') {
-        try {
-          const qr = qrcode(0, 'M');
-          qr.addData(text);
-          qr.make();
-          const img = new Image();
-          img.onload = () => {
-            const g = c.getContext('2d');
-            g.fillStyle = '#FCFAF6';
-            g.fillRect(0, 0, c.width, c.height);
-            g.drawImage(img, 0, 0, c.width, c.height);
-          };
-          img.src = qr.createDataURL(4, 0);
-          return;
-        } catch (e) {}
-      }
-      const g = c.getContext('2d');
-      const size = 25;
-      const cell = c.width / size;
-      g.fillStyle = '#FCFAF6';
-      g.fillRect(0, 0, c.width, c.height);
-
-      let hash = 2166136261;
-      for (let i = 0; i < text.length; i++) {
-        hash ^= text.charCodeAt(i);
-        hash = Math.imul(hash, 16777619);
-      }
-
-      const drawFinder = (ox, oy) => {
-        g.fillStyle = '#141923';
-        g.fillRect(ox * cell, oy * cell, 7 * cell, 7 * cell);
-        g.fillStyle = '#FCFAF6';
-        g.fillRect((ox + 1) * cell, (oy + 1) * cell, 5 * cell, 5 * cell);
-        g.fillStyle = '#B8293D';
-        g.fillRect((ox + 2) * cell, (oy + 2) * cell, 3 * cell, 3 * cell);
-      };
-
-      drawFinder(0, 0);
-      drawFinder(size - 7, 0);
-      drawFinder(0, size - 7);
-
-      for (let y = 0; y < size; y++) {
-        for (let x = 0; x < size; x++) {
-          const inFinder = (x < 8 && y < 8) || (x >= size - 8 && y < 8) || (x < 8 && y >= size - 8);
-          if (inFinder) continue;
-          const seed = (hash ^ (x * 73856093) ^ (y * 19349663)) >>> 0;
-          if ((seed % 11) < 5) {
-            g.fillStyle = '#141923';
-            g.fillRect(x * cell, y * cell, cell * 0.92, cell * 0.92);
-          }
-        }
+      try {
+        const qr = qrcode(0, 'M');
+        qr.addData(text);
+        qr.make();
+        const img = new Image();
+        img.onload = () => {
+          const g = c.getContext('2d');
+          g.fillStyle = '#FCFAF6';
+          g.fillRect(0, 0, c.width, c.height);
+          g.drawImage(img, 0, 0, c.width, c.height);
+        };
+        img.src = qr.createDataURL(4, 0);
+      } catch (e) {
+        drawQrUnavailable(c);
       }
     }
 
