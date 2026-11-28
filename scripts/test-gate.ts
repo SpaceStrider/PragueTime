@@ -16,6 +16,9 @@ assert.equal(lockedHtml.includes("user-scalable"), false);
 assert.match(lockedHtml, /aria-describedby="gate-error"/);
 assert.match(lockedHtml, /id="themeToggle"/);
 assert.match(lockedHtml, /atlas-theme/);
+assert.match(lockedHtml, /src="guides\/krtek\.png"/);
+assert.match(lockedHtml, /aria-label="Use dark mode"/);
+assert.match(lockedHtml, /inputmode="numeric"/);
 
 const missing = await POST(new Request("http://127.0.0.1/", {
   method: "POST",
