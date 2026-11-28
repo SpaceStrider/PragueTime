@@ -102,8 +102,13 @@ export function embedPayload(template: string, payload: unknown): string {
   return template.slice(0, start + START.length) + json + template.slice(end);
 }
 
-export async function renderAtlasHtml(): Promise<string> {
+export const STATIC_MARKER = "<script>window.ATLAS_STATIC = true;</script>";
+
+export async function renderAtlasHtml(options: { staticSite?: boolean } = {}): Promise<string> {
   const template = await readFile(path.join(process.cwd(), "content", "atlas.html"), "utf8");
   const payload = await loadTripPayload();
-  return embedPayload(template, payload);
+  const html = embedPayload(template, payload);
+  if (!options.staticSite) return html;
+  if (!html.includes("<head>")) throw new Error("Atlas template is missing <head>");
+  return html.replace("<head>", () => "<head>\n  " + STATIC_MARKER);
 }
