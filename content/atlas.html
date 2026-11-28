@@ -369,6 +369,27 @@
     .leaflet-popup-tip {
       background: rgba(252, 250, 246, 0.97) !important;
     }
+    .leaflet-popup-content h4 { font-size: 15px; }
+    .leaflet-popup-content p.text-xs { font-size: 14px; line-height: 1.5; }
+    .leaflet-popup-content .text-\[10px\],
+    .leaflet-popup-content .text-\[11px\] { font-size: 12px; line-height: 1.35; }
+    .leaflet-popup-content a[href].rounded-xl,
+    .leaflet-popup-content button.rounded-xl {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 2.5rem;
+      font-size: 13px;
+      white-space: nowrap;
+    }
+    .leaflet-container .leaflet-popup-content a.text-white { color: #fff; }
+    .leaflet-container .leaflet-popup-content a.text-parchment { color: #f4efe6; }
+    .leaflet-container .leaflet-popup-content a.text-vltava { color: #141923; }
+    html.theme-dark .leaflet-container .leaflet-popup-content a.text-vltava { color: #f4efe6; }
+    @media (pointer: coarse) {
+      .leaflet-popup-content a[href].rounded-xl,
+      .leaflet-popup-content button.rounded-xl { min-height: 2.75rem; }
+    }
     .leaflet-container a.leaflet-popup-close-button {
       color: #64748b !important;
       padding: 6px 8px 0 0 !important;
@@ -505,8 +526,9 @@
         max-width: 7.5rem;
         padding: 0 0.65rem;
         border-radius: 0.75rem;
-        border: 1px solid rgba(184, 41, 61, 0.28);
-        background: rgba(184, 41, 61, 0.07);
+        border: 1px solid rgba(20, 25, 35, 0.2);
+        background: rgba(255, 255, 255, 0.7);
+        color: var(--vltava-ink);
         font-size: 13px;
         text-decoration: none;
       }
@@ -528,6 +550,17 @@
         padding: 0 0.85rem;
         border-radius: 0.75rem;
       }
+
+      html.theme-dark #whoChip { border-color: rgba(255, 255, 255, 0.22); background: rgba(255, 255, 255, 0.06); color: #f4efe6; }
+      html.theme-dark #sheetGrab > span:first-child { background: rgba(255, 255, 255, 0.35); }
+
+      #drawerDayHeader button { min-height: 2.75rem; }
+      #sheetHandle { padding-top: 0; padding-bottom: 0; }
+      .sheet-snap[aria-pressed="true"] { background: var(--vltava-ink); border-color: var(--vltava-ink); color: #fcfaf6; }
+      html.theme-dark .sheet-snap[aria-pressed="true"] { background-color: #2b3a55 !important; border-color: rgba(255, 255, 255, 0.2) !important; color: #f4efe6 !important; }
+    }
+
+    @media (max-width: 1279px) {
       #btnMore {
         display: inline-flex;
         align-items: center;
@@ -624,12 +657,11 @@
         padding: 0.2rem 0.55rem;
         border-radius: 9999px;
         background: rgba(20, 25, 35, 0.1);
-        font-size: 11px;
+        font-size: 12px;
       }
       #btnGemsToggle.bg-linden #gemsStatusBadge { background: #245c46; color: #fff; }
-      #headerChecklistCount { flex: none; }
+      #btnToolsMenuItem .js-checklist-count { flex: none; }
 
-      html.theme-dark #whoChip { border-color: rgba(243, 168, 180, 0.35); background: rgba(243, 168, 180, 0.1); }
       html.theme-dark #btnMore { background: #1b2230; color: #f4efe6; border-color: rgba(255, 255, 255, 0.14); }
       html.theme-dark #btnMore[aria-expanded="true"] { background: #2b3a55; }
       html.theme-dark #headerMenu.is-open {
@@ -642,14 +674,13 @@
       html.theme-dark #headerMenu > button:hover { background-color: rgba(255, 255, 255, 0.08) !important; }
       html.theme-dark #headerMenu select { background-color: transparent !important; }
       html.theme-dark #headerMenu .menu-label { color: #f4efe6; }
-      html.theme-dark #sheetGrab > span:first-child { background: rgba(255, 255, 255, 0.35); }
       html.theme-dark #gemsStatusBadge { background: rgba(255, 255, 255, 0.14); }
       html.theme-dark #btnGemsToggle.bg-linden #gemsStatusBadge { background: #245c46; }
+    }
 
-      #drawerDayHeader button { min-height: 2.75rem; }
-      #sheetHandle { padding-top: 0; padding-bottom: 0; }
-      .sheet-snap[aria-pressed="true"] { background: var(--vltava-ink); border-color: var(--vltava-ink); color: #fcfaf6; }
-      html.theme-dark .sheet-snap[aria-pressed="true"] { background-color: #2b3a55 !important; border-color: rgba(255, 255, 255, 0.2) !important; color: #f4efe6 !important; }
+    @media (min-width: 1024px) and (max-width: 1279px) {
+      #headerMenu > #voterRow, #headerMenu > #btnToolsMenuItem { display: none; }
+      #headerMenu.is-open { width: 19rem; }
     }
 
     @media (min-width: 360px) and (max-width: 639px) {
@@ -859,10 +890,10 @@
   <div id="map" role="region" aria-label="Interactive Central Europe & Prague Winter Atlas Map"></div>
 
   <!-- Drop-Pin Active Crosshair Banner -->
-  <div id="dropPinBanner" class="hidden fixed top-32 left-1/2 -translate-x-1/2 z-[600] bg-garnet text-white px-4 py-2.5 rounded-2xl shadow-2xl border border-white/25 flex items-center gap-3 text-xs font-bold">
+  <div id="dropPinBanner" class="hidden fixed top-32 left-1/2 -translate-x-1/2 z-[600] bg-garnet text-white px-4 py-2.5 rounded-2xl shadow-2xl border border-white/25 flex items-center gap-3 text-[13px] font-bold">
     <span class="w-2.5 h-2.5 rounded-full bg-pilsner-light animate-ping"></span>
     <span>Click anywhere on the map to drop a custom pin</span>
-    <button onclick="cancelDropPinMode()" class="px-2.5 py-1 rounded-lg bg-vltava/90 hover:bg-vltava text-pilsner-light text-[11px] font-semibold transition">
+    <button onclick="cancelDropPinMode()" class="px-3 min-h-11 lg:min-h-9 rounded-lg bg-vltava/90 hover:bg-vltava text-pilsner-light text-[13px] font-semibold transition">
       Cancel
     </button>
   </div>
@@ -880,12 +911,12 @@
               Prague Time
               <svg class="festive-only w-3.5 h-3.5 ml-1.5 text-garnet inline-block align-baseline" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l2.4 6.9L21 10l-5.2 4.2L17.5 21 12 17.3 6.5 21l1.7-6.8L3 10l6.6-1.1z"/></svg>
             </h1>
-            <span id="tripDateRange" class="hidden 2xl:inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-mono font-medium bg-vltava/5 text-vltava/80 border border-vltava/10">
+            <span id="tripDateRange" class="hidden 2xl:inline-flex items-center px-2 py-0.5 rounded-full text-xs tabular-nums font-medium bg-vltava/5 text-vltava/80 border border-vltava/10">
               Trip dates
             </span>
           </div>
-          <p class="text-[11px] text-stone-600 truncate xl:overflow-visible hud-status">
-            <button type="button" id="whoChip" onclick="openWhoModal(false)" class="font-bold text-garnet underline decoration-garnet/30"><svg class="who-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7"/></svg><span class="who-prefix">This phone: </span><span id="whoChipName">choose</span></button>
+          <p class="text-xs text-stone-600 truncate xl:overflow-visible hud-status">
+            <button type="button" id="whoChip" onclick="openWhoModal(false)" class="text-[13px] font-bold text-vltava underline decoration-vltava/30"><svg class="who-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7"/></svg><span class="who-prefix">This phone: </span><span id="whoChipName">choose</span></button>
             <span class="hud-sep">&bull;</span> <span id="syncStatusLabel" class="font-medium text-linden">Connecting live sync…</span>
           </p>
         </div>
@@ -893,21 +924,25 @@
 
       <!-- Center / Right Controls -->
       <div id="hudActions" class="flex items-center gap-1.5 sm:gap-2 min-w-0 flex-wrap sm:flex-nowrap sm:overflow-visible sm:justify-end">
+        <!-- Active Family Member Voter Selector -->
+        <div class="hidden lg:flex items-center bg-white/75 border border-vltava/15 rounded-xl p-0.5 gap-0.5" title="Select active family member to vote on stops">
+          <div id="desktopVoterPills" class="flex items-center gap-0.5"></div>
+        </div>
         <div id="headerMenu" class="contents" role="group" aria-label="More options">
         <!-- View Scope Toggle: Day Route vs Central Europe Overview -->
-        <div class="hidden xl:inline-flex rounded-xl bg-vltava/5 p-1 border border-vltava/10">
-          <button id="btnScopeDay" onclick="setOverviewMode(false)" class="px-2.5 py-1 rounded-lg text-xs font-bold transition bg-vltava text-parchment shadow-2xs">
+        <div class="hidden min-[1700px]:inline-flex rounded-xl bg-vltava/5 p-1 border border-vltava/10">
+          <button id="btnScopeDay" onclick="setOverviewMode(false)" class="px-2.5 py-1 rounded-lg text-[13px] font-bold transition bg-vltava text-parchment shadow-2xs">
             Day Route
           </button>
-          <button id="btnScopeOverview" onclick="setOverviewMode(true)" class="px-2.5 py-1 rounded-lg text-xs font-semibold transition text-stone-700 hover:text-vltava">
+          <button id="btnScopeOverview" onclick="setOverviewMode(true)" class="px-2.5 py-1 rounded-lg text-[13px] font-semibold transition text-stone-700 hover:text-vltava">
             Central Europe Overview
           </button>
         </div>
 
         <!-- Compact Overview Toggle for Medium/Small Screens -->
-        <button id="btnScopeCompact" onclick="toggleOverviewMode()" class="xl:hidden flex items-center gap-1 min-h-8 px-2 py-1.5 sm:px-2.5 sm:py-2 rounded-xl bg-white/80 hover:bg-white text-vltava border border-vltava/15 text-xs font-bold transition shrink-0" title="Toggle Day Route vs Central Europe Overview">
+        <button id="btnScopeCompact" onclick="toggleOverviewMode()" class="min-[1700px]:hidden flex items-center gap-1 min-h-8 px-2 py-1.5 sm:px-2.5 sm:py-2 rounded-xl bg-white/80 hover:bg-white text-vltava border border-vltava/15 text-[13px] font-bold transition shrink-0" title="Toggle Day Route vs Central Europe Overview">
           <svg class="w-3.5 h-3.5 text-garnet" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
-          <span class="hidden sm:inline" id="compactScopeLabel">Overview</span>
+          <span class="hidden min-[1440px]:inline" id="compactScopeLabel">Overview</span>
           <span class="menu-label" id="compactScopeHint">Central Europe overview</span>
         </button>
 
@@ -927,7 +962,7 @@
         <div class="relative" id="tileStyleRow">
           <span class="menu-label" id="tileStyleLabel">Map style</span>
           <select id="tileStyleSelect" onchange="switchTileLayer(this.value, true)" aria-label="Map Cartographic Style"
-            class="appearance-none bg-white/85 hover:bg-white text-vltava text-[11px] sm:text-xs font-bold rounded-xl pl-1.5 pr-5 sm:pl-2.5 sm:pr-7 py-1.5 sm:py-2 border border-vltava/15 focus:outline-none focus:border-garnet cursor-pointer transition min-h-8 sm:min-h-0">
+            class="appearance-none bg-white/85 hover:bg-white text-vltava text-[13px] font-bold rounded-xl pl-1.5 pr-5 sm:pl-2.5 sm:pr-7 py-1.5 sm:py-2 border border-vltava/15 focus:outline-none focus:border-garnet cursor-pointer transition min-h-8 sm:min-h-0">
             <option value="voyager">Street Map</option>
             <option value="editorial">Clear Streets</option>
             <option value="topo">Topo Trails</option>
@@ -936,42 +971,44 @@
           <svg class="w-3.5 h-3.5 text-stone-500 absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="6 9 12 15 18 9"/></svg>
         </div>
 
-        <!-- Active Family Member Voter Selector -->
-        <div class="hidden lg:flex items-center bg-white/75 border border-vltava/15 rounded-xl p-0.5 gap-0.5" title="Select active family member to vote on stops">
-          <div id="desktopVoterPills" class="flex items-center gap-0.5"></div>
-        </div>
         <div class="contents" id="voterRow">
           <span class="menu-label" id="voterLabel">Voting as</span>
           <select id="mobileVoterSelect" onchange="setActiveUser(this.value)" aria-label="Who is holding this phone"
-            class="lg:hidden bg-white/85 text-vltava text-[11px] sm:text-xs font-bold rounded-xl pl-2 pr-6 py-1.5 sm:px-2 sm:py-2 border border-vltava/15 focus:outline-none min-h-8 sm:min-h-0 max-w-[7.5rem] sm:max-w-[8rem]">
+            class="lg:hidden bg-white/85 text-vltava text-[13px] font-bold rounded-xl pl-2 pr-6 py-1.5 sm:px-2 sm:py-2 border border-vltava/15 focus:outline-none min-h-8 sm:min-h-0 max-w-[7.5rem] sm:max-w-[8rem]">
           </select>
         </div>
 
         <!-- Hidden gems toggle -->
         <button id="btnGemsToggle" onclick="toggleHonestGems()"
-          class="flex items-center gap-1.5 min-h-8 px-2 py-1.5 sm:px-2.5 rounded-xl bg-linden text-white border border-linden text-xs font-bold transition shadow-2xs shrink-0"
+          class="flex items-center gap-1.5 min-h-8 px-2 py-1.5 sm:px-2.5 rounded-xl bg-linden text-white border border-linden text-[13px] font-bold transition shadow-2xs shrink-0"
           title="Toggle Bob & Bobek's Honest Guide Hidden Gems (+ pins)">
           <span id="btnBobekIcon" class="w-5 h-5 flex items-center justify-center shrink-0"></span>
-          <span class="hidden md:inline menu-hide">Gems</span>
+          <span class="hidden min-[1440px]:inline menu-hide">Gems</span>
           <span class="menu-label">Hidden gems</span>
-          <span id="gemsStatusBadge" class="hidden sm:inline text-[10px] font-mono bg-white/20 px-1.5 py-0.5 rounded-md">ON</span>
+          <span id="gemsStatusBadge" class="hidden sm:inline text-xs font-bold tabular-nums bg-white/20 px-1.5 py-0.5 rounded-md">ON</span>
         </button>
 
-        <!-- Toolkit button -->
-        <button id="btnToolsMenu" onclick="openToolsModal('checklist')"
-          class="flex items-center gap-1.5 min-h-8 px-2 py-1.5 sm:px-2.5 rounded-xl bg-amber-50 hover:bg-amber-100 text-vltava border border-amber-300/80 text-xs font-bold transition shadow-2xs shrink-0"
+        <button id="btnToolsMenuItem" onclick="openToolsModal('checklist')"
+          class="xl:hidden flex items-center gap-1.5 rounded-xl text-[13px] font-bold shrink-0"
           title="Pat & Mat's Trip Prep Checklist, CZK Converter & Near Me Finder">
-          <span id="btnPatMatIcon" class="w-5 h-5 flex items-center justify-center shrink-0"></span>
-          <span class="hidden md:inline menu-hide">Tools</span>
+          <span class="w-5 h-5 flex items-center justify-center shrink-0 js-pat-mat-icon"></span>
           <span class="menu-label">Tools &amp; checklist</span>
-          <span id="headerChecklistCount" class="text-[10px] font-mono font-bold bg-pilsner text-white px-1.5 py-0.5 rounded-full">0/0</span>
+          <span class="js-checklist-count text-xs font-bold tabular-nums bg-pilsner text-white px-1.5 py-0.5 rounded-full">0/0</span>
         </button>
 
         </div>
 
+        <button id="btnToolsMenu" onclick="openToolsModal('checklist')"
+          class="hidden lg:flex items-center gap-1.5 min-h-8 px-2 py-1.5 sm:px-2.5 rounded-xl bg-amber-50 hover:bg-amber-100 text-vltava border border-amber-300/80 text-[13px] font-bold transition shadow-2xs shrink-0"
+          title="Pat & Mat's Trip Prep Checklist, CZK Converter & Near Me Finder">
+          <span class="w-5 h-5 flex items-center justify-center shrink-0 js-pat-mat-icon"></span>
+          <span>Tools</span>
+          <span class="js-checklist-count text-xs font-bold tabular-nums bg-pilsner text-white px-1.5 py-0.5 rounded-full">0/0</span>
+        </button>
+
         <!-- Prominent Share Sync Link Button -->
         <button id="shareSyncButton" onclick="triggerQuickShareSync()" aria-label="Share family link"
-          class="flex items-center gap-1.5 min-h-8 px-2 py-1.5 sm:px-3 sm:py-2 rounded-xl bg-garnet hover:bg-garnet-dark text-white text-xs font-bold transition shadow-md border border-white/15 shrink-0"
+          class="flex items-center gap-1.5 min-h-8 px-2 py-1.5 sm:px-3 sm:py-2 rounded-xl bg-garnet hover:bg-garnet-dark text-white text-[13px] font-bold transition shadow-md border border-white/15 shrink-0"
           title="Copy the family link. Votes, checkmarks, and notes already sync across phones.">
           <svg class="w-3.5 h-3.5 shrink-0 share-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
@@ -980,7 +1017,7 @@
           <span class="hidden lg:inline">Share Sync Link</span>
           <span class="lg:hidden share-short">Share</span>
         </button>
-        <button type="button" id="btnMore" class="lg:hidden" aria-haspopup="true" aria-expanded="false" aria-controls="headerMenu" aria-label="More options" onclick="toggleHeaderMenu()">
+        <button type="button" id="btnMore" class="xl:hidden" aria-haspopup="true" aria-expanded="false" aria-controls="headerMenu" aria-label="More options" onclick="toggleHeaderMenu()">
           <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg>
         </button>
       </div>
@@ -1007,25 +1044,25 @@
   <!-- ==================== 4. FLOATING LEFT / BOTTOM ITINERARY DRAWER ==================== -->
   <!-- Desktop Collapse/Expand Pill -->
   <button id="desktopDrawerToggle" onclick="toggleDesktopDrawer()"
-    class="hidden lg:flex fixed left-3 top-[134px] z-[460] atlas-glass px-3 py-2 rounded-xl items-center gap-2 text-xs font-bold text-vltava hover:bg-white transition"
+    class="hidden lg:flex fixed left-3 top-[145px] z-[460] atlas-glass px-3 py-2 rounded-xl items-center gap-2 text-[13px] font-bold text-vltava hover:bg-white transition"
     title="Collapse or expand itinerary drawer">
     <svg id="desktopDrawerChevron" class="w-3.5 h-3.5 text-garnet transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
     <span id="desktopDrawerToggleLabel">Hide Itinerary</span>
   </button>
 
   <aside id="itineraryDrawer" data-sheet="half"
-    class="fixed z-[450] left-2.5 right-2.5 lg:right-auto lg:top-[176px] lg:bottom-3 lg:w-[380px] xl:w-[440px] lg:h-auto atlas-glass rounded-3xl flex flex-col overflow-hidden">
+    class="fixed z-[450] left-2.5 right-2.5 lg:right-auto lg:top-[186px] lg:bottom-3 lg:w-[380px] xl:w-[440px] lg:h-auto atlas-glass rounded-3xl flex flex-col overflow-hidden">
 
     <!-- Mobile Bottom-Sheet Drag / Snap Handle. Stays put while the day list scrolls. -->
     <div id="sheetHandle" class="lg:hidden sticky top-0 z-10 flex items-center justify-between gap-2 px-3 border-b border-vltava/10 shrink-0 bg-white/85">
-      <button type="button" id="sheetGrab" class="flex flex-1 items-center justify-center min-w-0 min-h-11 text-[11px] font-bold text-stone-600" aria-label="Resize the day panel. Drag, or tap to cycle.">
+      <button type="button" id="sheetGrab" class="flex flex-1 items-center justify-center min-w-0 min-h-11 text-xs font-bold text-stone-600" aria-label="Resize the day panel. Drag, or tap to cycle.">
         <span class="w-12 h-1.5 rounded-full bg-vltava/30 inline-block shrink-0"></span>
         <span id="mobileSheetStateLabel" class="sr-only">Drag or tap</span>
       </button>
       <div class="flex items-center gap-1 shrink-0" role="group" aria-label="Day panel size">
-        <button type="button" data-sheet-snap="peek" onclick="setMobileSheetHeight('peek')" aria-pressed="false" class="sheet-snap min-w-11 min-h-11 px-2.5 rounded-lg bg-white/80 border border-vltava/10 text-[11px] font-bold text-vltava">Map</button>
-        <button type="button" data-sheet-snap="half" onclick="setMobileSheetHeight('half')" aria-pressed="true" class="sheet-snap min-w-11 min-h-11 px-2.5 rounded-lg bg-white/80 border border-vltava/10 text-[11px] font-bold text-vltava">Split</button>
-        <button type="button" data-sheet-snap="full" onclick="setMobileSheetHeight('full')" aria-pressed="false" class="sheet-snap min-w-11 min-h-11 px-2.5 rounded-lg bg-white/80 border border-vltava/10 text-[11px] font-bold text-vltava">Full</button>
+        <button type="button" data-sheet-snap="peek" onclick="setMobileSheetHeight('peek')" aria-pressed="false" class="sheet-snap min-w-11 min-h-11 px-2.5 rounded-lg bg-white/80 border border-vltava/10 text-[13px] font-bold text-vltava">Map</button>
+        <button type="button" data-sheet-snap="half" onclick="setMobileSheetHeight('half')" aria-pressed="true" class="sheet-snap min-w-11 min-h-11 px-2.5 rounded-lg bg-white/80 border border-vltava/10 text-[13px] font-bold text-vltava">Split</button>
+        <button type="button" data-sheet-snap="full" onclick="setMobileSheetHeight('full')" aria-pressed="false" class="sheet-snap min-w-11 min-h-11 px-2.5 rounded-lg bg-white/80 border border-vltava/10 text-[13px] font-bold text-vltava">Full</button>
       </div>
     </div>
 
@@ -1221,7 +1258,7 @@
       <h2 id="whoTitle" class="font-display font-bold text-lg text-vltava">Who is holding this phone?</h2>
       <p id="whoIntro" class="text-sm text-stone-600 mt-1 leading-relaxed">Pick who is holding this phone.</p>
       <div id="whoChoices" class="mt-4 flex flex-col gap-2"></div>
-      <button type="button" id="whoSkip" onclick="closeWhoModal()" class="hidden mt-3 text-[11px] font-semibold text-stone-500 underline">Keep the Current Person</button>
+      <button type="button" id="whoSkip" onclick="closeWhoModal()" class="hidden mt-3 min-h-11 text-[13px] font-semibold text-stone-600 underline">Keep the Current Person</button>
     </div>
   </div>
 
@@ -1240,7 +1277,7 @@
   </div>
 
   <!-- ==================== 8. FLOATING TOAST NOTIFICATION ==================== -->
-  <div id="atlasToast" class="hidden fixed bottom-5 left-1/2 -translate-x-1/2 z-[900] atlas-glass-dark text-parchment px-4 py-2.5 rounded-2xl text-xs font-semibold flex items-center gap-2.5 shadow-2xl">
+  <div id="atlasToast" class="hidden fixed bottom-5 left-1/2 -translate-x-1/2 z-[900] atlas-glass-dark text-parchment px-4 py-2.5 rounded-2xl text-[13px] font-semibold flex items-center gap-2.5 shadow-2xl">
     <span class="w-2 h-2 rounded-full bg-pilsner-light"></span>
     <span id="atlasToastMsg">Synced!</span>
   </div>
@@ -3962,7 +3999,7 @@
       paintWhoFaces();
       paintHeaderMascot();
       document.getElementById('btnBobekIcon').innerHTML = CZECH_GERMAN_SVGS.bobAndBobek(true);
-      document.getElementById('btnPatMatIcon').innerHTML = CZECH_GERMAN_SVGS.patAndMat(true);
+      document.querySelectorAll('.js-pat-mat-icon').forEach((el) => { el.innerHTML = CZECH_GERMAN_SVGS.patAndMat(true); });
       document.getElementById('modalPatMatArt').innerHTML = CZECH_GERMAN_SVGS.patAndMat();
     }
 
@@ -4005,7 +4042,7 @@
         const active = state.activeUser === m.id;
         return `
           <button onclick="setActiveUser('${id}')"
-            class="px-2 py-1 rounded-lg text-[11px] font-bold transition ${
+            class="px-2.5 py-1 rounded-lg text-[13px] font-bold transition ${
               active ? 'bg-vltava text-parchment shadow-2xs' : 'text-stone-600 hover:bg-vltava/5'
             }">
             ${esc(m.label)}
@@ -4033,12 +4070,12 @@
       const compactHint = document.getElementById('compactScopeHint');
       if (compactHint) compactHint.textContent = state.overviewMode ? 'Back to day route' : 'Central Europe overview';
       if (state.overviewMode) {
-        bDay.className = 'px-2.5 py-1 rounded-lg text-xs font-semibold transition text-stone-700 hover:text-vltava';
-        bOv.className = 'px-2.5 py-1 rounded-lg text-xs font-bold transition bg-garnet text-white shadow-2xs';
+        bDay.className = 'px-2.5 py-1 rounded-lg text-[13px] font-semibold transition text-stone-700 hover:text-vltava';
+        bOv.className = 'px-2.5 py-1 rounded-lg text-[13px] font-bold transition bg-garnet text-white shadow-2xs';
         compactLbl.textContent = 'Day Route';
       } else {
-        bDay.className = 'px-2.5 py-1 rounded-lg text-xs font-bold transition bg-vltava text-parchment shadow-2xs';
-        bOv.className = 'px-2.5 py-1 rounded-lg text-xs font-semibold transition text-stone-700 hover:text-vltava';
+        bDay.className = 'px-2.5 py-1 rounded-lg text-[13px] font-bold transition bg-vltava text-parchment shadow-2xs';
+        bOv.className = 'px-2.5 py-1 rounded-lg text-[13px] font-semibold transition text-stone-700 hover:text-vltava';
         compactLbl.textContent = 'Overview';
       }
     }
@@ -4079,21 +4116,27 @@
     function updateHeaderChecklistBadge() {
       const mine = checklistForUser(state.activeUser);
       const done = mine.filter(i => state.checkedBookings[i.id]).length;
-      document.getElementById('headerChecklistCount').textContent = `${done}/${mine.length}`;
+      document.querySelectorAll('.js-checklist-count').forEach((el) => { el.textContent = `${done}/${mine.length}`; });
     }
 
-    // SVG Circular Progress Ring for Day Ribbon Pills
     function renderProgressRing(done, total, isActive) {
+      if (!total || !done) return '';
+      if (done >= total) {
+        return `
+        <svg class="w-[18px] h-[18px] shrink-0" viewBox="0 0 18 18" aria-hidden="true">
+          <circle cx="9" cy="9" r="9" fill="${isActive ? '#8FD4B0' : '#245C46'}"/>
+          <path d="M5 9.3l2.6 2.6L13 6.4" fill="none" stroke="${isActive ? '#141923' : '#fff'}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>`;
+      }
       const r = 7;
       const c = 2 * Math.PI * r;
-      const pct = total > 0 ? done / total : 0;
-      const offset = c * (1 - pct);
-      const trackColor = isActive ? 'rgba(255,255,255,0.22)' : 'rgba(20,25,35,0.12)';
-      const strokeColor = pct === 1 ? '#245C46' : (isActive ? '#FBBF24' : '#B8293D');
+      const offset = c * (1 - done / total);
+      const trackColor = isActive ? 'rgba(255,255,255,0.28)' : 'rgba(20,25,35,0.16)';
+      const strokeColor = isActive ? '#FBBF24' : '#B8293D';
       return `
-        <svg class="w-4 h-4 -rotate-90 shrink-0" viewBox="0 0 18 18">
-          <circle cx="9" cy="9" r="${r}" fill="none" stroke="${trackColor}" stroke-width="2.2"/>
-          <circle cx="9" cy="9" r="${r}" fill="none" stroke="${strokeColor}" stroke-width="2.2"
+        <svg class="w-[18px] h-[18px] -rotate-90 shrink-0" viewBox="0 0 18 18" aria-hidden="true">
+          <circle cx="9" cy="9" r="${r}" fill="none" stroke="${trackColor}" stroke-width="2.6"/>
+          <circle cx="9" cy="9" r="${r}" fill="none" stroke="${strokeColor}" stroke-width="2.6"
             stroke-dasharray="${c.toFixed(1)}" stroke-dashoffset="${offset.toFixed(1)}" stroke-linecap="round"/>
         </svg>`;
     }
@@ -4106,18 +4149,19 @@
         const isActive = idx === state.selectedDayIndex && !state.overviewMode;
         const here = userIsHere(state.activeUser, idx);
         const flag = day.country === 'DE' ? '🇩🇪' : '🇨🇿';
+        const progress = stops.length ? `, ${doneCount} of ${stops.length} stops done` : '';
 
         return `
-          <button id="ribbon-day-${idx}" onclick="selectDay(${idx})"
-            class="shrink-0 w-[8.25rem] sm:w-[9.5rem] px-2 py-1.5 rounded-xl border transition flex items-center justify-center gap-1.5 text-center ${
+          <button id="ribbon-day-${idx}" onclick="selectDay(${idx})" aria-label="${esc(day.shortDate)}, ${esc(here ? day.region : 'Away')}${progress}" ${isActive ? 'aria-current="true"' : ''}
+            class="shrink-0 w-[8.25rem] sm:w-[9.5rem] px-2 py-1 rounded-xl border transition flex items-center justify-center gap-1.5 text-center ${
               isActive
                 ? 'bg-vltava text-parchment border-vltava shadow-md'
                 : 'bg-white/80 hover:bg-white text-vltava border-vltava/12'
             } ${here ? '' : 'opacity-60'}">
             ${renderProgressRing(doneCount, stops.length, isActive)}
-            <div class="leading-none text-center">
-              <div class="font-mono text-[11px] font-bold tracking-tight whitespace-nowrap">${day.shortDate} ${flag}${festiveDot(day)}</div>
-              <div class="text-[10px] mt-1 whitespace-nowrap ${isActive ? 'text-pilsner-light font-medium' : 'text-stone-500'}">
+            <div class="min-w-0 text-center leading-tight">
+              <div class="text-[13px] font-semibold tabular-nums whitespace-nowrap">${day.shortDate} ${flag}${festiveDot(day)}</div>
+              <div class="text-xs whitespace-nowrap ${isActive ? 'text-pilsner-light font-medium' : 'text-stone-600'}">
                 ${here ? day.region : 'Away'}
               </div>
             </div>
@@ -4587,10 +4631,10 @@
       });
       menu.addEventListener('click', (e) => {
         const item = e.target.closest('button');
-        if (item && !item.hasAttribute('data-menu-keep')) setHeaderMenu(false, item.id !== 'btnToolsMenu');
+        if (item && !item.hasAttribute('data-menu-keep')) setHeaderMenu(false, !item.id.startsWith('btnToolsMenu'));
       });
       window.addEventListener('resize', () => {
-        if (isOpen() && window.innerWidth >= 1024) setHeaderMenu(false, false);
+        if (isOpen() && window.innerWidth >= 1280) setHeaderMenu(false, false);
       });
     }
 
