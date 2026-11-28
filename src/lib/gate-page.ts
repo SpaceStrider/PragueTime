@@ -23,8 +23,8 @@ export function gatePage(options: { failed: boolean; sealed?: string }): string 
   <title>Prague atlas</title>
   <style>
     :root { color-scheme: light; }
-    body { margin: 0; min-height: 100vh; min-height: 100dvh; display: grid; place-items: center; background: #141923; color: #141923; font-family: "Segoe UI", sans-serif; padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left); }
-    main { width: min(22rem, calc(100% - 2rem)); background: #fcfaf6; border-radius: 1.4rem; padding: 1.5rem; }
+    body { margin: 0; min-height: 100vh; min-height: 100dvh; display: grid; place-items: center; box-sizing: border-box; background: #efe9df; color: #141923; font-family: "Segoe UI", sans-serif; padding: max(1rem, env(safe-area-inset-top)) max(1rem, env(safe-area-inset-right)) max(1rem, env(safe-area-inset-bottom)) max(1rem, env(safe-area-inset-left)); }
+    main { box-sizing: border-box; width: 100%; max-width: 22rem; background: #fcfaf6; border: 1px solid rgba(20, 25, 35, 0.12); border-radius: 1.4rem; padding: 1.5rem; box-shadow: 0 0.6rem 1.8rem rgba(60, 45, 25, 0.12); }
     h1 { font-size: 1.6rem; line-height: 1.2; margin: 0 0 0.4rem; }
     p { margin: 0; color: #3d4654; line-height: 1.5; }
     form { display: grid; gap: 0.7rem; margin-top: 1.1rem; }
@@ -36,7 +36,7 @@ export function gatePage(options: { failed: boolean; sealed?: string }): string 
     #themeToggle { position: fixed; top: max(0.75rem, env(safe-area-inset-top)); right: max(0.75rem, env(safe-area-inset-right)); min-width: 2.75rem; min-height: 2.75rem; padding: 0 0.8rem; background: #fcfaf6; color: #141923; border: 1px solid rgba(20, 25, 35, 0.2); }
     html.theme-dark { color-scheme: dark; }
     html.theme-dark body { background: #0e1218; }
-    html.theme-dark main { background: #1b2230; color: #f4efe6; }
+    html.theme-dark main { background: #1b2230; color: #f4efe6; border-color: rgba(255, 255, 255, 0.12); box-shadow: none; }
     html.theme-dark p { color: #c5ceda; }
     html.theme-dark input { background: #151b26; color: #f4efe6; border-color: rgba(255, 255, 255, 0.2); }
     html.theme-dark #gate-error { color: #f3a8b4; }
