@@ -603,7 +603,7 @@
         </button>
 
         <!-- Prominent Share Sync Link Button -->
-        <button onclick="triggerQuickShareSync()"
+        <button id="shareSyncButton" onclick="triggerQuickShareSync()"
           class="flex items-center gap-1.5 px-2 py-1.5 sm:px-3 sm:py-2 rounded-xl bg-garnet hover:bg-garnet-dark text-white text-xs font-bold transition shadow-md border border-white/15 shrink-0"
           title="Copy the family link. Votes, checkmarks, and notes already sync across phones.">
           <svg class="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
@@ -724,7 +724,7 @@
                 &#10003; Compressed State Link Ready
               </span>
               <h3 id="shareHeading" class="font-bold text-sm text-vltava">Share this link</h3>
-              <p class="text-stone-600 leading-relaxed">
+              <p id="shareIntro" class="text-stone-600 leading-relaxed">
                 The plan is on this link. Hearts, finished stops, notes, custom pins, and route choices sync on their own. Each person taps their own name.
               </p>
             </div>
@@ -772,10 +772,10 @@
 
         <div class="bg-amber-50/75 rounded-2xl p-4 border border-amber-200/90 space-y-2.5">
           <div class="flex items-center justify-between">
-            <h4 class="font-bold text-sm text-vltava">Live sync across phones</h4>
+            <h4 id="syncHeading" class="font-bold text-sm text-vltava">Live sync across phones</h4>
             <span id="syncBadge" class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-stone-200 text-stone-700">Connecting</span>
           </div>
-          <p class="text-stone-700 leading-relaxed">
+          <p id="syncExplainer" class="text-stone-700 leading-relaxed">
             Hearts, checkmarks, notes, custom pins, and route choices are shared by every phone. The day open on this phone stays on this phone.
           </p>
           <div id="syncLiveState" class="hidden text-linden font-bold">This phone is on the shared family copy.</div>
@@ -1255,7 +1255,7 @@
           : mode === 'warn' ? 'font-medium text-pilsner' : 'font-medium text-stone-500';
       }
       if (badge) {
-        badge.textContent = mode === 'live' ? 'Live' : mode === 'warn' ? 'This phone' : 'Connecting';
+        badge.textContent = mode === 'live' ? 'Live' : mode === 'warn' || mode === 'local' ? 'This phone' : 'Connecting';
         badge.className = mode === 'live'
           ? 'px-2 py-0.5 rounded-full text-[10px] font-bold bg-linden text-white'
           : 'px-2 py-0.5 rounded-full text-[10px] font-bold bg-stone-200 text-stone-700';
@@ -1299,7 +1299,10 @@
       }
     }
 
+    const STATIC_SITE = window.ATLAS_STATIC === true;
+
     function scheduleLivePush() {
+      if (STATIC_SITE) return;
       editGen += 1;
       clearTimeout(pushTimer);
       pushTimer = setTimeout(() => { pushLiveSync(); }, 700);
@@ -1375,7 +1378,24 @@
       }
     }
 
+    function applyStaticSiteCopy() {
+      setSyncStatus('local', 'Saved on this phone');
+      const text = (id, value) => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = value;
+      };
+      text('shareIntro', 'This link opens the plan. Hearts, finished stops, notes, custom pins, and route choices stay on each phone. To share yours, send a backup snapshot or an exported .json file.');
+      text('syncHeading', 'Marks stay on this phone');
+      text('syncExplainer', 'This copy has no live sync. Use Copy Backup Snapshot or Export .json to send your marks to another phone, and Import .json to load someone else\u2019s.');
+      const button = document.getElementById('shareSyncButton');
+      if (button) button.title = 'Copy the page link. Marks stay on this phone; share a backup snapshot to pass them on.';
+    }
+
     function startLiveSync() {
+      if (STATIC_SITE) {
+        applyStaticSiteCopy();
+        return;
+      }
       pullLiveSync();
       clearInterval(pollTimer);
       pollTimer = setInterval(() => {
@@ -4226,7 +4246,7 @@
       const input = document.getElementById('shareUrlInput');
       if (input) input.value = baseUrl;
       const bytes = document.getElementById('syncByteCount');
-      if (bytes) bytes.textContent = 'Live link';
+      if (bytes) bytes.textContent = STATIC_SITE ? 'Page link' : 'Live link';
       drawVisualQrMatrix('syncQrCanvas', baseUrl);
       if (copyTextSafely(baseUrl)) showToast('Family link copied.');
     }
