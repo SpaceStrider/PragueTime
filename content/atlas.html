@@ -145,21 +145,25 @@
     }
 
     .district-callout {
+      position: absolute;
+      left: 0;
+      top: 0;
+      transform: translate(-50%, -50%);
       font-family: 'Fraunces', Georgia, serif;
-      font-size: 11px;
+      font-size: 10px;
       font-weight: 600;
-      letter-spacing: 0.14em;
+      letter-spacing: 0.08em;
       text-transform: uppercase;
-      color: rgba(20, 25, 35, 0.46);
-      text-shadow: 0 1px 0 rgba(255, 255, 255, 0.85), 0 -1px 0 rgba(255, 255, 255, 0.85), 1px 0 0 rgba(255, 255, 255, 0.85), -1px 0 0 rgba(255, 255, 255, 0.85);
+      color: rgba(38, 46, 58, 0.62);
+      text-shadow: 0 0 2px #fff, 0 0 2px #fff, 0 0 3px rgba(255, 255, 255, 0.95);
       white-space: nowrap;
       pointer-events: none;
       user-select: none;
     }
 
     .night-mode .district-callout {
-      color: rgba(252, 250, 246, 0.52);
-      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
+      color: rgba(236, 240, 246, 0.6);
+      text-shadow: 0 0 2px rgba(8, 11, 16, 0.95), 0 0 2px rgba(8, 11, 16, 0.95), 0 0 3px rgba(8, 11, 16, 0.9);
     }
 
     .who-card { width: 100%; min-height: 4.25rem; }
@@ -226,10 +230,6 @@
         color: #d5dbe4;
       }
       .leaflet-bar a { border-bottom-color: rgba(255,255,255,0.12); }
-      .district-callout {
-        color: rgba(244, 239, 230, 0.55);
-        text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
-      }
     }
 
     .clarity-hide { opacity: 0 !important; visibility: hidden; pointer-events: none !important; }
@@ -1999,6 +1999,7 @@
 
       L.control.scale({ position: 'bottomright', imperial: false, metric: true }).addTo(map);
 
+      map.createPane('districtPane').style.zIndex = 380;
       map.createPane('legLabelPane').style.zIndex = 450;
       map.createPane('gemPane').style.zIndex = 560;
 
@@ -2631,11 +2632,11 @@
       DISTRICT_CALLOUTS.forEach(d => {
         const icon = L.divIcon({
           className: '',
-          html: `<div class="district-callout">${esc(d.name)}</div>`,
-          iconSize: [140, 20],
-          iconAnchor: [70, 10]
+          html: `<div class="district-callout clarity-hide">${esc(d.name)}</div>`,
+          iconSize: [0, 0],
+          iconAnchor: [0, 0]
         });
-        L.marker([d.lat, d.lng], { icon, interactive: false, keyboard: false }).addTo(calloutsLayerGroup);
+        L.marker([d.lat, d.lng], { icon, interactive: false, keyboard: false, pane: 'districtPane' }).addTo(calloutsLayerGroup);
       });
       updateDistrictCalloutsVisibility();
     }
@@ -2643,7 +2644,7 @@
     function updateDistrictCalloutsVisibility() {
       if (!map || !calloutsLayerGroup) return;
       const z = map.getZoom();
-      if (z >= 11 && !state.overviewMode) {
+      if (z >= DISTRICT_MIN_ZOOM && z <= DISTRICT_MAX_ZOOM && !state.overviewMode) {
         if (!map.hasLayer(calloutsLayerGroup)) map.addLayer(calloutsLayerGroup);
       } else {
         if (map.hasLayer(calloutsLayerGroup)) map.removeLayer(calloutsLayerGroup);
@@ -2698,6 +2699,8 @@
     const LEG_LABEL_FOCUS_ZOOM = 11;
     const LEG_LABEL_MIN_PX = 56;
     const STOP_COMPACT_ZOOM = 12;
+    const DISTRICT_MIN_ZOOM = 13;
+    const DISTRICT_MAX_ZOOM = 15;
 
     function clarityRect(layer, extra) {
       const box = layer.options.clarityBox;
@@ -2851,6 +2854,24 @@
         if (!spot) return;
         placed.push(spot.rect);
         rec.marker.setLatLng(map.containerPointToLatLng(L.point(spot.cx, spot.cy)));
+      });
+
+      const keptCallouts = [];
+      calloutsLayerGroup.eachLayer(marker => {
+        const el = marker.getElement();
+        if (!el) return;
+        const label = el.firstElementChild;
+        let spot = null;
+        if (map.hasLayer(calloutsLayerGroup)) {
+          const pt = map.latLngToContainerPoint(marker.getLatLng());
+          const w = label.offsetWidth || 70, h = label.offsetHeight || 14;
+          const rect = { x: pt.x - w / 2 - 4, y: pt.y - h / 2 - 3, w: w + 8, h: h + 6 };
+          const clear = inView(rect) && !obstacles.some(o => rectsOverlap(o, rect)) &&
+            !placed.some(o => rectsOverlap(o, rect)) && !keptCallouts.some(o => rectsOverlap(o, rect));
+          if (clear) spot = rect;
+        }
+        label.classList.toggle('clarity-hide', !spot);
+        if (spot) keptCallouts.push(spot);
       });
     }
 
