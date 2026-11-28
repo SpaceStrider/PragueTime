@@ -200,7 +200,7 @@
       .text-cobalt { color: #9ec4f0 !important; }
       .text-pink-900 { color: #fbcfe8 !important; }
       .text-stone-800 { color: #e7e5e4 !important; }
-      .bg-amber-50, .bg-amber-50\/90, .bg-amber-50\/95, .bg-amber-100, .bg-amber-100\/90 {
+      .bg-amber-50, .bg-amber-50\/75, .bg-amber-50\/90, .bg-amber-50\/95, .bg-amber-100, .bg-amber-100\/90 {
         background-color: #3a2c16 !important;
       }
       .bg-rose-50, .bg-rose-50\/95, .bg-rose-50\/70 { background-color: #3a1c24 !important; }
@@ -210,7 +210,7 @@
       .bg-orange-50 { background-color: #3a2614 !important; }
       .bg-vltava\/5 { background-color: rgba(255, 255, 255, 0.06) !important; }
       .border-vltava\/8, .border-vltava\/10, .border-vltava\/12, .border-vltava\/15, .border-vltava\/20,
-      .border-stone-200, .border-stone-300, .border-amber-200, .border-amber-300, .border-amber-300\/80,
+      .border-stone-200, .border-stone-300, .border-amber-200, .border-amber-200\/90, .border-amber-300, .border-amber-300\/80,
       .border-rose-200, .border-rose-300, .border-emerald-200, .border-blue-200, .border-pink-200, .border-orange-200 {
         border-color: rgba(255, 255, 255, 0.14) !important;
       }
@@ -517,7 +517,7 @@
     <div class="atlas-glass rounded-2xl px-2.5 sm:px-4 py-1.5 sm:py-2 flex flex-col gap-1.5 sm:flex-row sm:items-center sm:justify-between sm:gap-2 pointer-events-auto">
       <div class="festive-lights" aria-hidden="true"></div>
       <!-- Guide emblem and atlas title -->
-      <div class="flex items-center gap-2.5 min-w-0">
+      <div class="flex items-center gap-2.5 min-w-0 xl:shrink-0">
         <div id="headerKrtekSlot" class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-amber-50 border border-amber-200/80 flex items-center justify-center shrink-0 shadow-2xs" title="Krtek — Your Bohemian Winter Guide"></div>
         <div class="min-w-0">
           <div class="flex items-center gap-2">
@@ -529,7 +529,7 @@
               Trip dates
             </span>
           </div>
-          <p class="text-[11px] text-stone-600 truncate">
+          <p class="text-[11px] text-stone-600 truncate xl:overflow-visible">
             <button type="button" id="whoChip" onclick="openWhoModal(false)" class="font-bold text-garnet underline decoration-garnet/30">This phone: <span id="whoChipName">choose</span></button>
             &bull; <span id="syncStatusLabel" class="font-medium text-linden">Connecting live sync…</span>
           </p>
@@ -736,7 +736,7 @@
           </div>
 
           <div class="flex items-center gap-2">
-            <input id="shareUrlInput" type="text" readonly class="flex-1 px-3 py-2 rounded-xl bg-stone-100 border border-stone-300 font-mono text-[11px] text-stone-700 focus:outline-none" />
+            <input id="shareUrlInput" type="text" readonly class="min-w-0 flex-1 px-3 py-2 rounded-xl bg-stone-100 border border-stone-300 font-mono text-[11px] text-stone-700 focus:outline-none" />
             <button onclick="copyShareUrlFromInput()" class="px-3.5 py-2 rounded-xl bg-garnet hover:bg-garnet-dark text-white font-bold text-xs shrink-0 transition shadow-2xs">
               Copy Link
             </button>
@@ -1329,7 +1329,7 @@
         syncRevision = Number(data.revision) || syncRevision;
         holdRemote = false;
         if (sentGen === editGen && data.state) applyRemote(data.state);
-        setSyncStatus('live', 'Live across every phone');
+        setSyncStatus('live', 'Live on all phones');
       } catch (e) {
         setSyncStatus('warn', 'Saved on this phone');
       } finally {
@@ -1362,9 +1362,9 @@
             scheduleLivePush();
           } else if (rev > 0 && data.state) {
             applyRemote(data.state);
-            setSyncStatus('live', 'Live across every phone');
+            setSyncStatus('live', 'Live on all phones');
           } else {
-            setSyncStatus('live', 'Live across every phone');
+            setSyncStatus('live', 'Live on all phones');
           }
           return;
         }
@@ -1372,7 +1372,7 @@
           syncRevision = rev;
           applyRemote(data.state);
         }
-        setSyncStatus('live', 'Live across every phone');
+        setSyncStatus('live', 'Live on all phones');
       } catch (e) {
         setSyncStatus('warn', 'Saved on this phone');
       }
@@ -2238,7 +2238,7 @@
     function renderGemsOverlay() {
       if (!gemsLayerGroup || typeof window.L === 'undefined') return;
       gemsLayerGroup.clearLayers();
-      if (!state.showGems) return;
+      if (!state.showGems || state.overviewMode) return;
 
       HONEST_GUIDE_GEMS.forEach(gem => {
         const icon = L.divIcon({
@@ -3091,6 +3091,7 @@
       markersLayerGroup.clearLayers();
       markerRefsById = {};
       updateDistrictCalloutsVisibility();
+      renderGemsOverlay();
 
       // MODE A: CENTRAL EUROPE 6-HUB REGIONAL OVERVIEW
       if (state.overviewMode) {
