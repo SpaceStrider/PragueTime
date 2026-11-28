@@ -232,18 +232,129 @@
       }
     }
 
-    .leg-midpoint-pill {
-      background: rgba(20, 25, 35, 0.88);
-      color: #FCFAF6;
-      border: 1px solid rgba(252, 250, 246, 0.22);
+    .clarity-hide { opacity: 0 !important; visibility: hidden; pointer-events: none !important; }
+
+    .stop-pin-wrap {
+      position: relative;
+      width: 44px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+    .stop-pin-wrap .pin-pulse-ring { inset: 3px; }
+    .stop-pin {
+      width: 30px;
+      height: 30px;
       border-radius: 9999px;
-      padding: 2px 8px;
+      border: 2px solid #FFFFFF;
+      color: #FFFFFF;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 6px rgba(20, 25, 35, 0.4);
+      transition: transform 0.15s ease;
+    }
+    .stop-pin-wrap:hover .stop-pin { transform: scale(1.08); }
+    .stop-pin-num { font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 12px; line-height: 1; }
+    .stop-pin-icon { opacity: 0.85; margin-top: 1px; display: flex; }
+    .stop-pin-wrap.is-selected .stop-pin {
+      width: 38px;
+      height: 38px;
+      border-width: 3px;
+      transform: none;
+      box-shadow: 0 0 0 3px #B8293D, 0 6px 14px rgba(20, 25, 35, 0.45);
+    }
+    .stop-pin-wrap.is-selected .stop-pin-num { font-size: 14px; }
+    .pins-compact .stop-pin-wrap:not(.is-selected) .stop-pin { width: 24px; height: 24px; border-width: 1.5px; }
+    .pins-compact .stop-pin-wrap:not(.is-selected) .stop-pin-icon { display: none; }
+    .pins-compact .stop-pin-wrap:not(.is-selected) .stop-pin-num { font-size: 11px; }
+
+    .origin-pin {
+      width: 26px;
+      height: 26px;
+      border-radius: 8px;
+      background: #FCFAF6;
+      color: #141923;
+      border: 1.5px solid rgba(20, 25, 35, 0.55);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 1px 4px rgba(20, 25, 35, 0.3);
+    }
+    .night-mode .origin-pin {
+      background: #1b2230;
+      color: #f4efe6;
+      border-color: rgba(244, 239, 230, 0.6);
+    }
+
+    .gem-pin {
+      width: 20px;
+      height: 20px;
+      border-radius: 9999px;
+      background: rgba(252, 250, 246, 0.92);
+      color: #245C46;
+      border: 1.5px solid #245C46;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 1;
+      opacity: 0.88;
+      transition: transform 0.15s ease, opacity 0.15s ease;
+    }
+    .gem-pin-wrap {
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+    .gem-pin-wrap:hover .gem-pin { transform: scale(1.15); opacity: 1; }
+    .night-mode .gem-pin {
+      background: rgba(18, 22, 30, 0.88);
+      color: #8fd4b0;
+      border-color: #8fd4b0;
+    }
+
+    .leg-label {
+      position: absolute;
+      left: 0;
+      top: 0;
+      transform: translate(-50%, -50%);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 1px 6px;
+      border-radius: 9999px;
+      background: rgba(255, 255, 255, 0.9);
+      color: #3b4350;
+      border: 1px solid rgba(20, 25, 35, 0.14);
       font-family: 'JetBrains Mono', monospace;
-      font-size: 10px;
+      font-size: 9.5px;
       font-weight: 500;
+      line-height: 14px;
       white-space: nowrap;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.22);
-      backdrop-filter: blur(8px);
+      pointer-events: none;
+      box-shadow: 0 1px 2px rgba(20, 25, 35, 0.14);
+    }
+    .leg-label::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-radius: 9999px;
+      background: var(--leg, #255485);
+      flex: none;
+    }
+    .night-mode .leg-label {
+      background: rgba(18, 22, 30, 0.84);
+      color: #d5dbe4;
+      border-color: rgba(255, 255, 255, 0.16);
+      box-shadow: none;
     }
 
     /* Leaflet Popup Editorial Styling */
@@ -1078,7 +1189,8 @@
       activeUser: TRIP_PRIVATE.defaultUser,
       tileStyle: 'voyager',
       overviewMode: false,
-      showGems: true,
+      showGems: false,
+      gemsChosen: false,
       completedStops: {},
       stopVotes: {},
       customStops: {},
@@ -1227,6 +1339,7 @@
           state.activeUser = legacyMember(state.activeUser);
           if (!knownMember(state.activeUser)) state.activeUser = TRIP_PRIVATE.defaultUser;
           state.stopVotes = sanitizeVoteMap(state.stopVotes);
+          if (!state.gemsChosen) state.showGems = false;
         }
       } catch (e) {}
     }
@@ -1541,6 +1654,8 @@
     let routeLayerGroup = null;
     let markersLayerGroup = null;
     let gemsLayerGroup = null;
+    let gemMarkers = [];
+    let legLabels = [];
     let calloutsLayerGroup = null;
     let markerRefsById = {};
     let isDropPinActive = false;
@@ -1602,6 +1717,9 @@
 
       L.control.scale({ position: 'bottomright', imperial: false, metric: true }).addTo(map);
 
+      map.createPane('legLabelPane').style.zIndex = 450;
+      map.createPane('gemPane').style.zIndex = 560;
+
       routeLayerGroup = L.layerGroup().addTo(map);
       calloutsLayerGroup = L.layerGroup().addTo(map);
       gemsLayerGroup = L.layerGroup().addTo(map);
@@ -1619,6 +1737,7 @@
 
       // Show/Hide District Cartographic Labels based on Zoom
       map.on('zoomend', updateDistrictCalloutsVisibility);
+      map.on('moveend', layoutMapClarity);
 
       // Handle Click for "Drop Pin on Map" Mode
       map.on('click', (e) => {
@@ -2248,18 +2367,16 @@
     function renderGemsOverlay() {
       if (!gemsLayerGroup || typeof window.L === 'undefined') return;
       gemsLayerGroup.clearLayers();
+      gemMarkers = [];
       if (!state.showGems || state.overviewMode) return;
 
       HONEST_GUIDE_GEMS.forEach(gem => {
         const icon = L.divIcon({
           className: '',
-          html: `
-            <div class="w-7 h-7 rounded-full bg-linden text-white border-2 border-amber-200 shadow-lg flex items-center justify-center font-extrabold text-sm hover:scale-110 transition-transform cursor-pointer" title="${esc(gem.title)}">
-              +
-            </div>`,
+          html: `<div class="gem-pin-wrap" title="${esc(gem.title)}"><div class="gem-pin">+</div></div>`,
           iconSize: [28, 28],
           iconAnchor: [14, 14],
-          popupAnchor: [0, -14]
+          popupAnchor: [0, -10]
         });
 
         const popupHtml = `
@@ -2283,8 +2400,146 @@
           </div>
         `;
 
-        L.marker([gem.lat, gem.lng], { icon }).bindPopup(popupHtml).addTo(gemsLayerGroup);
+        const gemMarker = L.marker([gem.lat, gem.lng], { icon, pane: 'gemPane', zIndexOffset: -1000, clarityBox: [22, 22] })
+          .bindPopup(popupHtml).addTo(gemsLayerGroup);
+        gemMarkers.push(gemMarker);
       });
+      layoutMapClarity();
+    }
+
+    const GEM_MIN_ZOOM = 12;
+    const LEG_LABEL_MIN_ZOOM = 14;
+    const LEG_LABEL_FOCUS_ZOOM = 11;
+    const LEG_LABEL_MIN_PX = 56;
+    const STOP_COMPACT_ZOOM = 12;
+
+    function clarityRect(layer, extra) {
+      const box = layer.options.clarityBox;
+      if (!box) return null;
+      const pt = map.latLngToContainerPoint(layer.getLatLng());
+      return { x: pt.x - box[0] / 2 - extra, y: pt.y - box[1] / 2 - extra, w: box[0] + extra * 2, h: box[1] + extra * 2 };
+    }
+
+    function rectsOverlap(a, b) {
+      return a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y;
+    }
+
+    function setClarityHidden(marker, hidden) {
+      const el = marker && marker.getElement && marker.getElement();
+      if (el) el.classList.toggle('clarity-hide', hidden);
+    }
+
+    function layoutMapClarity() {
+      if (!map || typeof window.L === 'undefined' || !markersLayerGroup) return;
+      const size = map.getSize();
+      if (!size.x || !size.y) return;
+      const zoom = map.getZoom();
+      map.getContainer().classList.toggle('pins-compact', zoom <= STOP_COMPACT_ZOOM);
+
+      const obstacles = [];
+      const origins = [];
+      markersLayerGroup.eachLayer(layer => {
+        const r = clarityRect(layer, 2);
+        if (!r) return;
+        if (layer.options.clarityRole === 'origin') origins.push({ layer, r });
+        else obstacles.push(r);
+      });
+      origins.forEach(o => {
+        const hide = obstacles.some(r => rectsOverlap(r, o.r));
+        setClarityHidden(o.layer, hide);
+        if (!hide) obstacles.push(o.r);
+      });
+
+      const keptGems = [];
+      gemMarkers.forEach(marker => {
+        const r = clarityRect(marker, 0);
+        let hide = zoom < GEM_MIN_ZOOM;
+        if (!hide) hide = obstacles.some(o => rectsOverlap(o, r)) || keptGems.some(k => rectsOverlap(k, r));
+        if (!hide) keptGems.push(r);
+        setClarityHidden(marker, hide);
+      });
+      keptGems.forEach(r => obstacles.push(r));
+
+      const pad = getMapFitPadding();
+      const view = {
+        x: pad.paddingTopLeft[0] - 24,
+        y: pad.paddingTopLeft[1] - 24,
+        w: size.x - pad.paddingTopLeft[0] - pad.paddingBottomRight[0] + 48,
+        h: size.y - pad.paddingTopLeft[1] - pad.paddingBottomRight[1] + 48
+      };
+      const inView = r => r.x >= view.x && r.y >= view.y && r.x + r.w <= view.x + view.w && r.y + r.h <= view.y + view.h;
+
+      const selected = state.selectedStopId;
+      const ordered = legLabels.slice().sort((a, b) => {
+        const fa = (a.from.id === selected || a.to.id === selected) ? 0 : 1;
+        const fb = (b.from.id === selected || b.to.id === selected) ? 0 : 1;
+        return fa - fb;
+      });
+      const placed = [];
+      ordered.forEach(rec => {
+        const el = rec.marker.getElement();
+        if (!el) return;
+        const label = el.firstElementChild;
+        const focus = rec.from.id === selected || rec.to.id === selected;
+        const minZoom = rec.always ? 0 : (focus ? LEG_LABEL_FOCUS_ZOOM : LEG_LABEL_MIN_ZOOM);
+        const spot = zoom >= minZoom ? findLegLabelSpot(rec, label, obstacles, placed, inView) : null;
+        label.classList.toggle('clarity-hide', !spot);
+        if (!spot) return;
+        placed.push(spot.rect);
+        rec.marker.setLatLng(map.containerPointToLatLng(L.point(spot.cx, spot.cy)));
+      });
+    }
+
+    function findLegLabelSpot(rec, label, obstacles, placed, inView) {
+      const pts = rec.line.map(ll => map.latLngToContainerPoint(ll));
+      const cum = [0];
+      for (let i = 1; i < pts.length; i++) cum.push(cum[i - 1] + pts[i].distanceTo(pts[i - 1]));
+      const total = cum[cum.length - 1];
+      if (!rec.always && total < LEG_LABEL_MIN_PX) return null;
+      const w = label.offsetWidth || 90;
+      const h = label.offsetHeight || 16;
+      const at = t => {
+        const target = total * t;
+        let i = 1;
+        while (i < cum.length - 1 && cum[i] < target) i++;
+        const a = pts[i - 1], b = pts[i];
+        const span = cum[i] - cum[i - 1] || 1;
+        const f = Math.min(1, Math.max(0, (target - cum[i - 1]) / span));
+        const len = Math.hypot(b.x - a.x, b.y - a.y) || 1;
+        return { x: a.x + (b.x - a.x) * f, y: a.y + (b.y - a.y) * f, dx: (b.x - a.x) / len, dy: (b.y - a.y) / len };
+      };
+      const ts = rec.always ? [0.5, 0.4, 0.6, 0.3, 0.7] : [0.5, 0.38, 0.62, 0.26, 0.74, 0.16, 0.84];
+      const crossesLine = rect => {
+        for (let i = 1; i < pts.length; i++) {
+          const a = pts[i - 1], b = pts[i];
+          const steps = Math.max(1, Math.ceil(a.distanceTo(b) / 6));
+          for (let j = 0; j <= steps; j++) {
+            const x = a.x + (b.x - a.x) * j / steps;
+            const y = a.y + (b.y - a.y) * j / steps;
+            if (x > rect.x && x < rect.x + rect.w && y > rect.y && y < rect.y + rect.h) return true;
+          }
+        }
+        return false;
+      };
+      let fallback = null;
+      for (let k = 0; k < ts.length; k++) {
+        const p = at(ts[k]);
+        let nx = -p.dy, ny = p.dx;
+        if (ny > 0 || (ny === 0 && nx > 0)) { nx = -nx; ny = -ny; }
+        const gap = Math.abs(nx) * w / 2 + Math.abs(ny) * h / 2 + 4;
+        for (let side = 1; side >= -1; side -= 2) {
+          const cx = p.x + nx * gap * side;
+          const cy = p.y + ny * gap * side;
+          const rect = { x: cx - w / 2 - 3, y: cy - h / 2 - 3, w: w + 6, h: h + 6 };
+          if (!inView(rect)) continue;
+          if (obstacles.some(o => rectsOverlap(o, rect))) continue;
+          if (placed.some(o => rectsOverlap(o, rect))) continue;
+          const spot = { cx, cy, rect };
+          if (!crossesLine(rect)) return spot;
+          if (!fallback) fallback = spot;
+        }
+      }
+      return fallback;
     }
 
     const WHO_STORAGE_KEY = 'prague_winter_atlas_who_v1';
@@ -2680,13 +2935,14 @@
 
     function markOrigin(origin) {
       if (!origin || !markersLayerGroup || typeof window.L === 'undefined') return;
+      const name = esc(origin.mapLabel || origin.name);
       const icon = L.divIcon({
         className: '',
-        html: `<div class="px-2 py-0.5 rounded-full bg-white text-vltava border border-vltava/20 shadow text-[10px] font-bold whitespace-nowrap">${esc(origin.mapLabel || origin.name)}</div>`,
-        iconSize: [72, 22],
-        iconAnchor: [36, 11]
+        html: `<div class="origin-pin" role="img" aria-label="${name}" title="${name}"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10v10h13V10"/><path d="M10 20v-5h4v5"/></svg></div>`,
+        iconSize: [30, 30],
+        iconAnchor: [15, 15]
       });
-      L.marker([origin.lat, origin.lng], { icon: icon, interactive: false }).addTo(markersLayerGroup);
+      L.marker([origin.lat, origin.lng], { icon: icon, interactive: false, zIndexOffset: 400, clarityBox: [28, 28], clarityRole: 'origin' }).addTo(markersLayerGroup);
     }
 
     async function drawRoutedLegs(token, pairs) {
@@ -2709,12 +2965,14 @@
           ? pair.label
           : (pair.plan.label + ' · ' + legDistanceLabel(km) + ' · ' + legClock(km, pair.plan));
         const icon = L.divIcon({
-          className: '',
-          html: `<div class="leg-midpoint-pill">${esc(text)}</div>`,
-          iconSize: [150, 20],
-          iconAnchor: [75, 10]
+          className: 'leg-label-anchor',
+          html: `<div class="leg-label clarity-hide" style="--leg:${esc(paint.color)}">${esc(text)}</div>`,
+          iconSize: [0, 0],
+          iconAnchor: [0, 0]
         });
-        L.marker(mid, { icon: icon, interactive: false }).addTo(routeLayerGroup);
+        const labelMarker = L.marker(mid, { icon: icon, interactive: false, keyboard: false, pane: 'legLabelPane' }).addTo(routeLayerGroup);
+        legLabels.push({ marker: labelMarker, line: line, from: pair.from, to: pair.to, always: !!pair.label });
+        layoutMapClarity();
       }
     }
 
@@ -3100,6 +3358,7 @@
       if (!map || typeof window.L === 'undefined') return;
       routeLayerGroup.clearLayers();
       markersLayerGroup.clearLayers();
+      legLabels = [];
       markerRefsById = {};
       updateDistrictCalloutsVisibility();
       renderGemsOverlay();
@@ -3125,7 +3384,7 @@
             iconAnchor: [55, 14]
           });
 
-          const m = L.marker([hub.lat, hub.lng], { icon }).addTo(markersLayerGroup);
+          const m = L.marker([hub.lat, hub.lng], { icon, clarityBox: [96, 28] }).addTo(markersLayerGroup);
           m.bindPopup(`
             <div class="space-y-1.5 p-0.5">
               <div class="font-display font-bold text-sm text-vltava">${esc(hub.name)}</div>
@@ -3149,6 +3408,7 @@
             map.flyToBounds(boundsPts, { ...getMapFitPadding(), maxZoom: OVERVIEW_MAX_ZOOM, duration: 0.75 });
           }
         }
+        layoutMapClarity();
         return;
       }
 
@@ -3176,17 +3436,16 @@
         const icon = L.divIcon({
           className: '',
           html: `
-            <div class="relative flex items-center justify-center w-9 h-9 cursor-pointer transition-transform ${isSelected ? 'scale-115 z-50' : 'hover:scale-105'}">
+            <div class="stop-pin-wrap${isSelected ? ' is-selected' : ''}">
               ${isSelected ? '<span class="pin-pulse-ring"></span>' : ''}
-              <div class="w-8 h-8 rounded-full flex flex-col items-center justify-center text-white border-2 ${isSelected ? 'border-pilsner-light ring-2 ring-vltava/30' : 'border-white'} shadow-lg"
-                style="background-color: ${bg};">
-                <span class="font-mono font-bold text-xs leading-none">${isDone ? '&#10003;' : stopNum}</span>
-                <span class="opacity-85 mt-0.5">${getCategoryMicroSvg(stop.category)}</span>
+              <div class="stop-pin" style="background-color: ${bg};">
+                <span class="stop-pin-num">${isDone ? '&#10003;' : stopNum}</span>
+                <span class="stop-pin-icon">${getCategoryMicroSvg(stop.category)}</span>
               </div>
             </div>`,
-          iconSize: [36, 36],
-          iconAnchor: [18, 18],
-          popupAnchor: [0, -18]
+          iconSize: [44, 44],
+          iconAnchor: [22, 22],
+          popupAnchor: [0, -20]
         });
 
         const popupHtml = `
@@ -3212,7 +3471,7 @@
           </div>
         `;
 
-        const marker = L.marker([stop.lat, stop.lng], { icon }).bindPopup(popupHtml).addTo(markersLayerGroup);
+        const marker = L.marker([stop.lat, stop.lng], { icon, zIndexOffset: isSelected ? 2000 : 1000, clarityBox: isSelected ? [42, 42] : [30, 30] }).bindPopup(popupHtml).addTo(markersLayerGroup);
         marker.on('click', () => {
           state.selectedStopId = stop.id;
           persistState();
@@ -3224,6 +3483,8 @@
         marker.on('popupopen', () => requestStopPhoto(stop));
         markerRefsById[stop.id] = marker;
       });
+
+      layoutMapClarity();
 
       if (shouldFitBounds) {
         if (latLngs.length === 1) {
@@ -3516,17 +3777,20 @@
 
     function toggleHonestGems() {
       state.showGems = !state.showGems;
-      const btn = document.getElementById('btnGemsToggle');
-      const badge = document.getElementById('gemsStatusBadge');
-      if (state.showGems) {
-        btn.className = 'flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-linden text-white border border-linden text-xs font-bold transition shadow-2xs';
-        badge.textContent = 'ON';
-      } else {
-        btn.className = 'flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-white/80 text-stone-700 border border-vltava/15 text-xs font-bold transition';
-        badge.textContent = 'OFF';
-      }
+      state.gemsChosen = true;
+      syncGemsButton();
       persistState();
       renderGemsOverlay();
+    }
+
+    function syncGemsButton() {
+      const btn = document.getElementById('btnGemsToggle');
+      const badge = document.getElementById('gemsStatusBadge');
+      if (!btn || !badge) return;
+      const on = !!state.showGems;
+      ['bg-linden', 'text-white', 'border-linden', 'shadow-2xs'].forEach(c => btn.classList.toggle(c, on));
+      ['bg-white/80', 'text-stone-700', 'border-vltava/15'].forEach(c => btn.classList.toggle(c, !on));
+      badge.textContent = on ? 'ON' : 'OFF';
     }
 
     function checklistForUser(user) {
@@ -4333,6 +4597,7 @@
       syncThemeButton();
       syncFestiveButton();
       loadLocalState();
+      syncGemsButton();
 
       // Check if opened via a GitHub Pages #sync=... shared URL
       if (window.location.hash && window.location.hash.startsWith('#sync=')) {
