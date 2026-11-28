@@ -3046,6 +3046,25 @@
       if (el) el.classList.add('hidden');
     }
 
+    const OVERVIEW_MAX_ZOOM = 7;
+
+    function getMapFitPadding() {
+      const isDesktopDrawerOpen = window.innerWidth >= 1024 && !state.drawerCollapsedDesktop;
+      const padTopLeft = isDesktopDrawerOpen ? [490, 145] : [36, 150];
+      const sheetEl = document.getElementById('itineraryDrawer');
+      const sheetCover = window.innerWidth < 1024 && sheetEl ? Math.round(sheetEl.getBoundingClientRect().height) + 28 : 55;
+      const padBottomRight = window.innerWidth < 1024 ? [36, sheetCover] : [55, 55];
+      return { paddingTopLeft: padTopLeft, paddingBottomRight: padBottomRight };
+    }
+
+    function flyToPaddedPoint(latLng, zoom) {
+      const pad = getMapFitPadding();
+      const pt = map.project(latLng, zoom);
+      pt.x -= (pad.paddingTopLeft[0] - pad.paddingBottomRight[0]) / 2;
+      pt.y -= (pad.paddingTopLeft[1] - pad.paddingBottomRight[1]) / 2;
+      map.flyTo(map.unproject(pt, zoom), zoom, { duration: 0.65 });
+    }
+
     function renderMapLayers(shouldFitBounds = true) {
       if (!map || typeof window.L === 'undefined') return;
       routeLayerGroup.clearLayers();
@@ -3086,8 +3105,17 @@
           `);
         });
 
+        REGIONAL_ARCS.forEach(arc => {
+          boundsPts.push(arc.from, arc.to);
+        });
+
         if (shouldFitBounds && boundsPts.length) {
-          map.flyToBounds(boundsPts, { padding: [75, 75], duration: 0.75 });
+          const unique = new Set(boundsPts.map(p => p.join(',')));
+          if (unique.size === 1) {
+            flyToPaddedPoint(boundsPts[0], OVERVIEW_MAX_ZOOM);
+          } else {
+            map.flyToBounds(boundsPts, { ...getMapFitPadding(), maxZoom: OVERVIEW_MAX_ZOOM, duration: 0.75 });
+          }
         }
         return;
       }
@@ -3166,18 +3194,11 @@
       });
 
       if (shouldFitBounds) {
-        const isDesktopDrawerOpen = window.innerWidth >= 1024 && !state.drawerCollapsedDesktop;
-        const padTopLeft = isDesktopDrawerOpen ? [490, 145] : [36, 150];
-        const sheetEl = document.getElementById('itineraryDrawer');
-        const sheetCover = window.innerWidth < 1024 && sheetEl ? Math.round(sheetEl.getBoundingClientRect().height) + 28 : 55;
-        const padBottomRight = window.innerWidth < 1024 ? [36, sheetCover] : [55, 55];
-
         if (latLngs.length === 1) {
           map.flyTo(latLngs[0], 15, { duration: 0.65 });
         } else {
           map.flyToBounds(latLngs, {
-            paddingTopLeft: padTopLeft,
-            paddingBottomRight: padBottomRight,
+            ...getMapFitPadding(),
             maxZoom: 15,
             duration: 0.75
           });
