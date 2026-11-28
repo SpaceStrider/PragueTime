@@ -244,6 +244,28 @@
       cursor: pointer;
     }
     .stop-pin-wrap .pin-pulse-ring { inset: 3px; }
+    .stop-leader {
+      display: none;
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      height: 0;
+      border-top: 1.5px solid rgba(20, 25, 35, 0.6);
+      transform-origin: 0 0;
+      pointer-events: none;
+    }
+    .stop-leader::after {
+      content: '';
+      position: absolute;
+      right: -2.5px;
+      top: -4px;
+      width: 5px;
+      height: 5px;
+      border-radius: 9999px;
+      background: rgba(20, 25, 35, 0.75);
+    }
+    .night-mode .stop-leader { border-top-color: rgba(244, 239, 230, 0.7); }
+    .night-mode .stop-leader::after { background: rgba(244, 239, 230, 0.85); }
     .stop-pin {
       width: 30px;
       height: 30px;
@@ -2681,6 +2703,8 @@
       const box = layer.options.clarityBox;
       if (!box) return null;
       const pt = map.latLngToContainerPoint(layer.getLatLng());
+      const shift = layer._clarityShift;
+      if (shift) { pt.x += shift.x; pt.y += shift.y; }
       return { x: pt.x - box[0] / 2 - extra, y: pt.y - box[1] / 2 - extra, w: box[0] + extra * 2, h: box[1] + extra * 2 };
     }
 
@@ -2693,12 +2717,88 @@
       if (el) el.classList.toggle('clarity-hide', hidden);
     }
 
+    function spreadStopMarkers(layers, compact) {
+      const items = layers.map(layer => {
+        const base = map.latLngToContainerPoint(layer.getLatLng());
+        const info = layer.options.clarityStop;
+        return { layer, num: info.num, bx: base.x, by: base.y, x: base.x, y: base.y, r: info.selected ? 19 : (compact ? 12 : 15) };
+      });
+
+      for (let pass = 0; pass < 4; pass++) {
+        const parent = items.map((_, i) => i);
+        const find = i => { while (parent[i] !== i) { parent[i] = parent[parent[i]]; i = parent[i]; } return i; };
+        let touching = false;
+        for (let i = 0; i < items.length; i++) {
+          for (let j = i + 1; j < items.length; j++) {
+            const a = items[i], b = items[j];
+            if (Math.hypot(a.x - b.x, a.y - b.y) < a.r + b.r + 2) { parent[find(i)] = find(j); touching = true; }
+          }
+        }
+        if (!touching) break;
+
+        const groups = {};
+        items.forEach((it, i) => { (groups[find(i)] = groups[find(i)] || []).push(it); });
+        Object.keys(groups).forEach(key => {
+          const group = groups[key].sort((a, b) => a.num - b.num);
+          const n = group.length;
+          if (n < 2) return;
+          const cx = group.reduce((sum, it) => sum + it.x, 0) / n;
+          const cy = group.reduce((sum, it) => sum + it.y, 0) / n;
+          const rmax = Math.max(...group.map(it => it.r));
+          if (n === 2) {
+            let ax = group[1].x - group[0].x, ay = group[1].y - group[0].y;
+            const len = Math.hypot(ax, ay);
+            if (len < 1) { ax = 1; ay = 0; } else { ax /= len; ay /= len; }
+            const half = (group[0].r + group[1].r + 6) / 2;
+            group[0].x = cx - ax * half; group[0].y = cy - ay * half;
+            group[1].x = cx + ax * half; group[1].y = cy + ay * half;
+            return;
+          }
+          const ring = Math.max((rmax + 3) / Math.sin(Math.PI / n), rmax * 2);
+          group.forEach((it, k) => {
+            const angle = -Math.PI / 2 + (2 * Math.PI * k) / n;
+            it.x = cx + Math.cos(angle) * ring;
+            it.y = cy + Math.sin(angle) * ring;
+          });
+        });
+      }
+
+      items.forEach(it => {
+        const dx = it.x - it.bx, dy = it.y - it.by;
+        const moved = Math.hypot(dx, dy) > 0.5;
+        it.layer._clarityShift = moved ? { x: dx, y: dy } : null;
+        const wrap = it.layer.getElement() && it.layer.getElement().querySelector('.stop-pin-wrap');
+        if (wrap) {
+          wrap.style.transform = moved ? `translate(${dx.toFixed(1)}px, ${dy.toFixed(1)}px)` : '';
+          const leader = wrap.querySelector('.stop-leader');
+          if (leader) {
+            leader.style.display = moved ? 'block' : 'none';
+            if (moved) {
+              leader.style.width = Math.hypot(dx, dy).toFixed(1) + 'px';
+              leader.style.transform = `rotate(${Math.atan2(-dy, -dx).toFixed(4)}rad)`;
+            }
+          }
+        }
+        const popup = it.layer.getPopup && it.layer.getPopup();
+        if (popup) {
+          popup.options.offset = L.point(moved ? dx : 0, 7 + (moved ? dy : 0));
+          if (popup.isOpen()) popup.update();
+        }
+      });
+    }
+
     function layoutMapClarity() {
       if (!map || typeof window.L === 'undefined' || !markersLayerGroup) return;
       const size = map.getSize();
       if (!size.x || !size.y) return;
       const zoom = map.getZoom();
       map.getContainer().classList.toggle('pins-compact', zoom <= STOP_COMPACT_ZOOM);
+
+      const stopLayers = [];
+      markersLayerGroup.eachLayer(layer => {
+        if (layer.options.clarityRole === 'stop') stopLayers.push(layer);
+      });
+      spreadStopMarkers(stopLayers, zoom <= STOP_COMPACT_ZOOM);
 
       const obstacles = [];
       const origins = [];
@@ -3714,6 +3814,7 @@
           className: '',
           html: `
             <div class="stop-pin-wrap${isSelected ? ' is-selected' : ''}">
+              <span class="stop-leader"></span>
               ${isSelected ? '<span class="pin-pulse-ring"></span>' : ''}
               <div class="stop-pin" style="background-color: ${bg};">
                 <span class="stop-pin-num">${isDone ? '&#10003;' : stopNum}</span>
@@ -3748,7 +3849,7 @@
           </div>
         `;
 
-        const marker = L.marker([stop.lat, stop.lng], { icon, zIndexOffset: isSelected ? 2000 : 1000, clarityBox: isSelected ? [42, 42] : [30, 30] }).bindPopup(popupHtml).addTo(markersLayerGroup);
+        const marker = L.marker([stop.lat, stop.lng], { icon, zIndexOffset: isSelected ? 2000 : 1000, clarityBox: isSelected ? [42, 42] : [30, 30], clarityRole: 'stop', clarityStop: { num: stopNum, selected: isSelected } }).bindPopup(popupHtml).addTo(markersLayerGroup);
         marker.on('click', () => {
           state.selectedStopId = stop.id;
           persistState();
