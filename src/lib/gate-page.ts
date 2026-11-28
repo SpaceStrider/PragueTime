@@ -34,7 +34,7 @@ export function gatePage(options: { failed: boolean; sealed?: string }): string 
       radial-gradient(34rem 28rem at 100% 104%, rgba(36, 92, 70, 0.14), transparent 70%),
       radial-gradient(circle at 1px 1px, rgba(20, 25, 35, 0.07) 1px, transparent 1.5px) 0 0 / 22px 22px,
       #efe9df; background-attachment: fixed; }
-    main { width: 100%; max-width: 23rem; background: var(--parchment); border: 1px solid var(--line); border-radius: 1.6rem; padding: 1.5rem 1.4rem 1.1rem; box-shadow: 0 1.2rem 2.6rem -0.8rem rgba(60, 45, 25, 0.28), 0 0.15rem 0.4rem rgba(60, 45, 25, 0.08); }
+    main { width: 100%; max-width: 23rem; background: var(--parchment); border: 1px solid var(--line); border-radius: 1.6rem; padding: 1.5rem 1.4rem; box-shadow: 0 1.2rem 2.6rem -0.8rem rgba(60, 45, 25, 0.28), 0 0.15rem 0.4rem rgba(60, 45, 25, 0.08); }
     .brand { display: flex; align-items: center; gap: 0.85rem; }
     .sticker { flex: none; width: 4.1rem; height: 4.1rem; border-radius: 1.2rem; background: #fff7d6; border: 2px solid #f0d98a; display: grid; place-items: center; transform: rotate(-4deg); box-shadow: 0 0.35rem 0.8rem -0.3rem rgba(120, 85, 20, 0.45); }
     .sticker img { width: 3.2rem; height: 3.2rem; object-fit: contain; display: block; filter: drop-shadow(0 1px 0 rgba(255, 255, 255, 0.9)); }
@@ -58,8 +58,7 @@ export function gatePage(options: { failed: boolean; sealed?: string }): string 
     button[type="submit"]:active { transform: translateY(1px); }
     button[type="submit"]:disabled { opacity: 0.7; cursor: progress; }
     button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
-    #gate-error { margin: 0; min-height: 2.3rem; display: flex; align-items: center; padding: 0 0.85rem; border-radius: 0.8rem; color: var(--garnet-deep); font-size: 0.95rem; font-weight: 700; line-height: 1.3; }
-    #gate-error:not(:empty) { background: rgba(184, 41, 61, 0.1); border: 1px solid rgba(184, 41, 61, 0.35); }
+    #gate-error { margin: -0.1rem 0; min-height: 1.25rem; color: var(--garnet-deep); font-size: 0.9rem; font-weight: 700; line-height: 1.25rem; text-align: center; }
     #themeToggle { position: fixed; top: max(0.75rem, env(safe-area-inset-top)); right: max(0.75rem, env(safe-area-inset-right)); width: 2.75rem; height: 2.75rem; padding: 0; display: grid; place-items: center; border-radius: 50%; background: var(--parchment); color: var(--ink); border: 1px solid var(--line); box-shadow: 0 0.3rem 0.8rem -0.4rem rgba(60, 45, 25, 0.5); cursor: pointer; touch-action: manipulation; }
     #themeToggle svg { width: 1.3rem; height: 1.3rem; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
     #themeToggle .icon-sun { display: none; }
@@ -80,8 +79,7 @@ export function gatePage(options: { failed: boolean; sealed?: string }): string 
     html.theme-dark button[type="submit"] { background: #c9364b; box-shadow: none; }
     html.theme-dark button[type="submit"]:hover { background: #d8475c; }
     html.theme-dark button:focus-visible { outline-color: #f4efe6; }
-    html.theme-dark #gate-error { color: #f9c3cc; }
-    html.theme-dark #gate-error:not(:empty) { background: rgba(243, 168, 180, 0.12); border-color: rgba(243, 168, 180, 0.4); }
+    html.theme-dark #gate-error { color: #f3a8b4; }
     html.theme-dark #themeToggle { background: #1b2230; color: #f4efe6; border-color: rgba(255, 255, 255, 0.2); box-shadow: none; }
     html.theme-dark #themeToggle .icon-moon { display: none; }
     html.theme-dark #themeToggle .icon-sun { display: block; }
@@ -116,8 +114,8 @@ export function gatePage(options: { failed: boolean; sealed?: string }): string 
         <input id="gate-code" name="code" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{4}" minlength="4" maxlength="4" required autofocus aria-describedby="gate-error"${options.failed ? ' aria-invalid="true"' : ""}>
         <div class="code-cells" aria-hidden="true"><span class="code-cell"></span><span class="code-cell"></span><span class="code-cell"></span><span class="code-cell"></span></div>
       </div>
-      <button type="submit" id="gate-submit">Unlock</button>
       <p id="gate-error" role="alert">${error}</p>
+      <button type="submit" id="gate-submit">Unlock</button>
     </form>
   </main>
   <textarea id="gate-sealed" hidden readonly>${sealed}</textarea>
