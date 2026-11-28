@@ -20,6 +20,11 @@ const rendered = await renderAtlasHtml();
 assert.match(rendered, /Alex/);
 assert.match(rendered, /Example Lane 1/);
 assert.equal(rendered.includes("/*__TRIP_PRIVATE_START__*/null/*__TRIP_PRIVATE_END__*/"), false);
+assert.equal(rendered.includes("window.ATLAS_STATIC = true"), false);
+assert.match(template, /window\.ATLAS_STATIC === true/);
+const staticRendered = await renderAtlasHtml({ staticSite: true });
+assert.match(staticRendered, /<head>\s*<script>window\.ATLAS_STATIC = true;<\/script>/);
+assert.match(staticRendered, /Alex/);
 const still = await readFile("content/atlas.html", "utf8");
 assert.equal(still, template);
 
